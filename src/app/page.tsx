@@ -1,28 +1,28 @@
 export default function DayiiiatchSolutionsAgencyLanding() {
   const platforms = [
     {
-      title: "Fiverr",
-      badge: "Fast-turn gigs",
+      title: "Free Strategy Call",
+      badge: "Best first step",
       description:
-        "Ideal for quick projects, starter packages, and easy entry for new clients who want a simple buying path.",
-      href: "#",
-      cta: "Hire on Fiverr",
+        "Book a free 15-minute phone call to talk through your goals, your current setup, and the best next move.",
+      href: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call",
+      cta: "Book Free Call",
     },
     {
-      title: "Upwork",
-      badge: "Longer contracts",
+      title: "Premium Session",
+      badge: "Serious clients",
       description:
-        "Best for custom scopes, ongoing support, larger system builds, and higher-trust freelance relationships.",
-      href: "#",
-      cta: "Hire on Upwork",
+        "Book a paid deep strategy session for focused planning, problem-solving, and a clearer path forward.",
+      href: "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
+      cta: "Book Premium Session",
     },
     {
-      title: "LinkedIn",
-      badge: "Professional presence",
+      title: "Direct Inquiry",
+      badge: "Project requests",
       description:
-        "Use this for networking, credibility, business outreach, and showcasing the DAYIIIatch Solutions brand story.",
-      href: "#",
-      cta: "View LinkedIn",
+        "Send a direct inquiry through the DAYIIIatch Solutions contact form for builds, collaborations, and custom scopes.",
+      href: "#contact-form",
+      cta: "Send Inquiry",
     },
   ];
 
@@ -54,32 +54,60 @@ export default function DayiiiatchSolutionsAgencyLanding() {
   ];
 
   const trustPoints = [
+    "Live booking flow for free and premium sessions",
     "Branded under DAYIIIatch Solutions",
-    "Multi-platform client entry points",
     "Built for creators, startups, and growing brands",
-    "Flexible support from quick gigs to custom builds",
+    "Flexible support from quick calls to custom builds",
   ];
 
   const process = [
     {
       step: "01",
-      title: "Choose your lane",
-      text: "Clients enter through Fiverr, Upwork, LinkedIn, or direct contact depending on the type of help they need.",
+      title: "Start with the free call",
+      text: "New clients can book a free 15-minute strategy call to explain what they need and find the right service path.",
     },
     {
       step: "02",
-      title: "Lock the scope",
-      text: "We define the goal, deliverables, timeline, and best-fit service path so the project starts clean.",
+      title: "Qualify the project",
+      text: "We figure out the scope, goals, priorities, and whether a direct service or premium planning session makes sense.",
     },
     {
       step: "03",
-      title: "Build with purpose",
-      text: "From websites to systems and creative assets, the work is designed to look sharp and solve real problems.",
+      title: "Deep strategy or build phase",
+      text: "Serious clients can move into a paid planning session or jump into the actual build depending on the project.",
     },
     {
       step: "04",
-      title: "Grow from there",
-      text: "Clients can return for upgrades, ongoing support, future packages, and larger builds over time.",
+      title: "Execute and expand",
+      text: "From websites to systems and creative support, the work is delivered with room for future upgrades and ongoing help.",
+    },
+  ];
+
+  const whyChooseUs = [
+    "Clear entry points for free consults, paid planning, and direct inquiries",
+    "Creative + technical support in one place",
+    "Fast path from conversation to action plan",
+    "Professional web presence backed by real booking links",
+  ];
+
+  const featuredOffers = [
+    {
+      title: "Free 15-Min Strategy Call",
+      text: "A quick phone call to understand your goals, answer high-level questions, and point you toward the best next move.",
+      cta: "Book Free Call",
+      href: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call",
+    },
+    {
+      title: "Deep Strategy Session (Paid)",
+      text: "A focused premium session for serious clients who want a deeper game plan, clearer direction, and actionable guidance.",
+      cta: "Book Premium Session",
+      href: "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
+    },
+    {
+      title: "Custom Project Inquiry",
+      text: "Send a direct project request for websites, automation systems, branding help, or digital support through the contact form.",
+      cta: "Send Inquiry",
+      href: "#contact-form",
     },
   ];
 
@@ -96,9 +124,9 @@ export default function DayiiiatchSolutionsAgencyLanding() {
 
           <nav className="flex flex-wrap gap-2 text-sm text-zinc-300">
             <a href="#services" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Services</a>
-            <a href="#platforms" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Platforms</a>
-            <a href="#process" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Process</a>
-            <a href="#contact" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Contact</a>
+            <a href="#offers" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Offers</a>
+            <a href="#platforms" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Booking</a>
+            <a href="#contact-form" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Contact</a>
           </nav>
         </header>
 
@@ -110,18 +138,31 @@ export default function DayiiiatchSolutionsAgencyLanding() {
 
             <div className="space-y-4">
               <h2 className="max-w-4xl text-4xl font-black leading-tight md:text-6xl">
-                Build trust first. Then send clients exactly where they need to go.
+                Build trust first. Then move visitors into a real client pipeline.
               </h2>
               <p className="max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
                 DAYIIIatch Solutions helps creators, businesses, and growing brands level up with websites, automation,
-                AI-assisted workflows, branding support, and digital problem-solving. This page acts as your central
-                web presence while routing clients into Fiverr, Upwork, LinkedIn, or direct contact.
+                AI-assisted workflows, branding support, and digital problem-solving. This site now routes people into a
+                free strategy call, a premium session, or a direct project inquiry depending on what they need.
               </p>
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <a href="#platforms" className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:scale-[1.02]">
+              <a
+                href="https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:scale-[1.02]"
+              >
                 Work With Us
+              </a>
+              <a
+                href="https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-2xl border border-cyan-400/40 bg-cyan-400/10 px-5 py-3 text-sm font-semibold text-cyan-200 transition hover:bg-cyan-400/20"
+              >
+                Book Premium Session
               </a>
               <a href="#services" className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
                 Explore Services
@@ -152,7 +193,7 @@ export default function DayiiiatchSolutionsAgencyLanding() {
               <div className="rounded-2xl border border-violet-400/20 bg-violet-500/10 p-4">
                 <p className="text-sm leading-6 text-violet-100">
                   Clean online presence. Professional routing. Flexible services. Built to help you look official while
-                  making it easy for clients to buy, inquire, or connect.
+                  making it easy for clients to book, inquire, and move from interest to action.
                 </p>
               </div>
 
@@ -168,6 +209,35 @@ export default function DayiiiatchSolutionsAgencyLanding() {
           </div>
         </section>
 
+        <section id="offers" className="mt-16">
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Featured Offers</p>
+              <h3 className="text-3xl font-bold">Choose the right entry point</h3>
+            </div>
+            <p className="max-w-2xl text-sm leading-6 text-zinc-400">
+              Start with a free call, move into a premium planning session, or send a direct inquiry for custom projects.
+            </p>
+          </div>
+
+          <div className="grid gap-4 md:grid-cols-3">
+            {featuredOffers.map((offer) => (
+              <div key={offer.title} className="rounded-[1.6rem] border border-white/10 bg-white/5 p-5 transition hover:-translate-y-1 hover:bg-white/10">
+                <h4 className="text-xl font-semibold">{offer.title}</h4>
+                <p className="mt-3 text-sm leading-6 text-zinc-400">{offer.text}</p>
+                <a
+                  href={offer.href}
+                  target={offer.href.startsWith("http") ? "_blank" : undefined}
+                  rel={offer.href.startsWith("http") ? "noreferrer" : undefined}
+                  className="mt-5 inline-flex rounded-2xl border border-white/15 bg-white/5 px-4 py-2 text-sm font-semibold text-white transition hover:bg-white/10"
+                >
+                  {offer.cta}
+                </a>
+              </div>
+            ))}
+          </div>
+        </section>
+
         <section id="services" className="mt-16">
           <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
@@ -175,7 +245,7 @@ export default function DayiiiatchSolutionsAgencyLanding() {
               <h3 className="text-3xl font-bold">Core offers</h3>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-zinc-400">
-              These blocks can later be expanded into package cards, pricing sections, portfolio proof, or platform-specific gigs.
+              These blocks can keep expanding into pricing cards, portfolio proof, and platform-specific offers as the brand grows.
             </p>
           </div>
 
@@ -191,8 +261,8 @@ export default function DayiiiatchSolutionsAgencyLanding() {
 
         <section id="platforms" className="mt-16">
           <div className="mb-6">
-            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Platforms</p>
-            <h3 className="text-3xl font-bold">Choose your entry point</h3>
+            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Booking & Contact</p>
+            <h3 className="text-3xl font-bold">Move visitors into action</h3>
           </div>
 
           <div className="grid gap-5 md:grid-cols-3">
@@ -200,6 +270,8 @@ export default function DayiiiatchSolutionsAgencyLanding() {
               <a
                 key={platform.title}
                 href={platform.href}
+                target={platform.href.startsWith("http") ? "_blank" : undefined}
+                rel={platform.href.startsWith("http") ? "noreferrer" : undefined}
                 className="group rounded-[1.8rem] border border-white/10 bg-white/5 p-6 transition hover:-translate-y-1 hover:border-cyan-400/40 hover:bg-white/10"
               >
                 <div className="mb-5 flex items-center justify-between gap-3">
@@ -232,13 +304,15 @@ export default function DayiiiatchSolutionsAgencyLanding() {
 
         <section className="mt-16 grid gap-8 lg:grid-cols-[0.9fr_1.1fr]">
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6">
-            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">About</p>
+            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Why Choose DAYIIIatch Solutions</p>
             <h3 className="mt-2 text-3xl font-bold">Built for modern digital work</h3>
-            <p className="mt-4 text-sm leading-7 text-zinc-300">
-              DAYIIIatch Solutions is positioned as a creative-tech service brand that blends freelance flexibility with
-              a more official agency-style presence. The goal is simple: make it easier for people to trust the brand,
-              understand the value, and choose the best way to work with you.
-            </p>
+            <div className="mt-5 space-y-3">
+              {whyChooseUs.map((item) => (
+                <div key={item} className="rounded-2xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-200">
+                  {item}
+                </div>
+              ))}
+            </div>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-gradient-to-r from-violet-500/15 via-white/5 to-cyan-400/10 p-6">
@@ -249,9 +323,9 @@ export default function DayiiiatchSolutionsAgencyLanding() {
                 "Add testimonials",
                 "Add portfolio case studies",
                 "Add service pricing",
-                "Add booking form or Calendly",
+                "Add Fiverr / Upwork / LinkedIn buttons",
                 "Add branded FAQ section",
-                "Add lead capture form",
+                "Add automation follow-up flow",
               ].map((item) => (
                 <div key={item} className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-200">
                   {item}
@@ -261,22 +335,110 @@ export default function DayiiiatchSolutionsAgencyLanding() {
           </div>
         </section>
 
-        <section id="contact" className="mt-16 rounded-[2rem] border border-white/10 bg-white/5 p-8 text-center">
-          <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Contact</p>
-          <h3 className="mt-2 text-4xl font-black">Ready to build with DAYIIIatch Solutions?</h3>
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-            Plug in your real Fiverr, Upwork, LinkedIn, email, booking page, and portfolio links to make this your live client-facing homepage.
-          </p>
-
-          <div className="mt-6 flex flex-wrap justify-center gap-3">
-            <a href="mailto:DAYIIIatchSolutions@outlook.com" className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:scale-[1.02]">
-              Email DAYIIIatch Solutions
-            </a>
-            <a href="#platforms" className="rounded-2xl border border-white/15 bg-white/5 px-5 py-3 text-sm font-semibold text-white transition hover:bg-white/10">
-              View Platforms
-            </a>
+        <section id="contact-form" className="mt-16 rounded-[2rem] border border-white/10 bg-white/5 p-8">
+          <div className="mb-8 text-center">
+            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Contact</p>
+            <h3 className="mt-2 text-4xl font-black">Send a direct project inquiry</h3>
+            <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
+              Use the form below for custom builds, collaborations, website requests, automation ideas, and digital support.
+            </p>
           </div>
+
+          <form
+            action="https://formspree.io/f/mdayoagd"
+            method="POST"
+            className="mx-auto grid max-w-4xl gap-4 md:grid-cols-2"
+          >
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium text-zinc-200">Name</label>
+              <input
+                id="name"
+                name="name"
+                type="text"
+                required
+                className="w-full rounded-2xl border border-white/10 bg-zinc-900/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                placeholder="Your name"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium text-zinc-200">Email</label>
+              <input
+                id="email"
+                name="email"
+                type="email"
+                required
+                className="w-full rounded-2xl border border-white/10 bg-zinc-900/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                placeholder="you@example.com"
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="projectType" className="text-sm font-medium text-zinc-200">Project Type</label>
+              <input
+                id="projectType"
+                name="project_type"
+                type="text"
+                className="w-full rounded-2xl border border-white/10 bg-zinc-900/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                placeholder="Website, automation, branding, AI workflow, tech support, etc."
+              />
+            </div>
+
+            <div className="space-y-2 md:col-span-2">
+              <label htmlFor="message" className="text-sm font-medium text-zinc-200">Project Details</label>
+              <textarea
+                id="message"
+                name="message"
+                required
+                rows={6}
+                className="w-full rounded-2xl border border-white/10 bg-zinc-900/70 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                placeholder="Tell DAYIIIatch Solutions what you need, what you're trying to build, and where you need help."
+              />
+            </div>
+
+            <div className="md:col-span-2 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+              <p className="text-xs leading-6 text-zinc-400">
+                Prefer a call first? Book the free strategy call or jump straight into the premium planning session.
+              </p>
+              <button
+                type="submit"
+                className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-zinc-950 transition hover:scale-[1.02]"
+              >
+                Send Project Inquiry
+              </button>
+            </div>
+          </form>
         </section>
+
+        <footer className="mt-16 border-t border-white/10 py-8">
+          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">DAYIIIatch Solutions</p>
+              <p className="mt-2 text-sm text-zinc-500">Creative systems, digital problem-solving, and client-ready service flow.</p>
+            </div>
+            <div className="flex flex-wrap gap-3 text-sm text-zinc-300">
+              <a
+                href="https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10"
+              >
+                Free Call
+              </a>
+              <a
+                href="https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid"
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10"
+              >
+                Premium Session
+              </a>
+              <a href="#contact-form" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">
+                Contact
+              </a>
+            </div>
+          </div>
+        </footer>
       </main>
     </div>
   );
