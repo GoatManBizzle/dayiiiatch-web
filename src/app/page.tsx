@@ -1,3 +1,5 @@
+import Image from "next/image";
+
 export default function DayiiiatchSolutionsAgencyLanding() {
   const platforms = [
     {
@@ -111,21 +113,99 @@ export default function DayiiiatchSolutionsAgencyLanding() {
     },
   ];
 
+  const testimonials = [
+    {
+      quote:
+        "DAYIIIatch Solutions blends creative thinking with real technical direction. The process feels direct, clear, and professional.",
+      name: "Future Client Slot",
+      role: "Testimonial placeholder",
+    },
+    {
+      quote:
+        "The strategy-first approach makes it easier to understand what needs to happen next instead of guessing through the project.",
+      name: "Future Client Slot",
+      role: "Testimonial placeholder",
+    },
+    {
+      quote:
+        "From the free call to the deeper planning session, the funnel feels polished and serious. It builds trust fast.",
+      name: "Future Client Slot",
+      role: "Testimonial placeholder",
+    },
+  ];
+
+  const packages = [
+    {
+      title: "Starter Guidance",
+      price: "From $50+",
+      text: "Best for quick guidance, setup direction, and focused digital problem-solving.",
+      items: ["Free call available", "Short-form support", "Best for smaller needs"],
+    },
+    {
+      title: "Strategy & Planning",
+      price: "From $100+",
+      text: "Best for clients who need a clearer roadmap, service recommendations, or system planning.",
+      items: ["Deep strategy session", "Action-focused direction", "Best for serious next steps"],
+    },
+    {
+      title: "Custom Build Projects",
+      price: "Custom Quote",
+      text: "Best for websites, automation systems, branding support, and larger custom scopes.",
+      items: ["Project inquiry required", "Scope-based pricing", "Best for full implementations"],
+    },
+  ];
+
+  const faqs = [
+    {
+      question: "What should I book first?",
+      answer:
+        "Start with the free 15-minute strategy call if you need help figuring out the right next step. Book the premium session if you already know you want deeper planning.",
+    },
+    {
+      question: "Do you only work through calls?",
+      answer:
+        "No. Calls are the entry point. DAYIIIatch Solutions also handles direct inquiries for websites, automation systems, branding help, and custom project work.",
+    },
+    {
+      question: "Can I send a project request without booking a call?",
+      answer:
+        "Yes. Use the inquiry form if you already know what you want built and want to start the conversation directly.",
+    },
+  ];
+
+  const socialLinks = [
+    { label: "Free Call", href: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call" },
+    { label: "Premium Session", href: "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid" },
+    { label: "Inquiry Form", href: "#contact-form" },
+  ];
+
   return (
     <div className="min-h-screen bg-zinc-950 text-white">
       <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_left,_rgba(139,92,246,0.24),_transparent_28%),radial-gradient(circle_at_bottom_right,_rgba(34,211,238,0.18),_transparent_30%),linear-gradient(to_bottom,_rgba(255,255,255,0.02),_rgba(255,255,255,0))]" />
 
       <main className="relative mx-auto max-w-7xl px-6 py-8 md:px-10 lg:px-16">
         <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-          <div>
-            <p className="text-xs uppercase tracking-[0.35em] text-violet-300">DAYIIIatch Solutions</p>
-            <h1 className="mt-2 text-xl font-semibold md:text-2xl">Freelance Services, Creative Systems, and Digital Solutions</h1>
+          <div className="flex items-center gap-4">
+            <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/70 shadow-lg shadow-cyan-500/10">
+              <Image
+                src="/dayiiiatch-logo.png"
+                alt="DAYIIIatch Solutions logo"
+                fill
+                className="object-cover"
+                priority
+              />
+            </div>
+            <div>
+              <p className="text-xs uppercase tracking-[0.35em] text-violet-300">DAYIIIatch Solutions</p>
+              <h1 className="mt-2 text-xl font-semibold md:text-2xl">Freelance Services, Creative Systems, and Digital Solutions</h1>
+            </div>
           </div>
 
           <nav className="flex flex-wrap gap-2 text-sm text-zinc-300">
             <a href="#services" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Services</a>
             <a href="#offers" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Offers</a>
-            <a href="#platforms" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Booking</a>
+            <a href="#pricing" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Pricing</a>
+            <a href="#booking" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Booking</a>
             <a href="#contact-form" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">Contact</a>
           </nav>
         </header>
@@ -259,7 +339,55 @@ export default function DayiiiatchSolutionsAgencyLanding() {
           </div>
         </section>
 
-        <section id="platforms" className="mt-16">
+        <section id="pricing" className="mt-16">
+          <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Starting Points</p>
+              <h3 className="text-3xl font-bold">Simple packages and project paths</h3>
+            </div>
+            <p className="max-w-2xl text-sm leading-6 text-zinc-400">
+              Use these as starter references while the business grows into more detailed service pricing.
+            </p>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {packages.map((pkg) => (
+              <div key={pkg.title} className="rounded-[1.8rem] border border-white/10 bg-white/5 p-6">
+                <p className="text-sm uppercase tracking-[0.2em] text-cyan-300">{pkg.title}</p>
+                <h4 className="mt-3 text-3xl font-black">{pkg.price}</h4>
+                <p className="mt-3 text-sm leading-6 text-zinc-400">{pkg.text}</p>
+                <div className="mt-5 space-y-3">
+                  {pkg.items.map((item) => (
+                    <div key={item} className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-200">
+                      {item}
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="mt-16">
+          <div className="mb-6">
+            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Trust & Proof</p>
+            <h3 className="text-3xl font-bold">Space for testimonials and results</h3>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-3">
+            {testimonials.map((item, index) => (
+              <div key={index} className="rounded-[1.8rem] border border-white/10 bg-white/5 p-6">
+                <p className="text-sm leading-7 text-zinc-300">“{item.quote}”</p>
+                <div className="mt-5 border-t border-white/10 pt-4">
+                  <p className="font-semibold text-white">{item.name}</p>
+                  <p className="text-sm text-zinc-500">{item.role}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section id="booking" className="mt-16">
           <div className="mb-6">
             <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Booking & Contact</p>
             <h3 className="text-3xl font-bold">Move visitors into action</h3>
@@ -316,19 +444,13 @@ export default function DayiiiatchSolutionsAgencyLanding() {
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-gradient-to-r from-violet-500/15 via-white/5 to-cyan-400/10 p-6">
-            <p className="text-sm uppercase tracking-[0.25em] text-zinc-300">Future upgrades</p>
-            <h3 className="mt-2 text-3xl font-bold">Easy next-step expansion</h3>
-            <div className="mt-5 grid gap-3 sm:grid-cols-2">
-              {[
-                "Add testimonials",
-                "Add portfolio case studies",
-                "Add service pricing",
-                "Add Fiverr / Upwork / LinkedIn buttons",
-                "Add branded FAQ section",
-                "Add automation follow-up flow",
-              ].map((item) => (
-                <div key={item} className="rounded-2xl border border-white/10 bg-zinc-950/40 px-4 py-3 text-sm text-zinc-200">
-                  {item}
+            <p className="text-sm uppercase tracking-[0.25em] text-zinc-300">Frequently Asked Questions</p>
+            <h3 className="mt-2 text-3xl font-bold">Quick answers for new visitors</h3>
+            <div className="mt-5 space-y-3">
+              {faqs.map((item) => (
+                <div key={item.question} className="rounded-2xl border border-white/10 bg-zinc-950/40 p-4">
+                  <p className="font-semibold text-white">{item.question}</p>
+                  <p className="mt-2 text-sm leading-6 text-zinc-300">{item.answer}</p>
                 </div>
               ))}
             </div>
@@ -411,31 +533,34 @@ export default function DayiiiatchSolutionsAgencyLanding() {
         </section>
 
         <footer className="mt-16 border-t border-white/10 py-8">
-          <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-            <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">DAYIIIatch Solutions</p>
-              <p className="mt-2 text-sm text-zinc-500">Creative systems, digital problem-solving, and client-ready service flow.</p>
+          <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+            <div className="flex items-center gap-4">
+              <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-white/10 bg-zinc-900/70">
+                <Image
+                  src="/dayiiiatch-logo.png"
+                  alt="DAYIIIatch Solutions logo"
+                  fill
+                  className="object-cover"
+                />
+              </div>
+              <div>
+                <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">DAYIIIatch Solutions</p>
+                <p className="mt-2 text-sm text-zinc-500">Creative systems, digital problem-solving, and client-ready service flow.</p>
+              </div>
             </div>
+
             <div className="flex flex-wrap gap-3 text-sm text-zinc-300">
-              <a
-                href="https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10"
-              >
-                Free Call
-              </a>
-              <a
-                href="https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid"
-                target="_blank"
-                rel="noreferrer"
-                className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10"
-              >
-                Premium Session
-              </a>
-              <a href="#contact-form" className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10">
-                Contact
-              </a>
+              {socialLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  target={link.href.startsWith("http") ? "_blank" : undefined}
+                  rel={link.href.startsWith("http") ? "noreferrer" : undefined}
+                  className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 hover:bg-white/10"
+                >
+                  {link.label}
+                </a>
+              ))}
             </div>
           </div>
         </footer>
