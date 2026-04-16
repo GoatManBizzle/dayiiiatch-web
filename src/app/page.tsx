@@ -1,5 +1,7 @@
 import SiteShell from "@/components/layout/site-shell";
+
 import TopBanner from "@/components/sections/top-banner";
+import ScreenshotBannerSection from "@/components/sections/screenshot-banner";
 import HeaderSection from "@/components/sections/header";
 import HeroSection from "@/components/sections/hero";
 import ServicesSection from "@/components/sections/services";
@@ -13,6 +15,7 @@ export default function HomePage() {
   return (
     <SiteShell>
       <TopBanner />
+      <ScreenshotBannerSection />
       <HeaderSection />
       <HeroSection />
       <ServicesSection />
