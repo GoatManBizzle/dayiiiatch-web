@@ -9,6 +9,7 @@ import ScreenshotBannerSection from "@/components/sections/screenshot-banner";
 import HeaderSection from "@/components/sections/header";
 import HeroSection from "@/components/sections/hero";
 import OffersSection from "@/components/sections/offers";
+import TrustSection from "@/components/sections/trust";
 import ServicesSection from "@/components/sections/services";
 import PricingSection from "@/components/sections/pricing";
 import TestimonialsSection from "@/components/sections/testimonials";
@@ -33,6 +34,7 @@ export default function HomePage() {
       <HeaderSection />
       <HeroSection />
       <OffersSection />
+      <TrustSection />
       <ServicesSection />
       <PricingSection />
       <TestimonialsSection />

@@ -3,6 +3,7 @@ export const links = {
   premiumSession:
     "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
   contactForm: "#contact-form",
+  adLanding: "/book",
 };
 
 export const navLinks = [

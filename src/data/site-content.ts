@@ -121,6 +121,42 @@ export const testimonials = [
   },
 ];
 
+export const proofCards = [
+  {
+    title: "Before → After Positioning",
+    subtitle: "Brand clarity upgrade",
+    summary:
+      "Move from a scattered online presence into a clearer, more premium client-facing system with stronger routing and better presentation.",
+    points: [
+      "Cleaner CTA hierarchy",
+      "More premium visual trust",
+      "Better client entry flow",
+    ],
+  },
+  {
+    title: "Booking Flow Upgrade",
+    subtitle: "Free + paid path system",
+    summary:
+      "Separate casual inquiries from serious buyers by giving visitors the right path at the right time.",
+    points: [
+      "Free consult option",
+      "Premium paid strategy call",
+      "Direct inquiry backup path",
+    ],
+  },
+  {
+    title: "Photoshop + Code Advantage",
+    subtitle: "Higher-end offer lane",
+    summary:
+      "Use custom visual design plus coded execution to offer a stronger premium package than standard template-based websites.",
+    points: [
+      "Stronger mockup control",
+      "More unique branded look",
+      "Higher perceived value",
+    ],
+  },
+];
+
 export const faqs = [
   {
     question: "What should I book first?",
