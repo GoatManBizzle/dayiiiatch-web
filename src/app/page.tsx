@@ -134,22 +134,43 @@ export default function DayiiiatchSolutionsAgencyLanding() {
 
   const packages = [
     {
-      title: "Starter Guidance",
-      price: "From $50+",
-      text: "Best for quick guidance, setup direction, and focused digital problem-solving.",
-      items: ["Free call available", "Short-form support", "Best for smaller needs"],
+      title: "Clean Build",
+      price: "$250+",
+      text: "Best for clients who need a clean, coded website that looks professional, works well, and gets them online fast.",
+      items: [
+        "Responsive coded webpage",
+        "Clean modern layout",
+        "Basic CTA + contact flow",
+        "Fast turnaround potential",
+      ],
+      badge: "Starter",
+      accent: "standard",
     },
     {
-      title: "Strategy & Planning",
-      price: "From $100+",
-      text: "Best for clients who need a clearer roadmap, service recommendations, or system planning.",
-      items: ["Deep strategy session", "Action-focused direction", "Best for serious next steps"],
+      title: "Premium Build",
+      price: "$750+",
+      text: "Best for brands that need stronger visuals, better conversion flow, and a more polished digital presence.",
+      items: [
+        "Everything in Clean Build",
+        "Advanced layout polish",
+        "Stronger CTA structure",
+        "Premium styling + visuals",
+      ],
+      badge: "Most Popular",
+      accent: "featured",
     },
     {
-      title: "Custom Build Projects",
-      price: "Custom Quote",
-      text: "Best for websites, automation systems, branding support, and larger custom scopes.",
-      items: ["Project inquiry required", "Scope-based pricing", "Best for full implementations"],
+      title: "Signature Build",
+      price: "$1500+",
+      text: "Best for clients who want a custom Photoshop-designed experience translated into premium code with standout branding.",
+      items: [
+        "Photoshop-designed mockup",
+        "Custom-coded final build",
+        "High-end branded look",
+        "Best for standout businesses",
+      ],
+      badge: "PS + Code",
+      accent: "standard",
     },
   ];
 
@@ -458,26 +479,91 @@ export default function DayiiiatchSolutionsAgencyLanding() {
         <section id="pricing" className="mt-16">
           <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
             <div>
-              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Starting Points</p>
-              <h3 className="text-3xl font-bold">Simple packages and project paths</h3>
+              <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">Website Packages</p>
+              <h3 className="text-3xl font-bold">Choose the build level that fits the mission</h3>
             </div>
             <p className="max-w-2xl text-sm leading-6 text-zinc-400">
-              Use these as starter references while the business grows into more detailed service pricing.
+              A clean offer stack for clients who need anything from a fast coded site to a premium Photoshop-to-code experience.
             </p>
           </div>
 
+          <div className="mb-6 rounded-[1.8rem] border border-cyan-400/15 bg-gradient-to-r from-cyan-400/8 via-violet-500/8 to-fuchsia-500/8 p-[1px] shadow-[0_0_32px_rgba(34,211,238,0.06)]">
+            <div className="rounded-[1.7rem] bg-zinc-950/85 px-5 py-5 backdrop-blur-xl md:px-6">
+              <div className="grid gap-4 md:grid-cols-3">
+                <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+                  <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">Tier 1</p>
+                  <p className="mt-2 text-lg font-bold text-white">Clean Build</p>
+                  <p className="mt-2 text-sm leading-6 text-zinc-400">For clients who want a clean coded webpage without a heavy custom design process.</p>
+                </div>
+                <div className="rounded-2xl border border-cyan-400/20 bg-cyan-400/8 px-4 py-4 shadow-[0_0_24px_rgba(34,211,238,0.08)]">
+                  <p className="text-xs uppercase tracking-[0.24em] text-cyan-300">Tier 2</p>
+                  <p className="mt-2 text-lg font-bold text-white">Premium Build</p>
+                  <p className="mt-2 text-sm leading-6 text-zinc-300">For brands that want stronger visuals, better page structure, and more polished conversion flow.</p>
+                </div>
+                <div className="rounded-2xl border border-violet-400/20 bg-violet-500/8 px-4 py-4 shadow-[0_0_24px_rgba(168,85,247,0.08)]">
+                  <p className="text-xs uppercase tracking-[0.24em] text-violet-300">Tier 3</p>
+                  <p className="mt-2 text-lg font-bold text-white">Signature Build</p>
+                  <p className="mt-2 text-sm leading-6 text-zinc-300">For clients who want a more expensive custom Photoshop-designed concept fully brought to life in code.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
           <div className="grid gap-4 lg:grid-cols-3">
-            {packages.map((pkg, index) => (
-              <div key={pkg.title} className={`rounded-[1.8rem] border p-6 ${index === 1 ? "border-cyan-400/30 bg-gradient-to-b from-cyan-400/10 to-violet-500/10 shadow-[0_0_30px_rgba(34,211,238,0.12)]" : "border-white/10 bg-white/5"}`}>
-                <p className="text-sm uppercase tracking-[0.2em] text-cyan-300">{pkg.title}</p>
-                <h4 className="mt-3 text-3xl font-black">{pkg.price}</h4>
-                <p className="mt-3 text-sm leading-6 text-zinc-400">{pkg.text}</p>
+            {packages.map((pkg) => (
+              <div
+                key={pkg.title}
+                className={`rounded-[1.9rem] border p-6 transition hover:-translate-y-1 ${
+                  pkg.accent === "featured"
+                    ? "border-cyan-400/30 bg-gradient-to-b from-cyan-400/10 via-zinc-950/90 to-violet-500/10 shadow-[0_0_34px_rgba(34,211,238,0.12)]"
+                    : "border-white/10 bg-white/5 hover:border-violet-400/20 hover:bg-white/10"
+                }`}
+              >
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <p className="text-sm uppercase tracking-[0.2em] text-cyan-300">{pkg.title}</p>
+                    <h4 className="mt-3 text-4xl font-black leading-none">{pkg.price}</h4>
+                  </div>
+                  <span
+                    className={`rounded-full px-3 py-1 text-xs font-semibold ${
+                      pkg.accent === "featured"
+                        ? "border border-cyan-400/30 bg-cyan-400/10 text-cyan-200"
+                        : "border border-white/10 bg-white/5 text-zinc-300"
+                    }`}
+                  >
+                    {pkg.badge}
+                  </span>
+                </div>
+
+                <p className="mt-4 text-sm leading-7 text-zinc-300">{pkg.text}</p>
+
                 <div className="mt-5 space-y-3">
                   {pkg.items.map((item) => (
                     <div key={item} className="rounded-xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-200">
                       {item}
                     </div>
                   ))}
+                </div>
+
+                <div className="mt-6 flex flex-wrap gap-3">
+                  <a
+                    href="https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call"
+                    target="_blank"
+                    rel="noreferrer"
+                    className={`rounded-2xl px-4 py-3 text-sm font-semibold transition ${
+                      pkg.accent === "featured"
+                        ? "border border-cyan-400/30 bg-cyan-400/12 text-cyan-100 hover:bg-cyan-400/20"
+                        : "border border-white/15 bg-white/5 text-white hover:bg-white/10"
+                    }`}
+                  >
+                    Start with Free Call
+                  </a>
+                  <a
+                    href="#contact-form"
+                    className="rounded-2xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-sm font-semibold text-zinc-200 transition hover:bg-zinc-800/80"
+                  >
+                    Ask for Quote
+                  </a>
                 </div>
               </div>
             ))}
