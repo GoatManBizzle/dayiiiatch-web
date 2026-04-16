@@ -5,16 +5,13 @@ import { brand } from "@/config/brand";
 export default function TopBanner() {
   return (
     <section className="relative mb-6 overflow-hidden rounded-[2.25rem] border border-cyan-400/20 shadow-[0_0_80px_rgba(56,189,248,0.08)]">
-      <div
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
-        style={{ backgroundImage: "url('/bg-banner.png')" }}
-      />
+      <div className="absolute inset-0 bg-[url('/bg-banner.png')] bg-cover bg-center bg-no-repeat opacity-45" />
 
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,6,23,0.88),rgba(9,9,11,0.72),rgba(9,9,11,0.86))]" />
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,6,23,0.92),rgba(9,9,11,0.76),rgba(9,9,11,0.90))]" />
 
       <div className="absolute inset-0 bg-gradient-to-r from-cyan-400/10 via-violet-500/10 to-fuchsia-500/10" />
 
-      <div className="relative rounded-[2.15rem] px-5 py-4 backdrop-blur-[2px] md:px-7 md:py-5">
+      <div className="relative px-5 py-4 backdrop-blur-[1px] md:px-7 md:py-5">
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">
