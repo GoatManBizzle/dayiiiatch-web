@@ -1,0 +1,30 @@
+🔘BUTTON EXPORT SET
+
+Sizes (PS Artboards)
+Large: 280 x 64
+Medium: 220 x 56
+Small: 160 x 44
+
+Export THESE Variants:
+
+🔥 Primary Glow
+Purple/Blue gradient
+Soft outer glow
+
+⚡ Outline Glow
+Transparent fill
+Neon border
+
+🧊 Glass Button
+Dark blur fill
+Subtle shine
+
+⚫ Minimal Dark
+No glow
+Clean modern
+
+Naming Convention:
+btn-primary-glow.png
+btn-outline-neon.png
+btn-glass-dark.png
+btn-minimal.png

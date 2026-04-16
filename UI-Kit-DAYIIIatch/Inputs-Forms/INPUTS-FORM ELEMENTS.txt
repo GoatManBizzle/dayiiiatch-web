@@ -1,0 +1,17 @@
+🧾INPUTS + FORM ELEMENTS
+
+Fields:
+Input box
+Textarea
+Dropdown
+Focus state
+
+Sizes:
+Input: 500 x 56
+Textarea: 500 x 140
+
+Files:
+input-default.png
+input-focus.png
+textarea.png
+dropdown.png

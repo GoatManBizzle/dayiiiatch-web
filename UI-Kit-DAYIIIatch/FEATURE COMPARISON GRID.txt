@@ -1,0 +1,13 @@
+📋FEATURE COMPARISON GRID
+
+Size:
+900 x 420
+
+Export:
+
+Empty grid
+Checkmark icons
+Highlight column
+comparison-grid.png
+checkmark-glow.png
+column-highlight.png

@@ -1,0 +1,15 @@
+🧭NAVIGATION SET
+
+Navbar:
+1200 x 80
+
+Elements to Export:
+
+Logo container (left)
+Nav buttons (center/right)
+CTA button (right)
+
+Variants:
+nav-default.png
+nav-glow.png
+nav-scrolled.png

@@ -1,0 +1,24 @@
+🚀HOW YOU USE THIS (IMPORTANT)
+
+Option A (Fast Builds)
+
+Drag PNGs into Next.js
+Layer text on top
+
+Option B (Pro Mode 👀)
+
+Recreate styles in CSS
+Use assets as references
+
+Option C (CLIENT WORKFLOW)
+
+Design in Photoshop
+Export UI Pack
+Code matching layout
+
+Deliver BOTH:
+
+Website
+Design kit
+
+💰 = PREMIUM PACKAGE

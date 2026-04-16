@@ -1,0 +1,12 @@
+🔲ICON SYSTEM
+
+Export ALL icons individually:
+
+Cube (build)
+Rocket (growth)
+Diamond (premium)
+Folder / tools / user icons
+icon-cube.png
+icon-rocket.png
+icon-diamond.png
+icon-user.png

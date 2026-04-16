@@ -1,0 +1,26 @@
+💳PRICING CARD SYSTEM
+
+Card Size:
+360 x 520
+
+Export 3 Types:
+
+🟢 Clean Build
+Minimal glow
+
+🔵 Premium Build
+Strong glow
+Highlight border
+
+🟣 Signature Build
+MAX glow
+Slight scale-up effect
+
+Export:
+card-clean.png
+card-premium.png
+card-signature.png
+card-hover.png
+
+💡 PRO TIP:
+Make a hover version slightly brighter + lifted

@@ -1,0 +1,18 @@
+📊TABLE SYSTEM
+
+Data Table Size:
+800 x 400
+
+Export Parts Separately:
+
+Row
+Header
+Status Dot (green/yellow/red)
+Icon cells
+
+Files:
+table-row.png
+table-header.png
+status-dot-green.png
+status-dot-purple.png
+status-dot-red.png

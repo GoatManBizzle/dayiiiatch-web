@@ -1,0 +1,14 @@
+🧩SECTION BLOCKS (🔥BIG ONE)
+
+Export FULL Sections:
+Hero Section
+1920 x 900
+Pricing Section
+1920 x 800
+Contact Section
+1920 x 700
+
+Files:
+section-hero.png
+section-pricing.png
+section-contact.png
