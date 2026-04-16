@@ -4,6 +4,33 @@ export const topBannerStats = [
   { label: "Client Funnel", value: "Live" },
 ];
 
+export const offers = [
+  {
+    title: "Free Strategy Call",
+    badge: "Best first step",
+    description:
+      "Book a free 15-minute phone call to talk through your goals, current setup, and what kind of help makes the most sense.",
+    cta: "Book Free Call",
+    href: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call",
+  },
+  {
+    title: "Premium Session",
+    badge: "Serious clients",
+    description:
+      "Book a paid deep strategy session for focused planning, problem-solving, and a cleaner action path for your project or business.",
+    cta: "Book Premium Session",
+    href: "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
+  },
+  {
+    title: "Direct Project Inquiry",
+    badge: "Skip straight in",
+    description:
+      "Use the inquiry form if you already know what you need and want to start the conversation about a custom build or service.",
+    cta: "Send Inquiry",
+    href: "#contact-form",
+  },
+];
+
 export const services = [
   {
     title: "Custom Websites & Landing Pages",

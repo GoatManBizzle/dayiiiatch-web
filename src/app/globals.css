@@ -59,3 +59,71 @@ html {
 .pulse-glow {
   animation: pulse-glow 3.5s ease-in-out infinite;
 }
+html {
+  scroll-behavior: smooth;
+}
+
+@keyframes float-soft {
+  0% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes pulse-glow {
+  0% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+  }
+  50% {
+    box-shadow: 0 0 28px rgba(34, 211, 238, 0.16);
+  }
+  100% {
+    box-shadow: 0 0 0 rgba(34, 211, 238, 0);
+  }
+}
+
+@keyframes sheen-slide {
+  0% {
+    transform: translateX(-140%);
+  }
+  100% {
+    transform: translateX(220%);
+  }
+}
+
+.float-soft {
+  animation: float-soft 5s ease-in-out infinite;
+}
+
+.pulse-glow {
+  animation: pulse-glow 3.5s ease-in-out infinite;
+}
+
+.card-sheen {
+  position: relative;
+  overflow: hidden;
+}
+
+.card-sheen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  width: 35%;
+  transform: translateX(-140%) skewX(-18deg);
+  background: linear-gradient(
+    to right,
+    rgba(255, 255, 255, 0),
+    rgba(255, 255, 255, 0.06),
+    rgba(255, 255, 255, 0)
+  );
+  pointer-events: none;
+}
+
+.card-sheen:hover::after {
+  animation: sheen-slide 900ms ease;
+}

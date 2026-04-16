@@ -7,19 +7,24 @@ const screenshotStats = [
   { value: "∞", label: "Growth Potential" },
 ];
 
+const proofBadges = [
+  "LinkedIn-ready visuals",
+  "Premium booking flow",
+  "Branded screenshot mode",
+  "Funnel-first presentation",
+];
+
 const caseStudyMock = {
   title: "Featured Build Concept",
   subtitle: "Client Funnel Upgrade Mock",
   summary:
     "A sample showcase card for future client wins, before-and-after transformations, system upgrades, and branded execution snapshots.",
-  metrics: ["Lead capture flow", "Premium booking path", "Sharper visual trust"],
+  metrics: [
+    "Lead capture flow",
+    "Premium booking path",
+    "Sharper visual trust",
+  ],
 };
-
-const neonDividers = [
-  "Strategy-first service flow",
-  "Neon brand presence",
-  "Built for LinkedIn-ready presentation",
-];
 
 export default function ScreenshotBannerSection() {
   return (
@@ -70,6 +75,16 @@ export default function ScreenshotBannerSection() {
                 </Reveal>
               ))}
             </div>
+
+            <div className="mt-6 flex flex-wrap gap-3">
+              {proofBadges.map((badge, index) => (
+                <Reveal key={badge} delayMs={index * 70}>
+                  <div className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.22em] text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.08)]">
+                    {badge}
+                  </div>
+                </Reveal>
+              ))}
+            </div>
           </div>
 
           <div className="rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-[0_0_40px_rgba(34,211,238,0.05)] transition duration-300 hover:border-violet-400/20">
@@ -103,19 +118,6 @@ export default function ScreenshotBannerSection() {
               </p>
             </div>
           </div>
-        </section>
-      </Reveal>
-
-      <Reveal delayMs={120}>
-        <section className="mb-10 flex flex-wrap gap-3">
-          {neonDividers.map((item) => (
-            <div
-              key={item}
-              className="rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-2 text-xs font-medium uppercase tracking-[0.24em] text-cyan-100 shadow-[0_0_18px_rgba(34,211,238,0.08)] transition duration-300 hover:scale-[1.03]"
-            >
-              {item}
-            </div>
-          ))}
         </section>
       </Reveal>
     </>
