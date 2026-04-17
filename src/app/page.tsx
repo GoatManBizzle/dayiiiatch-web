@@ -22,7 +22,7 @@ import { siteSettings } from "@/config/site-settings";
 
 export default function HomePage() {
   const [screenshotMode, setScreenshotMode] = useState(
-    siteSettings.screenshotModeDefault
+    siteSettings.screenshotMode
   );
 
   const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
