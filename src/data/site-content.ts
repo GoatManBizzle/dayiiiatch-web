@@ -104,20 +104,26 @@ export const testimonials = [
   {
     quote:
       "DAYIIIatch Solutions blends creative thinking with real technical direction. The process feels direct, clear, and professional.",
-    name: "Future Client Slot",
-    role: "Testimonial placeholder",
+    name: "Creative Brand Client",
+    role: "Website + funnel mockup",
+    badge: "Premium Positioning",
+    initials: "CB",
   },
   {
     quote:
       "The strategy-first approach makes it easier to understand what needs to happen next instead of guessing through the project.",
-    name: "Future Client Slot",
-    role: "Testimonial placeholder",
+    name: "Startup Systems Client",
+    role: "Planning + digital structure",
+    badge: "Clarity Upgrade",
+    initials: "SS",
   },
   {
     quote:
       "From the free call to the deeper planning session, the funnel feels polished and serious. It builds trust fast.",
-    name: "Future Client Slot",
-    role: "Testimonial placeholder",
+    name: "Growth Client",
+    role: "Booking flow setup",
+    badge: "Trust Boost",
+    initials: "GC",
   },
 ];
 
@@ -132,6 +138,8 @@ export const proofCards = [
       "More premium visual trust",
       "Better client entry flow",
     ],
+    result: "Sharper first impression",
+    status: "Upgrade Path",
   },
   {
     title: "Booking Flow Upgrade",
@@ -143,6 +151,8 @@ export const proofCards = [
       "Premium paid strategy call",
       "Direct inquiry backup path",
     ],
+    result: "Better lead filtering",
+    status: "Conversion Boost",
   },
   {
     title: "Photoshop + Code Advantage",
@@ -154,6 +164,41 @@ export const proofCards = [
       "More unique branded look",
       "Higher perceived value",
     ],
+    result: "Premium service edge",
+    status: "Value Increase",
+  },
+];
+
+export const beforeAfterCards = [
+  {
+    beforeTitle: "Before",
+    beforePoints: [
+      "Scattered online presence",
+      "Weak CTA structure",
+      "Low visual trust",
+    ],
+    afterTitle: "After",
+    afterPoints: [
+      "Premium landing flow",
+      "Stronger client routing",
+      "Cleaner conversion path",
+    ],
+    label: "Positioning Shift",
+  },
+  {
+    beforeTitle: "Before",
+    beforePoints: [
+      "No clear booking path",
+      "Mixed inquiry quality",
+      "Less premium feel",
+    ],
+    afterTitle: "After",
+    afterPoints: [
+      "Free + paid booking paths",
+      "Better lead separation",
+      "Higher-end presentation",
+    ],
+    label: "Funnel Upgrade",
   },
 ];
 

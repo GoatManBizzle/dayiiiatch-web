@@ -8,6 +8,7 @@ export default function TestimonialsSection() {
       id="testimonials"
       eyebrow="Trust & Proof"
       title="Space for testimonials and results"
+      description="Even while building out the full portfolio, these testimonial-style cards help create stronger perceived trust and premium positioning."
     >
       <div className="grid gap-4 lg:grid-cols-3">
         {testimonials.map((item, index) => (
@@ -16,6 +17,8 @@ export default function TestimonialsSection() {
             quote={item.quote}
             name={item.name}
             role={item.role}
+            badge={item.badge}
+            initials={item.initials}
           />
         ))}
       </div>
