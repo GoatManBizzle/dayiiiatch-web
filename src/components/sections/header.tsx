@@ -1,9 +1,10 @@
 import { brand } from "@/config/brand";
 import { navLinks } from "@/config/links";
+import NeonImageButton from "../ui/neon-image-button";
 
 export default function HeaderSection() {
   return (
-    <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-5 backdrop-blur-xl shadow-[0_0_40px_rgba(139,92,246,0.06)] md:flex-row md:items-center md:justify-between">
+    <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-[0_0_40px_rgba(139,92,246,0.06)] backdrop-blur-xl md:flex-row md:items-center md:justify-between">
       <div className="flex items-center gap-4">
         <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-cyan-400/30 bg-zinc-900/80 shadow-[0_0_20px_rgba(34,211,238,0.18)]">
           <img
@@ -23,15 +24,15 @@ export default function HeaderSection() {
         </div>
       </div>
 
-      <nav className="flex flex-wrap gap-2 text-sm text-zinc-300">
+      <nav className="flex flex-wrap items-center gap-4">
         {navLinks.map((link) => (
-          <a
+          <NeonImageButton
             key={link.label}
             href={link.href}
-            className="rounded-xl border border-white/10 bg-white/5 px-4 py-2 transition hover:bg-white/10"
+            minWidthClassName="min-w-[128px]"
           >
             {link.label}
-          </a>
+          </NeonImageButton>
         ))}
       </nav>
     </header>
