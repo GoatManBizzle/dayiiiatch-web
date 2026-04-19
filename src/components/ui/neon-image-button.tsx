@@ -1,3 +1,5 @@
+"use client";
+
 type NeonImageButtonProps = {
   href?: string;
   children: React.ReactNode;
@@ -28,9 +30,7 @@ export default function NeonImageButton({
   successImage,
 }: NeonImageButtonProps) {
   const isDisabled = disabled || loading;
-
-  const activeImage =
-    successPulse && successImage ? successImage : hoverImage;
+  const activeImage = successPulse && successImage ? successImage : hoverImage;
 
   const baseClass = `
     group relative inline-flex h-[54px] ${minWidthClassName}
@@ -49,7 +49,6 @@ export default function NeonImageButton({
 
   const content = (
     <>
-      {/* Default skin */}
       <span
         className={`
           absolute inset-0 rounded-full transition-opacity duration-200
@@ -69,7 +68,6 @@ export default function NeonImageButton({
         }}
       />
 
-      {/* Hover / success skin */}
       <span
         className={`
           absolute inset-0 rounded-full transition-opacity duration-200
@@ -89,14 +87,12 @@ export default function NeonImageButton({
         }}
       />
 
-      {/* Loading shimmer */}
       {loading && (
         <span className="pointer-events-none absolute inset-0 rounded-full overflow-hidden">
           <span className="absolute inset-y-0 left-[-35%] w-[35%] animate-[buttonShimmer_1.1s_linear_infinite] bg-gradient-to-r from-transparent via-white/20 to-transparent" />
         </span>
       )}
 
-      {/* Label */}
       <span
         className={`
           relative z-10 inline-flex items-center gap-2 whitespace-nowrap
@@ -119,7 +115,7 @@ export default function NeonImageButton({
   if (href) {
     return (
       <a
-        href={href}
+        href={isDisabled ? undefined : href}
         target={external ? "_blank" : undefined}
         rel={external ? "noreferrer" : undefined}
         aria-disabled={isDisabled}
