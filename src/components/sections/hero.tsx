@@ -1,7 +1,7 @@
-import { GhostButton, PrimaryButton, SolidCTA } from "../ui/buttons";
+import Reveal from "@/components/ui/reveal";
 import { brand } from "@/config/brand";
 import { links } from "@/config/links";
-import Reveal from "@/components/ui/reveal";
+import { GhostButton, PrimaryButton, SolidCTA } from "../ui/buttons";
 
 const trustPoints = [
   "Live booking flow for free and premium sessions",
@@ -49,11 +49,9 @@ export default function HeroSection() {
           </div>
 
           <div className="flex flex-wrap gap-3">
-            <SolidCTA href={links.freeCall} external>
-              Work With Us
-            </SolidCTA>
+            <SolidCTA href={links.freeCall}>Work With Us</SolidCTA>
 
-            <PrimaryButton href={links.premiumSession} external>
+            <PrimaryButton href={links.premiumSession}>
               Book Premium Session
             </PrimaryButton>
 
@@ -77,7 +75,9 @@ export default function HeroSection() {
           <div className="relative mb-6 flex items-center justify-between">
             <div>
               <p className="text-sm text-zinc-400">Agency Snapshot</p>
-              <h3 className="text-2xl font-bold">{brand.agencySnapshotTitle}</h3>
+              <h3 className="text-2xl font-bold">
+                {brand.agencySnapshotTitle}
+              </h3>
             </div>
 
             <div className="rounded-full border border-emerald-400/30 bg-emerald-400/10 px-3 py-1 text-xs font-medium text-emerald-300 shadow-[0_0_20px_rgba(16,185,129,0.12)]">

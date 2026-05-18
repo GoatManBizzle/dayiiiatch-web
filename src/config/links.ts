@@ -15,19 +15,11 @@ export const navLinks = [
 ];
 
 export const footerLinks = [
-  {
-    label: "Free Call",
-    href: "/book?service=free-call",
-    external: false,
-  },
+  { label: "Free Call", href: "/book?service=free-call", external: false },
   {
     label: "Premium Session",
     href: "/book?service=premium-session",
     external: false,
   },
-  {
-    label: "Contact",
-    href: "#contact-form",
-    external: false,
-  },
+  { label: "Contact", href: "#contact-form", external: false },
 ];
