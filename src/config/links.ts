@@ -1,7 +1,6 @@
 export const links = {
-  freeCall: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call",
-  premiumSession:
-    "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
+  freeCall: "/book?service=free-call",
+  premiumSession: "/book?service=premium-session",
   contactForm: "#contact-form",
   adLanding: "/book",
 };
@@ -18,13 +17,13 @@ export const navLinks = [
 export const footerLinks = [
   {
     label: "Free Call",
-    href: "https://calendly.com/dayiiiatchsolutions/free-15min-strategy-call",
-    external: true,
+    href: "/book?service=free-call",
+    external: false,
   },
   {
     label: "Premium Session",
-    href: "https://calendly.com/dayiiiatchsolutions/deep-strategy-session-paid",
-    external: true,
+    href: "/book?service=premium-session",
+    external: false,
   },
   {
     label: "Contact",

@@ -1,7 +1,7 @@
 "use client";
 
-import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import { links } from "@/config/links";
+import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import NeonImageButton from "../ui/neon-image-button";
 
 type SubmitState = "idle" | "loading" | "success" | "error";
@@ -38,6 +38,9 @@ function FloatingField({
   const sharedClassName =
     "peer w-full rounded-2xl border border-white/10 bg-black/35 px-4 pb-3 pt-6 text-sm text-white placeholder:text-transparent outline-none backdrop-blur-md transition-all duration-300 focus:border-cyan-400/50 focus:bg-black/45 focus:shadow-[0_0_22px_rgba(34,211,238,0.12)] disabled:cursor-not-allowed disabled:opacity-70";
 
+  const labelClassName =
+    "pointer-events-none absolute left-4 top-4 origin-left text-sm text-zinc-300 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-zinc-400 peer-focus:top-2 peer-focus:scale-[0.8] peer-focus:text-cyan-300 peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:scale-[0.8] peer-[&:not(:placeholder-shown)]:text-cyan-300";
+
   return (
     <div className="relative">
       {multiline ? (
@@ -66,22 +69,7 @@ function FloatingField({
         />
       )}
 
-      <label
-        htmlFor={id}
-        className="
-          pointer-events-none absolute left-4 top-4 origin-left text-sm text-zinc-300
-          transition-all duration-300
-          peer-placeholder-shown:top-4
-          peer-placeholder-shown:scale-100
-          peer-placeholder-shown:text-zinc-400
-          peer-focus:top-2
-          peer-focus:scale-[0.8]
-          peer-focus:text-cyan-300
-          peer-[&:not(:placeholder-shown)]:top-2
-          peer-[&:not(:placeholder-shown)]:scale-[0.8]
-          peer-[&:not(:placeholder-shown)]:text-cyan-300
-        "
-      >
+      <label htmlFor={id} className={labelClassName}>
         {label}
       </label>
     </div>
@@ -106,85 +94,67 @@ export default function ContactFormSection() {
 
   useEffect(() => {
     return () => {
-      if (successTimerRef.current) window.clearTimeout(successTimerRef.current);
-      if (successExitTimerRef.current) window.clearTimeout(successExitTimerRef.current);
+      if (successTimerRef.current) {
+        window.clearTimeout(successTimerRef.current);
+      }
+
+      if (successExitTimerRef.current) {
+        window.clearTimeout(successExitTimerRef.current);
+      }
     };
   }, []);
 
   const statusBox = useMemo(() => {
-    if (submitState === "error") {
+    if (submitState === "success" && successVisible) {
       return (
-        <div className="rounded-[1.25rem] border border-red-400/25 bg-red-500/10 px-4 py-3 text-sm text-red-100 shadow-[0_0_22px_rgba(239,68,68,0.12)] animate-[statusFadeInUp_300ms_ease-out]">
-          {errorMessage || "Something went wrong while sending your inquiry. Please try again."}
+        <div
+          className={`rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100 transition-all duration-500 ${
+            successExiting
+              ? "translate-y-2 opacity-0"
+              : "translate-y-0 opacity-100"
+          }`}
+        >
+          Inquiry transmitted successfully.
         </div>
       );
     }
 
-    if (successVisible) {
+    if (submitState === "error") {
       return (
-        <div
-          className={`rounded-[1.25rem] border border-emerald-400/25 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100 shadow-[0_0_22px_rgba(16,185,129,0.12)] ${
-            successExiting
-              ? "animate-[statusFadeOut_500ms_ease-in_forwards]"
-              : "animate-[statusFadeInUp_300ms_ease-out]"
-          }`}
-        >
-          <div className="flex items-center gap-3">
-            <span className="inline-flex h-8 w-8 items-center justify-center rounded-full border border-emerald-300/30 bg-emerald-400/10 shadow-[0_0_18px_rgba(16,185,129,0.35)] animate-[checkPop_350ms_ease-out] overflow-hidden">
-              <img
-                src="/images/check-success.png"
-                alt="Success"
-                className="h-5 w-5 object-contain animate-[checkGlow_1.2s_ease-in-out]"
-              />
-            </span>
-
-            <span>
-              Project inquiry sent successfully. We’ll tap in with you soon.
-            </span>
-          </div>
+        <div className="rounded-2xl border border-rose-400/20 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+          {errorMessage || "Something glitched. Please try again."}
         </div>
       );
     }
 
     return null;
-  }, [submitState, errorMessage, successVisible, successExiting]);
+  }, [errorMessage, submitState, successExiting, successVisible]);
 
-  async function handleSubmit(e: FormEvent<HTMLFormElement>) {
-    e.preventDefault();
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
 
     if (submitState === "loading") return;
 
     setSubmitState("loading");
     setErrorMessage("");
 
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-
     try {
       const response = await fetch(FORMSPREE_ENDPOINT, {
         method: "POST",
         headers: {
+          "Content-Type": "application/json",
           Accept: "application/json",
         },
-        body: formData,
+        body: JSON.stringify({
+          name: formValues.name,
+          email: formValues.email,
+          projectType: formValues.projectType,
+          message: formValues.message,
+        }),
       });
 
       if (!response.ok) {
-        let message = "Unable to send your inquiry right now.";
-
-        try {
-          const data = await response.json();
-          if (data?.errors?.length) {
-            message = data.errors
-              .map((err: { message?: string }) => err.message)
-              .filter(Boolean)
-              .join(" ");
-          }
-        } catch {
-          // keep fallback
-        }
-
-        throw new Error(message);
+        throw new Error("Unable to send inquiry.");
       }
 
       setFormValues({
@@ -194,13 +164,17 @@ export default function ContactFormSection() {
         message: "",
       });
 
-      form.reset();
       setSubmitState("success");
       setSuccessVisible(true);
       setSuccessExiting(false);
 
-      if (successTimerRef.current) window.clearTimeout(successTimerRef.current);
-      if (successExitTimerRef.current) window.clearTimeout(successExitTimerRef.current);
+      if (successTimerRef.current) {
+        window.clearTimeout(successTimerRef.current);
+      }
+
+      if (successExitTimerRef.current) {
+        window.clearTimeout(successExitTimerRef.current);
+      }
 
       successTimerRef.current = window.setTimeout(() => {
         setSuccessExiting(true);
@@ -209,16 +183,14 @@ export default function ContactFormSection() {
           setSuccessVisible(false);
           setSuccessExiting(false);
           setSubmitState("idle");
-        }, 500);
-      }, 3500);
+        }, 450);
+      }, 2600);
     } catch (error) {
-      const message =
-        error instanceof Error
-          ? error.message
-          : "Something went wrong while sending your inquiry.";
-
-      setErrorMessage(message);
+      console.error(error);
       setSubmitState("error");
+      setErrorMessage(
+        "Something glitched while sending. Hit us directly below.",
+      );
     }
   }
 
@@ -227,17 +199,14 @@ export default function ContactFormSection() {
       id="contact-form"
       className="relative mt-16 overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)]"
     >
-      {/* Main contact background */}
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('/images/contact-bg.png')" }}
       />
 
-      {/* Main overlays */}
       <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(5,8,20,0.94),rgba(9,16,36,0.86),rgba(0,90,120,0.30))]" />
       <div className="absolute inset-0 backdrop-blur-[3px]" />
 
-      {/* Section glows */}
       <div className="pointer-events-none absolute -left-16 top-10 h-40 w-40 rounded-full bg-cyan-400/10 blur-3xl" />
       <div className="pointer-events-none absolute bottom-0 right-0 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
       <div className="pointer-events-none absolute inset-[1px] rounded-[2rem] border border-cyan-300/10" />
@@ -253,8 +222,8 @@ export default function ContactFormSection() {
           </h3>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-            Use the form below for custom builds, collaborations, website requests,
-            automation ideas, and digital support.
+            Use the form below for custom builds, collaborations, website
+            requests, automation ideas, and digital support.
           </p>
         </div>
 
@@ -318,28 +287,26 @@ export default function ContactFormSection() {
 
           <div className="md:col-span-2">
             <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 p-4 backdrop-blur-md">
-              {/* CTA strip background */}
               <div
                 className="absolute inset-0 h-full w-full scale-105 bg-cover bg-center animate-[ctaDrift_18s_ease-in-out_infinite_alternate]"
-                style={{ backgroundImage: "url('/images/contact-cta-bg.png')" }}
+                style={{
+                  backgroundImage: "url('/images/contact-cta-bg.png')",
+                }}
               />
 
-              {/* CTA strip overlays */}
               <div className="absolute inset-0 bg-[linear-gradient(135deg,rgba(12,16,34,0.78),rgba(18,24,50,0.58),rgba(60,0,100,0.10))]" />
               <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_50%,rgba(34,211,238,0.10),transparent_28%),radial-gradient(circle_at_80%_40%,rgba(168,85,247,0.10),transparent_30%)]" />
 
-              {/* CTA glows */}
               <div className="pointer-events-none absolute -left-10 top-1/2 h-24 w-24 -translate-y-1/2 rounded-full bg-fuchsia-500/10 blur-3xl" />
               <div className="pointer-events-none absolute right-0 top-0 h-24 w-24 rounded-full bg-cyan-400/10 blur-3xl" />
 
-              {/* CTA border */}
               <div className="pointer-events-none absolute inset-[1px] rounded-[1.5rem] border border-cyan-300/10" />
 
               <div className="relative z-10">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                   <p className="max-w-2xl text-xs leading-6 text-zinc-200">
-                    Prefer a call first? Book the free strategy call or jump straight
-                    into a direct project inquiry.
+                    Prefer a call first? Book the free strategy call or jump
+                    straight into a direct project inquiry.
                   </p>
 
                   <div className="flex flex-wrap gap-4">
@@ -366,8 +333,8 @@ export default function ContactFormSection() {
                       {submitState === "loading"
                         ? "Sending..."
                         : submitState === "success"
-                        ? "Inquiry Sent"
-                        : "Send Inquiry"}
+                          ? "Inquiry Sent"
+                          : "Send Inquiry"}
                     </NeonImageButton>
                   </div>
                 </div>
