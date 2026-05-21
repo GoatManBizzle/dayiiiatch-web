@@ -14,15 +14,17 @@ export default function SectionShell({
   children,
 }: SectionShellProps) {
   return (
-    <section id={id} className="mt-16">
+    <section id={id} className="mt-12 md:mt-16">
       <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
           {eyebrow ? (
-            <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">
+            <p className="text-xs uppercase tracking-[0.18em] text-zinc-400 sm:text-sm sm:tracking-[0.25em]">
               {eyebrow}
             </p>
           ) : null}
-          <h3 className="text-3xl font-bold">{title}</h3>
+          <h3 className="text-2xl font-bold leading-tight sm:text-3xl">
+            {title}
+          </h3>
         </div>
 
         {description ? (

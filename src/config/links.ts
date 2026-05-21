@@ -9,17 +9,17 @@ export const navLinks = [
   { label: "Services", href: "#services" },
   { label: "Offers", href: "#offers" },
   { label: "Pricing", href: "#pricing" },
-  { label: "Proof", href: "#testimonials" },
+  { label: "Proof", href: "#trust" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact-form" },
 ];
 
 export const footerLinks = [
-  { label: "Free Call", href: "/book?service=free-call", external: false },
+  { label: "Book Free Call", href: "/book?service=free-call", external: false },
   {
-    label: "Premium Session",
+    label: "Book Premium Session",
     href: "/book?service=premium-session",
     external: false,
   },
-  { label: "Contact", href: "#contact-form", external: false },
+  { label: "Send Project Inquiry", href: "#contact-form", external: false },
 ];

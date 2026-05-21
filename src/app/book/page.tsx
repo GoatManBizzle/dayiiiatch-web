@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 
@@ -85,7 +86,10 @@ function BookingPageContent() {
     let ignore = false;
 
     async function loadBookedTimes() {
-      if (!formValues.preferredDate) return;
+      if (!formValues.preferredDate) {
+        if (!ignore) setBookedTimes([]);
+        return;
+      }
 
       try {
         const response = await fetch(
@@ -98,9 +102,7 @@ function BookingPageContent() {
           setBookedTimes(data.bookedTimes);
         }
       } catch {
-        if (!ignore) {
-          setBookedTimes([]);
-        }
+        if (!ignore) setBookedTimes([]);
       }
     }
 
@@ -130,16 +132,13 @@ function BookingPageContent() {
           serviceType: serviceKey,
           serviceLabel: selected.label,
           duration: selected.duration,
-
           name: formValues.name,
           email: formValues.email,
           phone: formValues.phone,
-
           date: formValues.preferredDate,
           time: formValues.preferredTime,
           preferredDate: formValues.preferredDate,
           preferredTime: formValues.preferredTime,
-
           message: formValues.notes,
           notes: formValues.notes,
           details: formValues.notes,
@@ -177,7 +176,7 @@ function BookingPageContent() {
     <SiteShell>
       <HeaderSection />
 
-      <section className="mt-6 grid gap-8 lg:grid-cols-[1.05fr_0.95fr] lg:items-start">
+      <section className="mt-6 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start">
         <div className="space-y-6">
           <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.25em] text-cyan-200">
             {selected.eyebrow}
@@ -212,6 +211,58 @@ function BookingPageContent() {
               Duration: {selected.duration}
             </div>
           </div>
+
+          <div className="rounded-[2rem] border border-cyan-400/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl">
+            <p className="text-xs uppercase tracking-[0.24em] text-cyan-200">
+              Available Time Slots
+            </p>
+
+            <h2 className="mt-2 text-3xl font-black text-white">
+              Pick your booking time
+            </h2>
+
+            <p className="mt-3 text-sm leading-6 text-zinc-300">
+              Select a date first, then choose a clean {selected.slotStep}
+              -minute slot.
+            </p>
+
+            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+              {availableSlots.map((slot) => {
+                const isBooked = bookedTimes.includes(slot);
+                const isSelected = formValues.preferredTime === slot;
+
+                return (
+                  <button
+                    key={slot}
+                    type="button"
+                    disabled={!formValues.preferredDate || isBooked}
+                    onClick={() =>
+                      setFormValues((prev) => ({
+                        ...prev,
+                        preferredTime: slot,
+                      }))
+                    }
+                    className={`rounded-2xl border px-4 py-4 text-sm font-semibold transition ${
+                      isSelected
+                        ? "border-cyan-300 bg-cyan-400/20 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.18)]"
+                        : "border-white/10 bg-black/35 text-zinc-200 hover:border-cyan-400/30 hover:bg-cyan-400/10"
+                    } disabled:cursor-not-allowed disabled:opacity-35`}
+                  >
+                    {isBooked ? "Booked" : to12Hour(slot)}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
+          <div className="pt-2">
+            <Link
+              href="/"
+              className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+            >
+              ← Return to Main Site
+            </Link>
+          </div>
         </div>
 
         <div
@@ -225,13 +276,11 @@ function BookingPageContent() {
               DAYIIIatch Scheduler
             </p>
 
-            <h2 className="mt-2 text-3xl font-black">
-              Choose your booking time
-            </h2>
+            <h2 className="mt-2 text-3xl font-black">Lock in your spot</h2>
 
             <p className="mt-3 text-sm leading-6 text-zinc-300">
-              Pick a clean {selected.slotStep}-minute slot. You’ll get a
-              confirmation once the booking is locked in.
+              Fill out your info, select a date, then choose a time slot from
+              the panel on the left.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
@@ -290,38 +339,13 @@ function BookingPageContent() {
                 className="rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none focus:border-cyan-400/50"
               />
 
-              <div className="grid gap-3">
-                <p className="text-xs uppercase tracking-[0.24em] text-zinc-400">
-                  Available Time Slots
-                </p>
-
-                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                  {availableSlots.map((slot) => {
-                    const isBooked = bookedTimes.includes(slot);
-                    const isSelected = formValues.preferredTime === slot;
-
-                    return (
-                      <button
-                        key={slot}
-                        type="button"
-                        disabled={!formValues.preferredDate || isBooked}
-                        onClick={() =>
-                          setFormValues((prev) => ({
-                            ...prev,
-                            preferredTime: slot,
-                          }))
-                        }
-                        className={`rounded-2xl border px-4 py-3 text-sm font-semibold transition ${
-                          isSelected
-                            ? "border-cyan-300 bg-cyan-400/20 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.18)]"
-                            : "border-white/10 bg-black/35 text-zinc-200 hover:border-cyan-400/30 hover:bg-cyan-400/10"
-                        } disabled:cursor-not-allowed disabled:opacity-35`}
-                      >
-                        {isBooked ? "Booked" : to12Hour(slot)}
-                      </button>
-                    );
-                  })}
-                </div>
+              <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 text-sm text-zinc-300">
+                Selected time:{" "}
+                <span className="font-bold text-cyan-100">
+                  {formValues.preferredTime
+                    ? to12Hour(formValues.preferredTime)
+                    : "Choose a slot on the left"}
+                </span>
               </div>
 
               <textarea

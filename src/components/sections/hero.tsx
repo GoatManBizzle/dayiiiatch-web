@@ -32,14 +32,14 @@ const services = [
 export default function HeroSection() {
   return (
     <Reveal>
-      <section className="grid gap-8 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
+      <section className="grid gap-7 lg:grid-cols-[1.1fr_0.9fr] lg:items-center">
         <div className="space-y-6">
-          <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.25em] text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.12)]">
+          <div className="inline-flex max-w-full rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.12)] sm:px-4 sm:text-xs sm:tracking-[0.25em]">
             {brand.heroEyebrow}
           </div>
 
           <div className="space-y-4">
-            <h2 className="max-w-4xl text-4xl font-black leading-[0.95] md:text-7xl">
+            <h2 className="max-w-4xl text-3xl font-black leading-tight sm:text-4xl md:text-6xl lg:text-7xl lg:leading-[0.95]">
               {brand.heroTitle}
             </h2>
 
@@ -48,8 +48,8 @@ export default function HeroSection() {
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <SolidCTA href={links.freeCall}>Work With Us</SolidCTA>
+          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+            <SolidCTA href={links.freeCall}>Book Free Call</SolidCTA>
 
             <PrimaryButton href={links.premiumSession}>
               Book Premium Session
@@ -69,13 +69,13 @@ export default function HeroSection() {
           </div>
         </div>
 
-        <div className="relative rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl transition duration-300 hover:border-cyan-400/20">
+        <div className="relative rounded-[1.5rem] border border-white/10 bg-white/5 p-4 shadow-2xl backdrop-blur-xl transition duration-300 hover:border-cyan-400/20 sm:rounded-[2rem] sm:p-6">
           <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-400/10" />
 
-          <div className="relative mb-6 flex items-center justify-between">
+          <div className="relative mb-6 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <p className="text-sm text-zinc-400">Agency Snapshot</p>
-              <h3 className="text-2xl font-bold">
+              <h3 className="text-xl font-bold sm:text-2xl">
                 {brand.agencySnapshotTitle}
               </h3>
             </div>

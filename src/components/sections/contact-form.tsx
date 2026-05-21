@@ -8,6 +8,13 @@ type SubmitState = "idle" | "loading" | "success" | "error";
 
 const FORMSPREE_ENDPOINT = "https://formspree.io/f/mdayoagd";
 
+const contactTrustNotes = [
+  "No spam.",
+  "Clear next steps.",
+  "Response window: 24-48 hours.",
+  "If urgent, book a call.",
+];
+
 type FloatingFieldProps = {
   id: string;
   name: string;
@@ -36,7 +43,7 @@ function FloatingField({
   placeholder = " ",
 }: FloatingFieldProps) {
   const sharedClassName =
-    "peer w-full rounded-2xl border border-white/10 bg-black/35 px-4 pb-3 pt-6 text-sm text-white placeholder:text-transparent outline-none backdrop-blur-md transition-all duration-300 focus:border-cyan-400/50 focus:bg-black/45 focus:shadow-[0_0_22px_rgba(34,211,238,0.12)] disabled:cursor-not-allowed disabled:opacity-70";
+    "peer w-full rounded-2xl border border-white/10 bg-black/35 px-4 pb-3 pt-6 text-base text-white placeholder:text-transparent outline-none backdrop-blur-md transition-all duration-300 focus:border-cyan-400/50 focus:bg-black/45 focus:shadow-[0_0_22px_rgba(34,211,238,0.12)] disabled:cursor-not-allowed disabled:opacity-70 sm:text-sm";
 
   const labelClassName =
     "pointer-events-none absolute left-4 top-4 origin-left text-sm text-zinc-300 transition-all duration-300 peer-placeholder-shown:top-4 peer-placeholder-shown:scale-100 peer-placeholder-shown:text-zinc-400 peer-focus:top-2 peer-focus:scale-[0.8] peer-focus:text-cyan-300 peer-[&:not(:placeholder-shown)]:top-2 peer-[&:not(:placeholder-shown)]:scale-[0.8] peer-[&:not(:placeholder-shown)]:text-cyan-300";
@@ -197,7 +204,7 @@ export default function ContactFormSection() {
   return (
     <section
       id="contact-form"
-      className="relative mt-16 overflow-hidden rounded-[2rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)]"
+      className="relative mt-12 overflow-hidden rounded-[1.6rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)] sm:rounded-[2rem] md:mt-16"
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -211,20 +218,56 @@ export default function ContactFormSection() {
       <div className="pointer-events-none absolute bottom-0 right-0 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
       <div className="pointer-events-none absolute inset-[1px] rounded-[2rem] border border-cyan-300/10" />
 
-      <div className="relative z-10 p-8 md:p-10">
+      <div className="relative z-10 p-5 sm:p-8 md:p-10">
         <div className="mb-8 text-center">
-          <p className="text-sm uppercase tracking-[0.25em] text-cyan-300/80">
-            Contact
+          <p className="text-xs uppercase tracking-[0.18em] text-cyan-300/80 sm:text-sm sm:tracking-[0.25em]">
+            Contact / Inquiry
           </p>
 
-          <h3 className="mt-2 text-4xl font-black text-white md:text-5xl">
-            Send a direct project inquiry
+          <h3 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
+            Send the project details. Choose the best next step.
           </h3>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
-            Use the form below for custom builds, collaborations, website
-            requests, automation ideas, and digital support.
+            Use the form for custom website builds, booking systems,
+            automation ideas, visual direction, and digital cleanup. Need quick
+            clarity first? Book the free call. Need deeper planning? Choose the
+            premium session.
           </p>
+        </div>
+
+        <div className="mx-auto mb-6 grid max-w-4xl gap-3 md:grid-cols-3">
+          <a
+            href={links.freeCall}
+            className="rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-3 text-center text-sm font-semibold text-cyan-100 transition hover:scale-[1.02] hover:border-cyan-300/45 hover:bg-cyan-400/15 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
+          >
+            Book Free Call
+          </a>
+
+          <a
+            href={links.premiumSession}
+            className="rounded-2xl border border-violet-400/25 bg-violet-500/10 px-4 py-3 text-center text-sm font-semibold text-violet-100 transition hover:scale-[1.02] hover:border-violet-300/45 hover:bg-violet-500/15 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)]"
+          >
+            Book Premium Session
+          </a>
+
+          <a
+            href="#services"
+            className="rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 text-center text-sm font-semibold text-zinc-100 transition hover:scale-[1.02] hover:border-cyan-400/25 hover:bg-white/10"
+          >
+            Return to Services
+          </a>
+        </div>
+
+        <div className="mx-auto mb-6 grid max-w-4xl gap-2 sm:grid-cols-2 xl:grid-cols-4">
+          {contactTrustNotes.map((note) => (
+            <div
+              key={note}
+              className="rounded-2xl border border-white/10 bg-black/25 px-4 py-3 text-center text-xs font-semibold uppercase tracking-[0.12em] text-zinc-300 backdrop-blur-md"
+            >
+              {note}
+            </div>
+          ))}
         </div>
 
         <form
@@ -286,7 +329,7 @@ export default function ContactFormSection() {
           </div>
 
           <div className="md:col-span-2">
-            <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 p-4 backdrop-blur-md">
+            <div className="relative overflow-hidden rounded-[1.5rem] border border-white/10 p-4 backdrop-blur-md sm:p-5">
               <div
                 className="absolute inset-0 h-full w-full scale-105 bg-cover bg-center animate-[ctaDrift_18s_ease-in-out_infinite_alternate]"
                 style={{
@@ -303,26 +346,36 @@ export default function ContactFormSection() {
               <div className="pointer-events-none absolute inset-[1px] rounded-[1.5rem] border border-cyan-300/10" />
 
               <div className="relative z-10">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+                <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                   <p className="max-w-2xl text-xs leading-6 text-zinc-200">
-                    Prefer a call first? Book the free strategy call or jump
-                    straight into a direct project inquiry.
+                    Submit the form for custom project requests. Use the free
+                    call for quick clarity, or book the premium session when
+                    you want deeper planning before a build.
                   </p>
 
-                  <div className="flex flex-wrap gap-4">
+                  <div className="grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:justify-end">
                     <NeonImageButton
                       href={links.freeCall}
-                      external
                       disabled={submitState === "loading"}
                       defaultImage="/images/contact-btn-default.png"
                       hoverImage="/images/contact-btn-hover.png"
                     >
-                      Free Call
+                      Book Free Call
+                    </NeonImageButton>
+
+                    <NeonImageButton
+                      href={links.premiumSession}
+                      minWidthClassName="min-w-[190px]"
+                      disabled={submitState === "loading"}
+                      defaultImage="/images/contact-btn-default.png"
+                      hoverImage="/images/contact-btn-hover.png"
+                    >
+                      Book Premium Session
                     </NeonImageButton>
 
                     <NeonImageButton
                       type="submit"
-                      minWidthClassName="min-w-[190px]"
+                      minWidthClassName="min-w-[210px]"
                       loading={submitState === "loading"}
                       disabled={submitState === "loading"}
                       successPulse={submitState === "success"}
@@ -334,7 +387,7 @@ export default function ContactFormSection() {
                         ? "Sending..."
                         : submitState === "success"
                           ? "Inquiry Sent"
-                          : "Send Inquiry"}
+                          : "Send Project Inquiry"}
                     </NeonImageButton>
                   </div>
                 </div>

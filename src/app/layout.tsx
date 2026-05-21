@@ -11,6 +11,17 @@ export const metadata: Metadata = {
   authors: [{ name: siteMeta.siteName }],
   creator: siteMeta.siteName,
   publisher: siteMeta.siteName,
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+      "max-video-preview": -1,
+    },
+  },
   openGraph: {
     title: siteMeta.title,
     description: siteMeta.description,
@@ -37,6 +48,9 @@ export const metadata: Metadata = {
     icon: "/favicon.ico",
     shortcut: "/favicon.ico",
     apple: "/favicon.ico",
+  },
+  alternates: {
+    canonical: siteMeta.url,
   },
 };
 

@@ -6,11 +6,11 @@ export default function TestimonialsSection() {
   return (
     <SectionShell
       id="testimonials"
-      eyebrow="Trust & Proof"
-      title="Space for testimonials and results"
-      description="Even while building out the full portfolio, these testimonial-style cards help create stronger perceived trust and premium positioning."
+      eyebrow="Testimonials"
+      title="Honest proof placeholders"
+      description="No fake testimonials here. These slots stay marked until real client quotes, case studies, and portfolio results are ready to publish."
     >
-      <div className="grid gap-4 lg:grid-cols-3">
+      <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {testimonials.map((item, index) => (
           <TestimonialCard
             key={index}

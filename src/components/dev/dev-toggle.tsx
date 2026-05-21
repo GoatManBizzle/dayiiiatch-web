@@ -12,7 +12,7 @@ export default function DevToggle({
   onToggle,
 }: DevToggleProps) {
   return (
-    <div className="fixed bottom-5 right-5 z-[999] rounded-2xl border border-cyan-400/20 bg-zinc-950/85 p-3 shadow-[0_0_28px_rgba(34,211,238,0.18)] backdrop-blur-xl">
+    <div className="fixed bottom-4 left-4 right-4 z-[999] rounded-2xl border border-cyan-400/20 bg-zinc-950/85 p-3 shadow-[0_0_28px_rgba(34,211,238,0.18)] backdrop-blur-xl sm:left-auto sm:right-5 sm:w-auto">
       <div className="flex items-center gap-3">
         <div>
           <p className="text-[10px] uppercase tracking-[0.25em] text-zinc-400">

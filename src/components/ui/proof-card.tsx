@@ -1,23 +1,33 @@
 type ProofCardProps = {
   title: string;
   subtitle: string;
-  summary: string;
-  points: string[];
+  problem: string;
+  solution: string;
   result: string;
+  cta: string;
+  href: string;
   status: string;
 };
 
 export default function ProofCard({
   title,
   subtitle,
-  summary,
-  points,
+  problem,
+  solution,
   result,
+  cta,
+  href,
   status,
 }: ProofCardProps) {
+  const rows = [
+    { label: "Problem", text: problem },
+    { label: "Solution", text: solution },
+    { label: "Result", text: result },
+  ];
+
   return (
-    <div className="card-sheen rounded-[1.8rem] border border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/20 hover:shadow-[0_0_36px_rgba(34,211,238,0.08)]">
-      <div className="mb-4 flex items-center justify-between gap-4">
+    <div className="card-sheen flex h-full flex-col rounded-[1.6rem] border border-white/10 bg-white/[0.055] p-5 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/25 hover:shadow-[0_0_36px_rgba(34,211,238,0.10)] sm:rounded-[1.8rem] sm:p-6">
+      <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <p className="text-xs uppercase tracking-[0.25em] text-zinc-400">
           {subtitle}
         </p>
@@ -27,26 +37,29 @@ export default function ProofCard({
         </span>
       </div>
 
-      <h3 className="text-2xl font-bold text-white">{title}</h3>
-
-      <p className="mt-4 text-sm leading-7 text-zinc-300">{summary}</p>
+      <h3 className="text-xl font-bold text-white sm:text-2xl">{title}</h3>
 
       <div className="mt-5 space-y-3">
-        {points.map((point) => (
+        {rows.map((row) => (
           <div
-            key={point}
-            className="rounded-2xl border border-white/10 bg-zinc-900/60 px-4 py-3 text-sm text-zinc-200 transition duration-300 hover:border-cyan-400/20 hover:bg-zinc-900/80"
+            key={row.label}
+            className="rounded-2xl border border-white/10 bg-zinc-900/60 px-4 py-3 transition duration-300 hover:border-cyan-400/20 hover:bg-zinc-900/80"
           >
-            {point}
+            <p className="text-[11px] font-bold uppercase tracking-[0.18em] text-cyan-300">
+              {row.label}
+            </p>
+            <p className="mt-2 text-sm leading-6 text-zinc-200">{row.text}</p>
           </div>
         ))}
       </div>
 
-      <div className="mt-6 rounded-2xl border border-violet-400/20 bg-gradient-to-r from-violet-500/10 to-cyan-400/10 px-4 py-4">
-        <p className="text-xs uppercase tracking-[0.2em] text-zinc-400">
-          Result
-        </p>
-        <p className="mt-2 text-sm font-semibold text-white">{result}</p>
+      <div className="mt-auto pt-6">
+        <a
+          href={href}
+          className="inline-flex w-full items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-4 py-3 text-center text-sm font-semibold text-cyan-100 transition duration-300 hover:scale-[1.02] hover:border-cyan-300/45 hover:shadow-[0_0_28px_rgba(34,211,238,0.18)]"
+        >
+          {cta}
+        </a>
       </div>
     </div>
   );

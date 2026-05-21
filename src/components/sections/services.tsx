@@ -7,8 +7,8 @@ export default function ServicesSection() {
     <SectionShell
       id="services"
       eyebrow="Services"
-      title="Core offers"
-      description="These blocks can keep expanding into pricing cards, portfolio proof, and platform-specific offers as the brand grows."
+      title="Six clear lanes for digital support"
+      description="Start with a quick call when you need direction, or choose a serious path when the project already has shape."
     >
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {services.map((service) => (
@@ -16,6 +16,10 @@ export default function ServicesSection() {
             key={service.title}
             title={service.title}
             text={service.text}
+            bestFor={service.bestFor}
+            features={service.features}
+            cta={service.cta}
+            href={service.href}
           />
         ))}
       </div>

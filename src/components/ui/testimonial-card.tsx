@@ -14,8 +14,8 @@ export default function TestimonialCard({
   initials,
 }: TestimonialCardProps) {
   return (
-    <div className="card-sheen rounded-[1.8rem] border border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-violet-400/20 hover:shadow-[0_0_36px_rgba(168,85,247,0.10)]">
-      <div className="mb-5 flex items-center justify-between gap-4">
+    <div className="card-sheen rounded-[1.6rem] border border-white/10 bg-white/5 p-5 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-violet-400/20 hover:shadow-[0_0_36px_rgba(168,85,247,0.10)] sm:rounded-[1.8rem] sm:p-6">
+      <div className="mb-5 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div className="flex items-center gap-3">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 text-sm font-bold text-cyan-200 shadow-[0_0_20px_rgba(34,211,238,0.10)]">
             {initials}
@@ -31,7 +31,7 @@ export default function TestimonialCard({
         </span>
       </div>
 
-      <p className="text-sm leading-7 text-zinc-300">“{quote}”</p>
+      <p className="text-sm leading-7 text-zinc-300">"{quote}"</p>
     </div>
   );
 }

@@ -1,38 +1,17 @@
-import { brand } from "@/config/brand";
 import { navLinks } from "@/config/links";
-import NeonImageButton from "../ui/neon-image-button";
 
 export default function HeaderSection() {
   return (
-    <header className="mb-10 flex flex-col gap-4 rounded-[2rem] border border-white/10 bg-white/5 p-5 shadow-[0_0_40px_rgba(139,92,246,0.06)] backdrop-blur-xl md:flex-row md:items-center md:justify-between">
-      <div className="flex items-center gap-4">
-        <div className="relative h-14 w-14 overflow-hidden rounded-2xl border border-cyan-400/30 bg-zinc-900/80 shadow-[0_0_20px_rgba(34,211,238,0.18)]">
-          <img
-            src="/dayiiiatch-logo.png"
-            alt={`${brand.name} logo`}
-            className="h-full w-full object-cover"
-          />
-        </div>
-
-        <div>
-          <p className="text-xs uppercase tracking-[0.35em] text-violet-300">
-            {brand.name}
-          </p>
-          <h2 className="mt-2 text-xl font-semibold md:text-2xl">
-            {brand.tagline}
-          </h2>
-        </div>
-      </div>
-
-      <nav className="flex flex-wrap items-center gap-4">
+    <header className="relative z-20 mb-7 mt-4 flex justify-center">
+      <nav className="flex w-full max-w-5xl flex-wrap items-center justify-center gap-2 rounded-[1.5rem] border border-white/10 bg-zinc-950/70 px-2.5 py-2 shadow-[0_0_36px_rgba(34,211,238,0.12)] backdrop-blur-xl sm:w-auto sm:rounded-full sm:px-3">
         {navLinks.map((link) => (
-          <NeonImageButton
+          <a
             key={link.label}
             href={link.href}
-            minWidthClassName="min-w-[128px]"
+            className="min-h-10 rounded-full border border-white/10 bg-white/[0.04] px-3 py-2 text-[11px] font-bold uppercase tracking-[0.1em] text-zinc-200 transition hover:border-cyan-400/35 hover:bg-cyan-400/10 hover:text-cyan-100 sm:px-4 sm:text-xs sm:tracking-[0.16em]"
           >
             {link.label}
-          </NeonImageButton>
+          </a>
         ))}
       </nav>
     </header>

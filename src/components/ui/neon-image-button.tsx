@@ -33,7 +33,7 @@ export default function NeonImageButton({
   const activeImage = successPulse && successImage ? successImage : hoverImage;
 
   const baseClass = `
-    group relative inline-flex h-[54px] ${minWidthClassName}
+    group relative inline-flex h-[54px] w-full max-w-full sm:w-auto ${minWidthClassName}
     items-center justify-center overflow-hidden rounded-full
     px-6 text-sm font-semibold text-white no-underline
     select-none

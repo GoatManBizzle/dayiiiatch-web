@@ -13,8 +13,12 @@ if (!supabaseUrl || !supabaseKey) {
 const supabase = createClient(supabaseUrl, supabaseKey);
 const resend = resendKey ? new Resend(resendKey) : null;
 
-const ADMIN_EMAIL =
-  process.env.BOOKING_ADMIN_EMAIL || "DAYIIIatchSolutions@outlook.com";
+const ADMIN_EMAILS = (
+  process.env.BOOKING_ADMIN_EMAIL || "DAYIIIatchSolutions@outlook.com"
+)
+  .split(",")
+  .map((email) => email.trim())
+  .filter(Boolean);
 
 const FROM_EMAIL =
   process.env.BOOKING_FROM_EMAIL ||
@@ -191,7 +195,7 @@ export async function POST(request: NextRequest) {
 
     const adminEmail = await resend.emails.send({
       from: FROM_EMAIL,
-      to: [ADMIN_EMAIL],
+      to: ADMIN_EMAILS,
       subject: `🚨 New Booking Request — ${serviceLabel}`,
       html: `
         <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">

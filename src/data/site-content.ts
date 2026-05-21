@@ -26,35 +26,88 @@ export const offers = [
     badge: "Skip straight in",
     description:
       "Use the inquiry form if you already know what you need and want to start the conversation about a custom build or service.",
-    cta: "Send Inquiry",
+    cta: "Send Project Inquiry",
     href: "#contact-form",
   },
 ];
 
 export const services = [
   {
-    title: "Custom Websites & Landing Pages",
-    text: "Modern pages built to help brands look official, convert traffic, and present services clearly.",
+    title: "Website Builds",
+    text: "Clean, responsive websites and landing pages built to make your brand look official and move visitors toward action.",
+    bestFor:
+      "Brands, creators, and small businesses that need a stronger online home.",
+    features: [
+      "Landing pages and service pages",
+      "CTA and contact flow setup",
+      "Responsive coded layouts",
+    ],
+    cta: "Book Premium Session",
+    href: "/book?service=premium-session",
+  },
+  {
+    title: "Booking & Automation Systems",
+    text: "Scheduling flows, client intake paths, admin views, and automations that reduce manual back-and-forth.",
+    bestFor:
+      "Service providers who need cleaner bookings, reminders, and client tracking.",
+    features: [
+      "Booking path planning",
+      "Intake and status flows",
+      "Admin dashboard support",
+    ],
+    cta: "Book Premium Session",
+    href: "/book?service=premium-session",
   },
   {
     title: "AI Workflow Setup",
-    text: "Prompt systems, content pipelines, automation flows, and productivity upgrades for creators and businesses.",
+    text: "Practical AI systems for content, planning, prompts, research, and repeatable business tasks.",
+    bestFor:
+      "Teams and solo operators who want AI to save time without adding chaos.",
+    features: [
+      "Prompt and template systems",
+      "Content workflow support",
+      "Tool setup and training",
+    ],
+    cta: "Book Free Call",
+    href: "/book?service=free-call",
   },
   {
-    title: "Branding & Creative Direction",
-    text: "Visual identity support, concept development, and strategic presentation for digital products and services.",
+    title: "Branding / Visual Direction",
+    text: "Sharper visual direction for launches, service pages, offers, and digital presentation.",
+    bestFor:
+      "Projects that need a more premium first impression before going live.",
+    features: [
+      "Visual concept direction",
+      "Offer and page positioning",
+      "Asset and style guidance",
+    ],
+    cta: "Send Project Inquiry",
+    href: "#contact-form",
   },
   {
-    title: "Automation & System Builds",
-    text: "Smart tools, dashboards, process cleanup, and custom builds that save time and reduce friction.",
+    title: "Creator Tools & Dashboards",
+    text: "Simple custom tools, trackers, dashboards, and interfaces that help creators manage work with less friction.",
+    bestFor:
+      "Creators and operators who need a lightweight system around their workflow.",
+    features: [
+      "Custom dashboard concepts",
+      "Tracking and reporting views",
+      "Internal tool planning",
+    ],
+    cta: "Send Project Inquiry",
+    href: "#contact-form",
   },
   {
-    title: "Tech Support & Guided Setup",
-    text: "Hands-on help for tools, software, account setup, remote systems, and workflow troubleshooting.",
-  },
-  {
-    title: "Creative Asset Production",
-    text: "Support for digital visuals, mockups, concept materials, and polished assets for online presence.",
+    title: "Digital Cleanup / Process Support",
+    text: "Hands-on help organizing tools, accounts, pages, files, and messy workflows into a cleaner operating rhythm.",
+    bestFor: "People who know things are scattered and need a practical reset.",
+    features: [
+      "Tool and account cleanup",
+      "Process mapping",
+      "Guided setup support",
+    ],
+    cta: "Book Free Call",
+    href: "/book?service=free-call",
   },
 ];
 
@@ -62,110 +115,156 @@ export const packages = [
   {
     title: "Clean Build",
     price: "$250+",
+    priceLabel: "Starting at",
     text: "Best for clients who need a clean, coded website that looks professional, works well, and gets them online fast.",
+    bestFor:
+      "Simple service pages, personal brands, and small businesses that need a polished first version.",
     items: [
       "Responsive coded webpage",
       "Clean modern layout",
       "Basic CTA + contact flow",
       "Fast turnaround potential",
     ],
+    scopeNote:
+      "Estimated scope: one focused page or a small starter build with clear content direction.",
     badge: "Starter",
+    cta: "Book Free Call",
+    href: "/book?service=free-call",
     featured: false,
   },
   {
     title: "Premium Build",
     price: "$750+",
+    priceLabel: "Starting at",
     text: "Best for brands that need stronger visuals, better conversion flow, and a more polished digital presence.",
+    bestFor:
+      "Growing brands that need stronger structure, sharper presentation, and a more serious conversion path.",
     items: [
       "Everything in Clean Build",
       "Advanced layout polish",
       "Stronger CTA structure",
       "Premium styling + visuals",
     ],
+    scopeNote:
+      "Estimated scope: a richer landing experience, service flow, or multi-section public site.",
     badge: "Most Popular",
+    cta: "Book Premium Session",
+    href: "/book?service=premium-session",
     featured: true,
   },
   {
     title: "Signature Build",
     price: "$1500+",
+    priceLabel: "Starting at",
     text: "Best for clients who want a custom Photoshop-designed experience translated into premium code with standout branding.",
+    bestFor:
+      "Custom launches, high-end service offers, and brands that need a more designed website experience.",
     items: [
       "Photoshop-designed mockup",
       "Custom-coded final build",
       "High-end branded look",
       "Best for standout businesses",
     ],
+    scopeNote:
+      "Estimated scope: custom visual direction, designed mockups, and a more tailored coded build.",
     badge: "PS + Code",
+    cta: "Send Project Inquiry",
+    href: "#contact-form",
     featured: false,
+  },
+];
+
+export const pricingTrustNotes = [
+  "Starting prices may vary based on scope.",
+  "Final quote confirmed after strategy call.",
+  "No pressure - start with the free call if unsure.",
+  "Premium planning session can be credited toward larger projects if we choose to offer that later.",
+];
+
+export const pricingFaqs = [
+  {
+    question: "Do I need a free call first?",
+    answer:
+      "No. Use the free call if you are unsure what you need, or book the premium session when you already want deeper planning.",
+  },
+  {
+    question: "Can I request a custom quote?",
+    answer:
+      "Yes. Send a project inquiry when the work has custom scope, multiple pages, automation needs, or special visual direction.",
+  },
+  {
+    question: "What if I need Photoshop + coded design?",
+    answer:
+      "That belongs in the Signature Build lane, where the visual mockup and coded execution can be scoped together.",
   },
 ];
 
 export const testimonials = [
   {
     quote:
-      "DAYIIIatch Solutions blends creative thinking with real technical direction. The process feels direct, clear, and professional.",
-    name: "Creative Brand Client",
-    role: "Website + funnel mockup",
-    badge: "Premium Positioning",
-    initials: "CB",
+      "This slot is reserved for a real client quote once a completed project has permission to be shown publicly.",
+    name: "Client slot reserved",
+    role: "Verified testimonial pending",
+    badge: "Placeholder",
+    initials: "CS",
   },
   {
     quote:
-      "The strategy-first approach makes it easier to understand what needs to happen next instead of guessing through the project.",
-    name: "Startup Systems Client",
-    role: "Planning + digital structure",
-    badge: "Clarity Upgrade",
-    initials: "SS",
+      "A full case study will live here after the before, build process, and final result can be documented cleanly.",
+    name: "Case study coming soon",
+    role: "Build story in progress",
+    badge: "Coming Soon",
+    initials: "CS",
   },
   {
     quote:
-      "From the free call to the deeper planning session, the funnel feels polished and serious. It builds trust fast.",
-    name: "Growth Client",
-    role: "Booking flow setup",
-    badge: "Trust Boost",
-    initials: "GC",
+      "Portfolio proof is being organized so this section stays honest instead of pretending unfinished work is already client proof.",
+    name: "Portfolio proof in progress",
+    role: "Public results being prepared",
+    badge: "In Progress",
+    initials: "PP",
   },
 ];
 
 export const proofCards = [
   {
-    title: "Before → After Positioning",
-    subtitle: "Brand clarity upgrade",
-    summary:
-      "Move from a scattered online presence into a clearer, more premium client-facing system with stronger routing and better presentation.",
-    points: [
-      "Cleaner CTA hierarchy",
-      "More premium visual trust",
-      "Better client entry flow",
-    ],
-    result: "Sharper first impression",
-    status: "Upgrade Path",
+    title: "Website Presence Upgrade",
+    subtitle: "Digital storefront",
+    problem:
+      "The brand has scattered links, weak service clarity, and no polished place to send serious visitors.",
+    solution:
+      "Build a focused public site with a strong hero, service lanes, proof blocks, pricing, and clear contact paths.",
+    result:
+      "Visitors understand the offer faster and move into booking or project inquiry without guessing.",
+    cta: "Book Premium Session",
+    href: "/book?service=premium-session",
+    status: "Website Lane",
   },
   {
-    title: "Booking Flow Upgrade",
-    subtitle: "Free + paid path system",
-    summary:
-      "Separate casual inquiries from serious buyers by giving visitors the right path at the right time.",
-    points: [
-      "Free consult option",
-      "Premium paid strategy call",
-      "Direct inquiry backup path",
-    ],
-    result: "Better lead filtering",
-    status: "Conversion Boost",
+    title: "Booking System Build",
+    subtitle: "Scheduler infrastructure",
+    problem:
+      "Requests live in messages, times get missed, and there is no clean way to separate free calls from premium sessions.",
+    solution:
+      "Create a scheduler path with service-specific booking links, availability checks, and an admin dashboard for review.",
+    result:
+      "The business gets clearer lead intake, fewer manual follow-ups, and real booking infrastructure behind the website.",
+    cta: "Book Free Call",
+    href: "/book?service=free-call",
+    status: "Booking Lane",
   },
   {
-    title: "Photoshop + Code Advantage",
-    subtitle: "Higher-end offer lane",
-    summary:
-      "Use custom visual design plus coded execution to offer a stronger premium package than standard template-based websites.",
-    points: [
-      "Stronger mockup control",
-      "More unique branded look",
-      "Higher perceived value",
-    ],
-    result: "Premium service edge",
-    status: "Value Increase",
+    title: "Automation Workflow Setup",
+    subtitle: "Process support",
+    problem:
+      "Repeated admin tasks, content steps, and client updates eat time because the workflow is not mapped or systemized.",
+    solution:
+      "Design lightweight automations, AI-assisted templates, and process support around the way the business actually works.",
+    result:
+      "Daily operations feel cleaner, repeat tasks become easier, and the owner has a stronger system to grow from.",
+    cta: "Send Project Inquiry",
+    href: "#contact-form",
+    status: "Automation Lane",
   },
 ];
 
@@ -174,32 +273,24 @@ export const beforeAfterCards = [
     beforeTitle: "Before",
     beforePoints: [
       "Scattered online presence",
-      "Weak CTA structure",
-      "Low visual trust",
+      "Unclear booking path",
+      "Manual back-and-forth",
     ],
     afterTitle: "After",
     afterPoints: [
-      "Premium landing flow",
-      "Stronger client routing",
-      "Cleaner conversion path",
+      "Clean website",
+      "Scheduler flow",
+      "Admin dashboard / automation support",
     ],
-    label: "Positioning Shift",
+    label: "Problem to System",
   },
-  {
-    beforeTitle: "Before",
-    beforePoints: [
-      "No clear booking path",
-      "Mixed inquiry quality",
-      "Less premium feel",
-    ],
-    afterTitle: "After",
-    afterPoints: [
-      "Free + paid booking paths",
-      "Better lead separation",
-      "Higher-end presentation",
-    ],
-    label: "Funnel Upgrade",
-  },
+];
+
+export const trustStripItems = [
+  "Custom-built workflows",
+  "Real booking infrastructure",
+  "Local-first business tooling",
+  "AI-assisted creative systems",
 ];
 
 export const faqs = [

@@ -14,9 +14,9 @@ export default function BeforeAfterCard({
   label,
 }: BeforeAfterCardProps) {
   return (
-    <div className="card-sheen rounded-[1.9rem] border border-white/10 bg-white/5 p-6 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/20 hover:shadow-[0_0_36px_rgba(34,211,238,0.08)]">
-      <div className="mb-5 flex items-center justify-between">
-        <h3 className="text-2xl font-bold text-white">{label}</h3>
+    <div className="card-sheen rounded-[1.6rem] border border-white/10 bg-white/5 p-5 transition duration-300 hover:-translate-y-1 hover:scale-[1.01] hover:border-cyan-400/20 hover:shadow-[0_0_36px_rgba(34,211,238,0.08)] sm:rounded-[1.9rem] sm:p-6">
+      <div className="mb-5 flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <h3 className="text-xl font-bold text-white sm:text-2xl">{label}</h3>
         <span className="rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-semibold uppercase tracking-[0.18em] text-zinc-300">
           Proof Mock
         </span>

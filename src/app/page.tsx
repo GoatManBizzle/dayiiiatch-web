@@ -4,10 +4,10 @@ import { useMemo, useState } from "react";
 
 import SiteShell from "@/components/layout/site-shell";
 
-import TopBanner from "@/components/sections/top-banner";
 import ScreenshotBannerSection from "@/components/sections/screenshot-banner";
 import HeaderSection from "@/components/sections/header";
 import HeroSection from "@/components/sections/hero";
+import DigitalLogoBanner from "@/components/sections/digital-logo-banner";
 import OffersSection from "@/components/sections/offers";
 import TrustSection from "@/components/sections/trust";
 import ServicesSection from "@/components/sections/services";
@@ -29,15 +29,15 @@ export default function HomePage() {
 
   return (
     <SiteShell>
-      <TopBanner />
-      {screenshotMode && <ScreenshotBannerSection />}
+      <DigitalLogoBanner />
       <HeaderSection />
       <HeroSection />
+      {screenshotMode && <ScreenshotBannerSection />}
+      <ServicesSection />
       <OffersSection />
       <TrustSection />
-      <ServicesSection />
-      <PricingSection />
       <TestimonialsSection />
+      <PricingSection />
       <FAQSection />
       <ContactFormSection />
       <FooterSection />
