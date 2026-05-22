@@ -32,7 +32,7 @@ export default function HomePage() {
       <DigitalLogoBanner />
       <HeaderSection />
       <HeroSection />
-      {screenshotMode && <ScreenshotBannerSection />}
+      {isDev && screenshotMode && <ScreenshotBannerSection />}
       <ServicesSection />
       <OffersSection />
       <TrustSection />

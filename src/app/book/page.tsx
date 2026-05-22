@@ -17,7 +17,7 @@ const serviceMap = {
     slotStep: 15,
     eyebrow: "Free Strategy Call",
     title: "Book your free 15-minute strategy call.",
-    text: "Use this quick call to explain what you need, where you’re stuck, and what kind of DAYIIIatch Solutions support makes the most sense.",
+    text: "Use this quick call to explain what you need, where you are stuck, and what kind of DAYIIIatch Solutions support makes the most sense.",
   },
   "premium-session": {
     label: "Premium Strategy Session",
@@ -48,6 +48,63 @@ function buildSlots(step: number) {
   }
 
   return slots;
+}
+
+type TimeSlotPickerProps = {
+  availableSlots: string[];
+  bookedTimes: string[];
+  preferredDate: string;
+  preferredTime: string;
+  slotStep: number;
+  onSelectSlot: (slot: string) => void;
+};
+
+function TimeSlotPicker({
+  availableSlots,
+  bookedTimes,
+  preferredDate,
+  preferredTime,
+  slotStep,
+  onSelectSlot,
+}: TimeSlotPickerProps) {
+  return (
+    <div className="rounded-[2rem] border border-cyan-400/10 bg-white/[0.04] p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+      <p className="text-xs uppercase tracking-[0.24em] text-cyan-200">
+        Available Time Slots
+      </p>
+
+      <h2 className="mt-2 text-2xl font-black text-white sm:text-3xl">
+        Pick your booking time
+      </h2>
+
+      <p className="mt-3 text-sm leading-6 text-zinc-300">
+        Select a date first, then choose a clean {slotStep}-minute slot.
+      </p>
+
+      <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {availableSlots.map((slot) => {
+          const isBooked = bookedTimes.includes(slot);
+          const isSelected = preferredTime === slot;
+
+          return (
+            <button
+              key={slot}
+              type="button"
+              disabled={!preferredDate || isBooked}
+              onClick={() => onSelectSlot(slot)}
+              className={`min-h-14 rounded-2xl border px-3 py-3 text-sm font-semibold transition sm:px-4 sm:py-4 ${
+                isSelected
+                  ? "border-cyan-300 bg-cyan-400/20 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.18)]"
+                  : "border-white/10 bg-black/35 text-zinc-200 hover:border-cyan-400/30 hover:bg-cyan-400/10"
+              } disabled:cursor-not-allowed disabled:opacity-35`}
+            >
+              {isBooked ? "Booked" : to12Hour(slot)}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function BookingPageContent() {
@@ -81,6 +138,13 @@ function BookingPageContent() {
     formValues.preferredTime &&
     availableSlots.includes(formValues.preferredTime) &&
     !bookedTimes.includes(formValues.preferredTime);
+
+  function selectTimeSlot(slot: string) {
+    setFormValues((prev) => ({
+      ...prev,
+      preferredTime: slot,
+    }));
+  }
 
   useEffect(() => {
     let ignore = false;
@@ -212,47 +276,15 @@ function BookingPageContent() {
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-cyan-400/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl">
-            <p className="text-xs uppercase tracking-[0.24em] text-cyan-200">
-              Available Time Slots
-            </p>
-
-            <h2 className="mt-2 text-3xl font-black text-white">
-              Pick your booking time
-            </h2>
-
-            <p className="mt-3 text-sm leading-6 text-zinc-300">
-              Select a date first, then choose a clean {selected.slotStep}
-              -minute slot.
-            </p>
-
-            <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
-              {availableSlots.map((slot) => {
-                const isBooked = bookedTimes.includes(slot);
-                const isSelected = formValues.preferredTime === slot;
-
-                return (
-                  <button
-                    key={slot}
-                    type="button"
-                    disabled={!formValues.preferredDate || isBooked}
-                    onClick={() =>
-                      setFormValues((prev) => ({
-                        ...prev,
-                        preferredTime: slot,
-                      }))
-                    }
-                    className={`rounded-2xl border px-4 py-4 text-sm font-semibold transition ${
-                      isSelected
-                        ? "border-cyan-300 bg-cyan-400/20 text-cyan-100 shadow-[0_0_22px_rgba(34,211,238,0.18)]"
-                        : "border-white/10 bg-black/35 text-zinc-200 hover:border-cyan-400/30 hover:bg-cyan-400/10"
-                    } disabled:cursor-not-allowed disabled:opacity-35`}
-                  >
-                    {isBooked ? "Booked" : to12Hour(slot)}
-                  </button>
-                );
-              })}
-            </div>
+          <div className="hidden lg:block">
+            <TimeSlotPicker
+              availableSlots={availableSlots}
+              bookedTimes={bookedTimes}
+              preferredDate={formValues.preferredDate}
+              preferredTime={formValues.preferredTime}
+              slotStep={selected.slotStep}
+              onSelectSlot={selectTimeSlot}
+            />
           </div>
 
           <div className="pt-2">
@@ -260,7 +292,7 @@ function BookingPageContent() {
               href="/"
               className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
             >
-              ← Return to Main Site
+              Return to Main Site
             </Link>
           </div>
         </div>
@@ -280,7 +312,7 @@ function BookingPageContent() {
 
             <p className="mt-3 text-sm leading-6 text-zinc-300">
               Fill out your info, select a date, then choose a time slot from
-              the panel on the left.
+              the available slots.
             </p>
 
             <form onSubmit={handleSubmit} className="mt-6 grid gap-4">
@@ -339,15 +371,6 @@ function BookingPageContent() {
                 className="rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none focus:border-cyan-400/50"
               />
 
-              <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 text-sm text-zinc-300">
-                Selected time:{" "}
-                <span className="font-bold text-cyan-100">
-                  {formValues.preferredTime
-                    ? to12Hour(formValues.preferredTime)
-                    : "Choose a slot on the left"}
-                </span>
-              </div>
-
               <textarea
                 rows={5}
                 value={formValues.notes}
@@ -360,6 +383,26 @@ function BookingPageContent() {
                 placeholder="Quick notes about what you need help with"
                 className="rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none focus:border-cyan-400/50"
               />
+
+              <div className="lg:hidden">
+                <TimeSlotPicker
+                  availableSlots={availableSlots}
+                  bookedTimes={bookedTimes}
+                  preferredDate={formValues.preferredDate}
+                  preferredTime={formValues.preferredTime}
+                  slotStep={selected.slotStep}
+                  onSelectSlot={selectTimeSlot}
+                />
+              </div>
+
+              <div className="rounded-2xl border border-white/10 bg-black/25 px-4 py-4 text-sm text-zinc-300">
+                Selected time:{" "}
+                <span className="font-bold text-cyan-100">
+                  {formValues.preferredTime
+                    ? to12Hour(formValues.preferredTime)
+                    : "Choose a slot"}
+                </span>
+              </div>
 
               {submitState === "success" && (
                 <div className="rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-100">

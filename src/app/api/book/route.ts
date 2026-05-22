@@ -6,6 +6,11 @@ const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const resendKey = process.env.RESEND_API_KEY;
 
+// Env checklist:
+// - NEXT_PUBLIC_SUPABASE_URL is safe to expose and is used by server routes.
+// - NEXT_PUBLIC_SUPABASE_ANON_KEY is not currently read by app code.
+// - SUPABASE_SERVICE_ROLE_KEY must stay server-only in route handlers/admin pages.
+// - RESEND_API_KEY, BOOKING_FROM_EMAIL, and BOOKING_ADMIN_EMAIL drive email delivery.
 if (!supabaseUrl || !supabaseKey) {
   throw new Error("Missing Supabase environment variables.");
 }
@@ -48,6 +53,63 @@ function safeText(value: unknown) {
     .replaceAll("&", "&amp;")
     .replaceAll("<", "&lt;")
     .replaceAll(">", "&gt;");
+}
+
+function extractEmailAddress(value: string) {
+  const match = value.match(/<([^<>@\s]+@[^<>@\s]+\.[^<>@\s]+)>$/);
+  return match?.[1] ?? value;
+}
+
+function isValidEmailAddress(value: string) {
+  return /^[^\s@<>]+@[^\s@<>]+\.[^\s@<>]+$/.test(value);
+}
+
+function isValidFromEmail(value: string) {
+  return isValidEmailAddress(extractEmailAddress(value.trim()));
+}
+
+function getEmailConfigIssue() {
+  if (!resend) {
+    return "RESEND_API_KEY is missing.";
+  }
+
+  if (!isValidFromEmail(FROM_EMAIL)) {
+    return "BOOKING_FROM_EMAIL must be a valid email or Name <email@domain.com> value.";
+  }
+
+  if (ADMIN_EMAILS.length === 0) {
+    return "BOOKING_ADMIN_EMAIL must include at least one email address.";
+  }
+
+  const invalidAdminEmail = ADMIN_EMAILS.find(
+    (email) => !isValidEmailAddress(email),
+  );
+
+  if (invalidAdminEmail) {
+    return "BOOKING_ADMIN_EMAIL contains an invalid email address.";
+  }
+
+  return "";
+}
+
+function describeResendError(error: unknown) {
+  if (!error || typeof error !== "object") return "Unknown Resend error.";
+
+  const maybeError = error as {
+    message?: unknown;
+    name?: unknown;
+    statusCode?: unknown;
+  };
+
+  const parts = [
+    typeof maybeError.name === "string" ? maybeError.name : "",
+    typeof maybeError.statusCode === "number"
+      ? `status ${maybeError.statusCode}`
+      : "",
+    typeof maybeError.message === "string" ? maybeError.message : "",
+  ].filter(Boolean);
+
+  return parts.join(": ") || "Unknown Resend error.";
 }
 
 export async function GET(request: NextRequest) {
@@ -101,7 +163,7 @@ export async function POST(request: NextRequest) {
       !isValidDate(date) ||
       !isValidTime(time) ||
       !name ||
-      !email
+      !isValidEmailAddress(email)
     ) {
       return NextResponse.json(
         { error: "Missing or invalid booking fields." },
@@ -167,76 +229,140 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    if (!resend) {
+    const emailConfigIssue = getEmailConfigIssue();
+
+    if (emailConfigIssue) {
+      console.error("DAYIIIatch booking email config issue:", {
+        bookingId: insertedBooking.id,
+        issue: emailConfigIssue,
+        hasResendKey: Boolean(resendKey),
+        fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
+        adminEmailCount: ADMIN_EMAILS.length,
+      });
+
       return NextResponse.json({
         success: true,
         bookingId: insertedBooking.id,
-        warning: "Booking saved, but RESEND_API_KEY is missing.",
+        email: {
+          sent: false,
+          warning: `Booking saved, but email was not sent: ${emailConfigIssue}`,
+        },
+      });
+    }
+
+    const emailClient = resend;
+    if (!emailClient) {
+      return NextResponse.json({
+        success: true,
+        bookingId: insertedBooking.id,
+        email: {
+          sent: false,
+          warning: "Booking saved, but email was not sent.",
+        },
       });
     }
 
     const duration = service === "free-call" ? "15 minutes" : "30+ minutes";
 
-    const clientEmail = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: [email],
-      subject: `Booking Request Received — ${serviceLabel}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
-          <h2>DAYIIIatch Solutions received your booking request.</h2>
-          <p>We got your request and will confirm everything soon.</p>
-          <p><strong>Service:</strong> ${safeText(serviceLabel)}</p>
-          <p><strong>Date:</strong> ${safeText(date)}</p>
-          <p><strong>Time:</strong> ${safeText(time)}</p>
-          <p><strong>Duration:</strong> ${safeText(duration)}</p>
-        </div>
-      `,
-    });
+    try {
+      const clientEmail = await emailClient.emails.send({
+        from: FROM_EMAIL,
+        to: [email],
+        subject: `Booking Request Received - ${serviceLabel}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
+            <h2>DAYIIIatch Solutions received your booking request.</h2>
+            <p>We got your request and will confirm everything soon.</p>
+            <p><strong>Service:</strong> ${safeText(serviceLabel)}</p>
+            <p><strong>Date:</strong> ${safeText(date)}</p>
+            <p><strong>Time:</strong> ${safeText(time)}</p>
+            <p><strong>Duration:</strong> ${safeText(duration)}</p>
+          </div>
+        `,
+      });
 
-    const adminEmail = await resend.emails.send({
-      from: FROM_EMAIL,
-      to: ADMIN_EMAILS,
-      subject: `🚨 New Booking Request — ${serviceLabel}`,
-      html: `
-        <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
-          <h2>New DAYIIIatch booking request.</h2>
-          <p><strong>Name:</strong> ${safeText(name)}</p>
-          <p><strong>Email:</strong> ${safeText(email)}</p>
-          <p><strong>Phone:</strong> ${safeText(phone || "N/A")}</p>
-          <hr />
-          <p><strong>Service:</strong> ${safeText(serviceLabel)}</p>
-          <p><strong>Date:</strong> ${safeText(date)}</p>
-          <p><strong>Time:</strong> ${safeText(time)}</p>
-          <p><strong>Duration:</strong> ${safeText(duration)}</p>
-          <hr />
-          <p><strong>Notes:</strong></p>
-          <p>${safeText(details || "N/A")}</p>
-        </div>
-      `,
-    });
+      const adminEmail = await emailClient.emails.send({
+        from: FROM_EMAIL,
+        to: ADMIN_EMAILS,
+        subject: `New Booking Request - ${serviceLabel}`,
+        html: `
+          <div style="font-family:Arial,sans-serif;color:#111;line-height:1.6;">
+            <h2>New DAYIIIatch booking request.</h2>
+            <p><strong>Name:</strong> ${safeText(name)}</p>
+            <p><strong>Email:</strong> ${safeText(email)}</p>
+            <p><strong>Phone:</strong> ${safeText(phone || "N/A")}</p>
+            <hr />
+            <p><strong>Service:</strong> ${safeText(serviceLabel)}</p>
+            <p><strong>Date:</strong> ${safeText(date)}</p>
+            <p><strong>Time:</strong> ${safeText(time)}</p>
+            <p><strong>Duration:</strong> ${safeText(duration)}</p>
+            <hr />
+            <p><strong>Notes:</strong></p>
+            <p>${safeText(details || "N/A")}</p>
+          </div>
+        `,
+      });
 
-    if (clientEmail.error || adminEmail.error) {
-      return NextResponse.json(
-        {
-          error: "Booking saved, but email failed.",
-          resend: {
-            clientError: clientEmail.error,
-            adminError: adminEmail.error,
+      if (clientEmail.error || adminEmail.error) {
+        const clientError = describeResendError(clientEmail.error);
+        const adminError = describeResendError(adminEmail.error);
+
+        console.error("DAYIIIatch booking email send failed:", {
+          bookingId: insertedBooking.id,
+          clientError,
+          adminError,
+          hasResendKey: Boolean(resendKey),
+          fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
+          adminEmailCount: ADMIN_EMAILS.length,
+        });
+
+        return NextResponse.json({
+          success: true,
+          bookingId: insertedBooking.id,
+          email: {
+            sent: false,
+            warning: "Booking saved, but one or more booking emails failed.",
+            clientError,
+            adminError,
           },
-        },
-        { status: 500 },
-      );
-    }
+        });
+      }
 
-    return NextResponse.json({
-      success: true,
-      bookingId: insertedBooking.id,
-      email: {
-        client: clientEmail.data?.id,
-        admin: adminEmail.data?.id,
-      },
+      return NextResponse.json({
+        success: true,
+        bookingId: insertedBooking.id,
+        email: {
+          sent: true,
+          client: clientEmail.data?.id,
+          admin: adminEmail.data?.id,
+        },
+      });
+    } catch (emailError) {
+      const deliveryError = describeResendError(emailError);
+
+      console.error("DAYIIIatch booking email delivery threw:", {
+        bookingId: insertedBooking.id,
+        deliveryError,
+        hasResendKey: Boolean(resendKey),
+        fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
+        adminEmailCount: ADMIN_EMAILS.length,
+      });
+
+      return NextResponse.json({
+        success: true,
+        bookingId: insertedBooking.id,
+        email: {
+          sent: false,
+          warning: "Booking saved, but email delivery failed.",
+          error: deliveryError,
+        },
+      });
+    }
+  } catch (error) {
+    console.error("DAYIIIatch unexpected booking error:", {
+      message: error instanceof Error ? error.message : "Unknown error",
     });
-  } catch {
+
     return NextResponse.json(
       { error: "Unexpected booking error." },
       { status: 500 },
