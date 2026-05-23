@@ -112,6 +112,41 @@ function describeResendError(error: unknown) {
   return parts.join(": ") || "Unknown Resend error.";
 }
 
+function buildEmailLogMeta(clientEmail: string) {
+  return {
+    fromEmailPresent: Boolean(process.env.BOOKING_FROM_EMAIL),
+    adminEmailPresent: ADMIN_EMAILS.length > 0,
+    resendKeyPresent: Boolean(resendKey),
+    clientEmailValid: isValidEmailAddress(clientEmail),
+  };
+}
+
+function buildEmailFailureResponse({
+  bookingId,
+  warning,
+  error = "",
+  clientError = "",
+  adminError = "",
+}: {
+  bookingId: string;
+  warning: string;
+  error?: string;
+  clientError?: string;
+  adminError?: string;
+}) {
+  return NextResponse.json({
+    success: true,
+    bookingId,
+    email: {
+      sent: false,
+      warning,
+      error,
+      clientError,
+      adminError,
+    },
+  });
+}
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const service = searchParams.get("service") ?? "";
@@ -235,30 +270,22 @@ export async function POST(request: NextRequest) {
       console.error("DAYIIIatch booking email config issue:", {
         bookingId: insertedBooking.id,
         issue: emailConfigIssue,
-        hasResendKey: Boolean(resendKey),
-        fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
-        adminEmailCount: ADMIN_EMAILS.length,
+        ...buildEmailLogMeta(email),
       });
 
-      return NextResponse.json({
-        success: true,
+      return buildEmailFailureResponse({
         bookingId: insertedBooking.id,
-        email: {
-          sent: false,
-          warning: `Booking saved, but email was not sent: ${emailConfigIssue}`,
-        },
+        warning: "Booking saved, but email was not sent.",
+        error: emailConfigIssue,
       });
     }
 
     const emailClient = resend;
     if (!emailClient) {
-      return NextResponse.json({
-        success: true,
+      return buildEmailFailureResponse({
         bookingId: insertedBooking.id,
-        email: {
-          sent: false,
-          warning: "Booking saved, but email was not sent.",
-        },
+        warning: "Booking saved, but email was not sent.",
+        error: "RESEND_API_KEY is missing.",
       });
     }
 
@@ -309,22 +336,21 @@ export async function POST(request: NextRequest) {
 
         console.error("DAYIIIatch booking email send failed:", {
           bookingId: insertedBooking.id,
-          clientError,
-          adminError,
-          hasResendKey: Boolean(resendKey),
-          fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
-          adminEmailCount: ADMIN_EMAILS.length,
-        });
-
-        return NextResponse.json({
-          success: true,
-          bookingId: insertedBooking.id,
-          email: {
-            sent: false,
-            warning: "Booking saved, but one or more booking emails failed.",
+          resendStatus: {
             clientError,
             adminError,
           },
+          clientError,
+          adminError,
+          ...buildEmailLogMeta(email),
+        });
+
+        return buildEmailFailureResponse({
+          bookingId: insertedBooking.id,
+          warning: "Booking saved, but one or more booking emails failed.",
+          error: "Resend returned an email send error.",
+          clientError,
+          adminError,
         });
       }
 
@@ -342,20 +368,17 @@ export async function POST(request: NextRequest) {
 
       console.error("DAYIIIatch booking email delivery threw:", {
         bookingId: insertedBooking.id,
-        deliveryError,
-        hasResendKey: Boolean(resendKey),
-        fromEmailConfigured: Boolean(process.env.BOOKING_FROM_EMAIL),
-        adminEmailCount: ADMIN_EMAILS.length,
-      });
-
-      return NextResponse.json({
-        success: true,
-        bookingId: insertedBooking.id,
-        email: {
-          sent: false,
-          warning: "Booking saved, but email delivery failed.",
+        resendStatus: {
           error: deliveryError,
         },
+        deliveryError,
+        ...buildEmailLogMeta(email),
+      });
+
+      return buildEmailFailureResponse({
+        bookingId: insertedBooking.id,
+        warning: "Booking saved, but email delivery failed.",
+        error: deliveryError,
       });
     }
   } catch (error) {

@@ -465,3 +465,164 @@ textarea:-webkit-autofill {
   -webkit-text-fill-color: #ffffff !important;
   transition: background-color 9999s ease-in-out 0s;
 }
+
+@keyframes ambientGradientDrift {
+  0% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+    opacity: 0.56;
+  }
+  50% {
+    transform: translate3d(1.5%, 1%, 0) scale(1.025);
+    opacity: 0.68;
+  }
+  100% {
+    transform: translate3d(-1.5%, -1%, 0) scale(1);
+    opacity: 0.56;
+  }
+}
+
+@keyframes ambientHazeDrift {
+  0% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  50% {
+    transform: translate3d(2.5%, -1.5%, 0) scale(1.035);
+  }
+  100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+}
+
+@keyframes ambientSweep {
+  0% {
+    transform: translate3d(-18%, 0, 0) rotate(12deg);
+    opacity: 0;
+  }
+  28% {
+    opacity: 0.14;
+  }
+  58% {
+    opacity: 0.05;
+  }
+  100% {
+    transform: translate3d(18%, 0, 0) rotate(12deg);
+    opacity: 0;
+  }
+}
+
+@keyframes ambientParticles {
+  0% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.16;
+  }
+  50% {
+    transform: translate3d(0.6%, -0.8%, 0);
+    opacity: 0.22;
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+    opacity: 0.16;
+  }
+}
+
+.ambient-home-layer {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  contain: paint;
+}
+
+.ambient-home-gradient,
+.ambient-home-haze,
+.ambient-home-sweep,
+.ambient-home-particles {
+  position: absolute;
+  inset: 0;
+  will-change: transform, opacity;
+}
+
+.ambient-home-gradient {
+  inset: -12%;
+  background:
+    linear-gradient(115deg, rgba(34, 211, 238, 0.045), transparent 34%),
+    linear-gradient(245deg, rgba(168, 85, 247, 0.055), transparent 38%),
+    linear-gradient(180deg, transparent 0%, rgba(8, 12, 28, 0.28) 58%, rgba(0, 0, 0, 0.18) 100%);
+  animation: ambientGradientDrift 34s ease-in-out infinite;
+}
+
+.ambient-home-haze {
+  filter: blur(56px);
+  opacity: 0.28;
+}
+
+.ambient-home-haze-a {
+  inset: -22% -14% 42% -18%;
+  background: linear-gradient(100deg, rgba(34, 211, 238, 0.11), rgba(168, 85, 247, 0.08), transparent 70%);
+  animation: ambientHazeDrift 42s ease-in-out infinite;
+}
+
+.ambient-home-haze-b {
+  inset: 48% -18% -24% 12%;
+  background: linear-gradient(130deg, transparent 10%, rgba(59, 130, 246, 0.08), rgba(34, 211, 238, 0.08));
+  animation: ambientHazeDrift 52s ease-in-out infinite reverse;
+}
+
+.ambient-home-sweep {
+  width: 42%;
+  left: 29%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.04), rgba(34, 211, 238, 0.035), transparent);
+  filter: blur(18px);
+}
+
+.ambient-home-sweep-a {
+  animation: ambientSweep 26s ease-in-out infinite;
+}
+
+.ambient-home-sweep-b {
+  animation: ambientSweep 38s ease-in-out infinite reverse;
+  opacity: 0.5;
+}
+
+.ambient-home-particles {
+  opacity: 0.16;
+  background-image:
+    radial-gradient(circle at 12% 24%, rgba(255, 255, 255, 0.16) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 38% 62%, rgba(34, 211, 238, 0.12) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 72% 32%, rgba(168, 85, 247, 0.12) 0 1px, transparent 1.5px),
+    radial-gradient(circle at 84% 78%, rgba(255, 255, 255, 0.10) 0 1px, transparent 1.5px);
+  background-size: 320px 320px, 420px 420px, 380px 380px, 520px 520px;
+  animation: ambientParticles 48s ease-in-out infinite;
+}
+
+@media (max-width: 640px) {
+  .ambient-home-gradient {
+    opacity: 0.42;
+    animation-duration: 48s;
+  }
+
+  .ambient-home-haze {
+    opacity: 0.18;
+    filter: blur(48px);
+  }
+
+  .ambient-home-sweep {
+    opacity: 0.55;
+    animation-duration: 46s;
+  }
+
+  .ambient-home-particles {
+    opacity: 0.08;
+    background-size: 420px 420px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ambient-home-gradient,
+  .ambient-home-haze,
+  .ambient-home-sweep,
+  .ambient-home-particles {
+    animation: none !important;
+  }
+}
