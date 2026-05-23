@@ -1,6 +1,7 @@
 "use client";
 
 import { links } from "@/config/links";
+import { getCtaToneClass } from "@/components/ui/cta-tone";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import NeonImageButton from "../ui/neon-image-button";
 
@@ -239,21 +240,21 @@ export default function ContactFormSection() {
         <div className="mx-auto mb-6 grid max-w-4xl gap-3 md:grid-cols-3">
           <a
             href={links.freeCall}
-            className="rounded-2xl border border-cyan-400/25 bg-cyan-400/10 px-4 py-3 text-center text-sm font-semibold text-cyan-100 transition hover:scale-[1.02] hover:border-cyan-300/45 hover:bg-cyan-400/15 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
+            className={`rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.012] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${getCtaToneClass("Book Free Call", links.freeCall)}`}
           >
             Book Free Call
           </a>
 
           <a
             href={links.premiumSession}
-            className="rounded-2xl border border-violet-400/25 bg-violet-500/10 px-4 py-3 text-center text-sm font-semibold text-violet-100 transition hover:scale-[1.02] hover:border-violet-300/45 hover:bg-violet-500/15 hover:shadow-[0_0_24px_rgba(168,85,247,0.12)]"
+            className={`rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.012] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${getCtaToneClass("Book Premium Session", links.premiumSession)}`}
           >
             Book Premium Session
           </a>
 
           <a
             href="#services"
-            className="rounded-2xl border border-white/10 bg-white/[0.055] px-4 py-3 text-center text-sm font-semibold text-zinc-100 transition hover:scale-[1.02] hover:border-cyan-400/25 hover:bg-white/10"
+            className="rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-center text-sm font-semibold text-zinc-300 transition duration-500 ease-out hover:scale-[1.008] hover:border-cyan-400/25 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-300/25"
           >
             Return to Services
           </a>

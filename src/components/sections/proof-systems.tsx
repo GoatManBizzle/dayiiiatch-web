@@ -5,6 +5,16 @@ import { createPortal } from "react-dom";
 
 import Reveal from "@/components/ui/reveal";
 
+type ProofImage = {
+  label: string;
+  src: string;
+};
+
+type ProofImageSlot = {
+  label: string;
+  images: ProofImage[];
+};
+
 type Project = {
   title: string;
   status: string;
@@ -15,11 +25,69 @@ type Project = {
   stack: string[];
   highlights: string[];
   badges: string[];
-  screenshots: {
-    label: string;
-    src: string;
-  }[];
+  imageSlots: ProofImageSlot[];
+  demoVideoSrc: string;
 };
+
+function buildImageSlots(slug: string): ProofImageSlot[] {
+  return [
+    {
+      label: "Screenshot slot",
+      images: [
+        {
+          label: "Screenshot slot 1",
+          src: `/images/proof/${slug}/screenshot-01.png`,
+        },
+        {
+          label: "Screenshot slot 2",
+          src: `/images/proof/${slug}/screenshot-01b.png`,
+        },
+        {
+          label: "Screenshot slot 3",
+          src: `/images/proof/${slug}/screenshot-01c.png`,
+        },
+      ],
+    },
+    {
+      label: "Workflow visual",
+      images: [
+        {
+          label: "Workflow visual 1",
+          src: `/images/proof/${slug}/screenshot-02.png`,
+        },
+        {
+          label: "Workflow visual 2",
+          src: `/images/proof/${slug}/screenshot-02b.png`,
+        },
+        {
+          label: "Workflow visual 3",
+          src: `/images/proof/${slug}/screenshot-02c.png`,
+        },
+      ],
+    },
+    {
+      label: "Dashboard preview",
+      images: [
+        {
+          label: "Dashboard preview 1",
+          src: `/images/proof/${slug}/screenshot-03.png`,
+        },
+        {
+          label: "Dashboard preview 2",
+          src: `/images/proof/${slug}/screenshot-03b.png`,
+        },
+        {
+          label: "Dashboard preview 3",
+          src: `/images/proof/${slug}/screenshot-03c.png`,
+        },
+      ],
+    },
+  ];
+}
+
+function getProjectImages(project: Project) {
+  return project.imageSlots.flatMap((slot) => slot.images);
+}
 
 const projects: Project[] = [
   {
@@ -40,20 +108,8 @@ const projects: Project[] = [
       "Email diagnostics and reminders",
     ],
     badges: ["Booking flow", "Admin dashboard", "Email alerts", "CSV exports"],
-    screenshots: [
-      {
-        label: "Screenshot slot",
-        src: "/images/proof/scheduler/screenshot-01.png",
-      },
-      {
-        label: "Workflow visual",
-        src: "/images/proof/scheduler/screenshot-02.png",
-      },
-      {
-        label: "Dashboard preview",
-        src: "/images/proof/scheduler/screenshot-03.png",
-      },
-    ],
+    imageSlots: buildImageSlots("scheduler"),
+    demoVideoSrc: "/videos/proof/scheduler-demo.mp4",
   },
   {
     title: "Project Damarko",
@@ -73,20 +129,8 @@ const projects: Project[] = [
       "Contact and booking funnel alignment",
     ],
     badges: ["Brand system", "Landing flow", "CTA map", "Mobile polish"],
-    screenshots: [
-      {
-        label: "Screenshot slot",
-        src: "/images/proof/damarko/screenshot-01.png",
-      },
-      {
-        label: "Workflow visual",
-        src: "/images/proof/damarko/screenshot-02.png",
-      },
-      {
-        label: "Dashboard preview",
-        src: "/images/proof/damarko/screenshot-03.png",
-      },
-    ],
+    imageSlots: buildImageSlots("damarko"),
+    demoVideoSrc: "/videos/proof/damarko-demo.mp4",
   },
   {
     title: "EchoForge Audio Suite",
@@ -106,20 +150,8 @@ const projects: Project[] = [
       "Dashboard-ready interaction model",
     ],
     badges: ["Audio workflow", "Creator tools", "AI support", "Dashboard UX"],
-    screenshots: [
-      {
-        label: "Screenshot slot",
-        src: "/images/proof/echoforge/screenshot-01.png",
-      },
-      {
-        label: "Workflow visual",
-        src: "/images/proof/echoforge/screenshot-02.png",
-      },
-      {
-        label: "Dashboard preview",
-        src: "/images/proof/echoforge/screenshot-03.png",
-      },
-    ],
+    imageSlots: buildImageSlots("echoforge"),
+    demoVideoSrc: "/videos/proof/echoforge-demo.mp4",
   },
 ];
 
@@ -146,7 +178,7 @@ export default function ProofSystemsSection() {
   const [activeProject, setActiveProject] = useState<Project | null>(null);
   const [activeScreenshot, setActiveScreenshot] = useState<{
     title: string;
-    screenshots: Project["screenshots"];
+    screenshots: ProofImage[];
     index: number;
   } | null>(null);
   const [mounted, setMounted] = useState(false);
@@ -260,7 +292,7 @@ export default function ProofSystemsSection() {
           onOpenScreenshot={(index) =>
             setActiveScreenshot({
               title: activeProject.title,
-              screenshots: activeProject.screenshots,
+              screenshots: getProjectImages(activeProject),
               index,
             })
           }
@@ -318,6 +350,12 @@ function ProjectDetailsModal({
               <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-300">
                 {project.summary}
               </p>
+              <p className="mt-4 max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-6 text-zinc-300">
+                <span className="font-bold text-cyan-100">
+                  Problem solved:
+                </span>{" "}
+                {project.problem}
+              </p>
             </div>
 
             <button
@@ -329,55 +367,58 @@ function ProjectDetailsModal({
             </button>
           </div>
 
-          <div className="mt-5 grid gap-4 lg:grid-cols-[0.88fr_1.12fr]">
-            <div className="space-y-4">
-              <DetailBlock title="Problem Solved" text={project.problem} />
-
-              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
-                  Stack Used
-                </p>
-                <div className="mt-4 flex flex-wrap gap-2">
-                  {project.stack.map((item) => (
-                    <span
-                      key={item}
-                      className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs font-semibold text-zinc-200"
-                    >
-                      {item}
-                    </span>
-                  ))}
-                </div>
-              </div>
+          <div className="mt-5 space-y-4">
+            <div className="grid gap-3 sm:grid-cols-3">
+              {project.imageSlots.map((slot, slotIndex) => (
+                <ScreenshotSlot
+                  key={slot.label}
+                  slot={slot}
+                  startIndex={slotIndex * 3}
+                  projectTitle={project.title}
+                  onOpenScreenshot={onOpenScreenshot}
+                />
+              ))}
             </div>
 
-            <div className="space-y-4">
-              <div className="grid gap-3 sm:grid-cols-3">
-                {project.screenshots.map((screenshot, index) => (
-                  <ScreenshotPanel
-                    key={screenshot.src}
-                    screenshot={screenshot}
-                    index={index}
-                    projectTitle={project.title}
-                    onOpen={() => onOpenScreenshot(index)}
-                  />
-                ))}
-              </div>
+            <div className="grid gap-4 lg:grid-cols-[0.95fr_1.05fr] lg:items-start">
+              <div className="space-y-4">
+                <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                    Stack Used
+                  </p>
+                  <div className="mt-4 flex flex-wrap gap-2">
+                    {project.stack.map((item) => (
+                      <span
+                        key={item}
+                        className="rounded-full border border-white/10 bg-black/30 px-3 py-1.5 text-xs font-semibold text-zinc-200"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
 
-              <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4">
-                <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
-                  Workflow / Feature Highlights
-                </p>
-                <div className="mt-4 grid gap-2 sm:grid-cols-2">
-                  {project.highlights.map((highlight) => (
-                    <div
-                      key={highlight}
-                      className="rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-sm leading-5 text-zinc-200"
-                    >
-                      {highlight}
-                    </div>
-                  ))}
+                <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4">
+                  <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+                    Workflow / Feature Highlights
+                  </p>
+                  <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                    {project.highlights.map((highlight) => (
+                      <div
+                        key={highlight}
+                        className="rounded-2xl border border-white/10 bg-black/25 px-3 py-3 text-sm leading-5 text-zinc-200"
+                      >
+                        {highlight}
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
+
+              <VideoPreview
+                projectTitle={project.title}
+                src={project.demoVideoSrc}
+              />
             </div>
           </div>
 
@@ -408,13 +449,44 @@ function ProjectDetailsModal({
   );
 }
 
+function ScreenshotSlot({
+  slot,
+  startIndex,
+  projectTitle,
+  onOpenScreenshot,
+}: {
+  slot: ProofImageSlot;
+  startIndex: number;
+  projectTitle: string;
+  onOpenScreenshot: (index: number) => void;
+}) {
+  return (
+    <div className="rounded-[1.25rem] border border-cyan-300/12 bg-black/25 p-3 shadow-[inset_0_0_28px_rgba(255,255,255,0.025)]">
+      <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-cyan-100">
+        {slot.label}
+      </p>
+      <div className="grid gap-2">
+        {slot.images.map((image, index) => (
+          <ScreenshotPanel
+            key={image.src}
+            screenshot={image}
+            index={startIndex + index}
+            projectTitle={projectTitle}
+            onOpen={() => onOpenScreenshot(startIndex + index)}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ScreenshotPanel({
   screenshot,
   index,
   projectTitle,
   onOpen,
 }: {
-  screenshot: { label: string; src: string };
+  screenshot: ProofImage;
   index: number;
   projectTitle: string;
   onOpen: () => void;
@@ -429,10 +501,10 @@ function ScreenshotPanel({
     <button
       type="button"
       onClick={onOpen}
-      className="group/screenshot min-h-32 overflow-hidden rounded-[1.25rem] border border-cyan-300/12 bg-black/30 text-left shadow-[inset_0_0_28px_rgba(255,255,255,0.025)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:shadow-[0_0_28px_rgba(34,211,238,0.12)]"
+      className="group/screenshot min-h-20 overflow-hidden rounded-2xl border border-cyan-300/12 bg-black/30 text-left shadow-[inset_0_0_20px_rgba(255,255,255,0.025)] transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/30 hover:shadow-[0_0_24px_rgba(34,211,238,0.12)]"
       aria-label={`Open ${projectTitle} ${screenshot.label}`}
     >
-      <div className="relative aspect-[4/3] overflow-hidden bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.22))]">
+      <div className="relative aspect-[16/9] overflow-hidden bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.22))]">
         <img
           src={screenshot.src}
           alt={`${projectTitle} ${screenshot.label}`}
@@ -440,8 +512,8 @@ function ScreenshotPanel({
           className="h-full w-full object-cover transition duration-500 group-hover/screenshot:scale-[1.025]"
         />
         <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-black/55 via-transparent to-transparent opacity-80" />
-        <p className="absolute bottom-3 left-3 right-3 text-xs font-bold uppercase tracking-[0.14em] text-white">
-          {screenshot.label}
+        <p className="absolute bottom-2 left-2 right-2 text-[10px] font-bold uppercase tracking-[0.12em] text-white">
+          {index + 1}
         </p>
       </div>
     </button>
@@ -456,12 +528,60 @@ function ScreenshotPlaceholder({
   index: number;
 }) {
   return (
-    <div className="min-h-32 rounded-[1.25rem] border border-cyan-300/12 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.22))] p-4 shadow-[inset_0_0_28px_rgba(255,255,255,0.025)]">
-      <div className="mb-4 h-1 w-10 rounded-full bg-cyan-300/70 shadow-[0_0_16px_rgba(34,211,238,0.32)]" />
-      <p className="text-sm font-bold text-white">{label}</p>
-      <p className="mt-2 text-xs leading-5 text-zinc-400">
+    <div className="min-h-20 rounded-2xl border border-cyan-300/12 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.22))] p-3 shadow-[inset_0_0_22px_rgba(255,255,255,0.025)]">
+      <div className="mb-3 h-1 w-8 rounded-full bg-cyan-300/70 shadow-[0_0_16px_rgba(34,211,238,0.32)]" />
+      <p className="text-xs font-bold text-white">{label}</p>
+      <p className="mt-1 text-[11px] leading-4 text-zinc-400">
         Placeholder panel {index + 1}
       </p>
+    </div>
+  );
+}
+
+function VideoPreview({
+  projectTitle,
+  src,
+}: {
+  projectTitle: string;
+  src: string;
+}) {
+  const [failed, setFailed] = useState(false);
+
+  return (
+    <div className="rounded-[1.4rem] border border-cyan-300/12 bg-black/25 p-3 shadow-[inset_0_0_28px_rgba(255,255,255,0.025)]">
+      <div className="mb-3 flex items-center justify-between gap-3">
+        <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
+          App Demo
+        </p>
+        <span className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[10px] font-bold uppercase tracking-[0.14em] text-zinc-400">
+          15-30 sec MP4
+        </span>
+      </div>
+
+      {failed ? (
+        <div className="flex aspect-video items-center justify-center rounded-[1.15rem] border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.34))] p-5 text-center">
+          <div>
+            <div className="mx-auto mb-4 h-1 w-14 rounded-full bg-cyan-300/70 shadow-[0_0_18px_rgba(34,211,238,0.34)]" />
+            <p className="text-sm font-black text-white">
+              App demo video slot
+            </p>
+            <p className="mt-2 text-xs leading-5 text-zinc-400">
+              Add the project MP4 when the walkthrough is ready.
+            </p>
+          </div>
+        </div>
+      ) : (
+        <video
+          src={src}
+          aria-label={`${projectTitle} app demo video`}
+          className="aspect-video w-full rounded-[1.15rem] border border-white/10 bg-black object-cover"
+          muted
+          controls
+          playsInline
+          preload="metadata"
+          onError={() => setFailed(true)}
+        />
+      )}
     </div>
   );
 }
@@ -472,7 +592,7 @@ function ScreenshotLightbox({
 }: {
   screenshot: {
     title: string;
-    screenshots: Project["screenshots"];
+    screenshots: ProofImage[];
     index: number;
   };
   onClose: () => void;
@@ -582,7 +702,7 @@ function ScreenshotLightbox({
               className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/55 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 sm:h-14 sm:w-14"
               aria-label="Previous screenshot"
             >
-              ‹
+              &lt;
             </button>
           </div>
 
@@ -593,22 +713,11 @@ function ScreenshotLightbox({
               className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/55 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 sm:h-14 sm:w-14"
               aria-label="Next screenshot"
             >
-              ›
+              &gt;
             </button>
           </div>
         </div>
       </div>
-    </div>
-  );
-}
-
-function DetailBlock({ title, text }: { title: string; text: string }) {
-  return (
-    <div className="rounded-[1.4rem] border border-white/10 bg-white/[0.045] p-4">
-      <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
-        {title}
-      </p>
-      <p className="mt-3 text-sm leading-6 text-zinc-300">{text}</p>
     </div>
   );
 }

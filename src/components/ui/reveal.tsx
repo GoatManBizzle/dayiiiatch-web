@@ -21,6 +21,15 @@ export default function Reveal({
     const node = ref.current;
     if (!node) return;
 
+    const prefersReducedMotion = window.matchMedia(
+      "(prefers-reduced-motion: reduce)"
+    ).matches;
+
+    if (prefersReducedMotion) {
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
@@ -40,6 +49,7 @@ export default function Reveal({
       },
       {
         threshold: 0.12,
+        rootMargin: "0px 0px -8% 0px",
       }
     );
 
@@ -54,15 +64,15 @@ export default function Reveal({
   }, [delayMs]);
 
   return (
-<div
-  ref={ref}
-  className={`transition-all duration-700 ease-out will-change-transform ${
-    visible
-      ? "translate-y-0 opacity-100 blur-0"
-      : "translate-y-3 opacity-0 blur-[1px]"
-  } ${className}`}
->
-  {children}
-</div>
+    <div
+      ref={ref}
+      className={`transition-all duration-700 ease-out will-change-transform motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 motion-reduce:blur-0 motion-reduce:transition-none ${
+        visible
+          ? "translate-y-0 scale-100 opacity-100 blur-0"
+          : "translate-y-2 scale-[0.985] opacity-0 blur-[1px] sm:translate-y-3 sm:scale-[0.98]"
+      } ${className}`}
+    >
+      {children}
+    </div>
   );
 }

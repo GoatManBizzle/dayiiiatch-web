@@ -48,14 +48,27 @@ export default function HeroSection() {
             </p>
           </div>
 
-          <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-            <SolidCTA href={links.freeCall}>Book Free Call</SolidCTA>
+          <div className="space-y-3">
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <Reveal delayMs={80}>
+                <SolidCTA href={links.freeCall}>Book Free Call</SolidCTA>
+              </Reveal>
 
-            <PrimaryButton href={links.premiumSession}>
-              Book Premium Session
-            </PrimaryButton>
+              <Reveal delayMs={140}>
+                <PrimaryButton href={links.premiumSession}>
+                  Book Premium Session
+                </PrimaryButton>
+              </Reveal>
 
-            <GhostButton href="#services">Explore Services</GhostButton>
+              <Reveal delayMs={200}>
+                <GhostButton href="#services">Explore Services</GhostButton>
+              </Reveal>
+            </div>
+
+            <p className="max-w-xl text-xs leading-5 text-zinc-500">
+              Start with the free call if you are unsure. Premium planning is
+              for deeper strategy before a serious build.
+            </p>
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">

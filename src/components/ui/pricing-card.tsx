@@ -1,4 +1,5 @@
 import Magnetic from "@/components/ui/magnetic";
+import { getCtaSupportCopy, getCtaToneClass } from "@/components/ui/cta-tone";
 
 type PricingCardProps = {
   title: string;
@@ -27,6 +28,9 @@ export default function PricingCard({
   href,
   featured = false,
 }: PricingCardProps) {
+  const ctaToneClass = getCtaToneClass(cta, href);
+  const ctaSupportCopy = getCtaSupportCopy(cta, href);
+
   return (
     <Magnetic as="div" className="h-full" strength={0.04} scale={1.002}>
       <div
@@ -88,15 +92,14 @@ export default function PricingCard({
         <Magnetic className="inline-flex w-full" strength={0.1}>
           <a
             href={href}
-            className={`inline-flex w-full items-center justify-center rounded-2xl px-4 py-3 text-center text-sm font-semibold transition duration-300 hover:scale-[1.01] ${
-              featured
-                ? "border border-cyan-400/35 bg-cyan-400/14 text-cyan-100 hover:border-cyan-300/55 hover:bg-cyan-400/22 hover:shadow-[0_0_32px_rgba(34,211,238,0.22)]"
-                : "border border-white/15 bg-white/5 text-white hover:border-cyan-400/30 hover:bg-white/10 hover:shadow-[0_0_24px_rgba(34,211,238,0.10)]"
-            }`}
+            className={`inline-flex w-full items-center justify-center rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${ctaToneClass}`}
           >
             {cta}
           </a>
         </Magnetic>
+        <p className="mt-2 text-center text-[11px] leading-5 text-zinc-500">
+          {featured ? "Most guided path for serious builds." : ctaSupportCopy}
+        </p>
       </div>
       </div>
     </Magnetic>

@@ -28,6 +28,24 @@ html {
   scroll-behavior: smooth;
 }
 
+section[id],
+#contact-form {
+  scroll-margin-top: 118px;
+}
+
+@media (max-width: 640px) {
+  section[id],
+  #contact-form {
+    scroll-margin-top: 142px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}
+
 @keyframes float-soft {
   0% {
     transform: translateY(0px);

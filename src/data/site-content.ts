@@ -9,23 +9,23 @@ export const offers = [
     title: "Free Strategy Call",
     badge: "Best first step",
     description:
-      "Book a free 15-minute phone call to talk through your goals, current setup, and what kind of help makes the most sense.",
+      "A quick 15-minute clarity call for your goals, current setup, and the best next step.",
     cta: "Book Free Call",
     href: "/book?service=free-call",
   },
   {
     title: "Premium Session",
-    badge: "Serious clients",
+    badge: "Deep planning",
     description:
-      "Book a paid deep strategy session for focused planning, problem-solving, and a cleaner action path for your project or business.",
+      "A focused paid session for deeper planning, problem-solving, and a cleaner action path.",
     cta: "Book Premium Session",
     href: "/book?service=premium-session",
   },
   {
     title: "Direct Project Inquiry",
-    badge: "Skip straight in",
+    badge: "Low pressure",
     description:
-      "Use the inquiry form if you already know what you need and want to start the conversation about a custom build or service.",
+      "Use the inquiry form when you already know the custom build or service you want to discuss.",
     cta: "Send Project Inquiry",
     href: "#contact-form",
   },
@@ -178,7 +178,7 @@ export const pricingTrustNotes = [
   "Starting prices may vary based on scope.",
   "Final quote confirmed after strategy call.",
   "No pressure - start with the free call if unsure.",
-  "Premium planning session can be credited toward larger projects if we choose to offer that later.",
+  "Build queue availability changes weekly.",
 ];
 
 export const pricingFaqs = [
@@ -291,6 +291,8 @@ export const trustStripItems = [
   "Real booking infrastructure",
   "Local-first business tooling",
   "AI-assisted creative systems",
+  "Structured build process",
+  "Automation-ready workflows",
 ];
 
 export const faqs = [
@@ -314,6 +316,6 @@ export const faqs = [
 export const whyChoose = [
   "Clear entry points for free consults, paid planning, and direct inquiries",
   "Creative + technical support in one place",
-  "Fast path from conversation to action plan",
+  "Fast response support with clear next steps",
   "Professional web presence backed by real booking links",
 ];

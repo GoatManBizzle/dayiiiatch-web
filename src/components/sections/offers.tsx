@@ -1,6 +1,7 @@
 import SectionShell from "@/components/ui/section-shell";
 import Reveal from "@/components/ui/reveal";
 import Magnetic from "@/components/ui/magnetic";
+import { getCtaSupportCopy, getCtaToneClass } from "@/components/ui/cta-tone";
 import { offers } from "@/data/site-content";
 
 export default function OffersSection() {
@@ -14,6 +15,8 @@ export default function OffersSection() {
       <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {offers.map((offer, index) => {
           const external = offer.href.startsWith("http");
+          const ctaToneClass = getCtaToneClass(offer.cta, offer.href);
+          const supportCopy = getCtaSupportCopy(offer.cta, offer.href);
 
           return (
             <Reveal key={offer.title} delayMs={index * 90}>
@@ -38,11 +41,14 @@ export default function OffersSection() {
                       href={offer.href}
                       target={external ? "_blank" : undefined}
                       rel={external ? "noreferrer" : undefined}
-                      className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/15 to-violet-500/15 px-5 py-3 text-center text-sm font-semibold text-cyan-100 transition duration-300 hover:scale-[1.012] hover:border-cyan-300/50 hover:shadow-[0_0_32px_rgba(34,211,238,0.23)] sm:w-auto"
+                      className={`inline-flex min-h-12 w-full items-center justify-center rounded-2xl border px-5 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.012] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 sm:w-auto ${ctaToneClass}`}
                     >
                       {offer.cta}
                     </a>
                   </Magnetic>
+                  <p className="mt-2 text-xs leading-5 text-zinc-500">
+                    {supportCopy}
+                  </p>
                 </div>
                 </div>
               </Magnetic>

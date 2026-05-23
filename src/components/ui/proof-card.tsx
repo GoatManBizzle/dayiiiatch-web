@@ -1,4 +1,5 @@
 import Magnetic from "@/components/ui/magnetic";
+import { getCtaSupportCopy, getCtaToneClass } from "@/components/ui/cta-tone";
 
 type ProofCardProps = {
   title: string;
@@ -21,6 +22,9 @@ export default function ProofCard({
   href,
   status,
 }: ProofCardProps) {
+  const ctaToneClass = getCtaToneClass(cta, href);
+  const ctaSupportCopy = getCtaSupportCopy(cta, href);
+
   const rows = [
     { label: "Problem", text: problem },
     { label: "Solution", text: solution },
@@ -60,11 +64,14 @@ export default function ProofCard({
         <Magnetic className="inline-flex w-full" strength={0.1}>
           <a
             href={href}
-            className="inline-flex w-full items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-4 py-3 text-center text-sm font-semibold text-cyan-100 transition duration-300 hover:scale-[1.01] hover:border-cyan-300/55 hover:shadow-[0_0_32px_rgba(34,211,238,0.22)]"
+            className={`inline-flex w-full items-center justify-center rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.01] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${ctaToneClass}`}
           >
             {cta}
           </a>
         </Magnetic>
+        <p className="mt-2 text-center text-[11px] leading-5 text-zinc-500">
+          {ctaSupportCopy}
+        </p>
       </div>
       </div>
     </Magnetic>
