@@ -24,6 +24,28 @@ body {
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.main-public-background {
+  position: fixed;
+  inset: 0;
+  background-image: url("/bg-main.png");
+  background-size: 100% auto;
+  background-position: top center;
+  background-repeat: repeat-y;
+  background-attachment: fixed;
+  opacity: 0.72;
+  transform: translateZ(0);
+}
+
+@media (max-width: 640px) {
+  .main-public-background {
+    position: absolute;
+    background-size: 125% auto;
+    background-attachment: scroll;
+    opacity: 0.62;
+  }
+}
+
 html {
   scroll-behavior: smooth;
 }
@@ -43,6 +65,24 @@ section[id],
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+}
+
+@media (hover: none) and (pointer: coarse) {
+  a,
+  button,
+  [role="button"] {
+    -webkit-tap-highlight-color: rgba(34, 211, 238, 0.14);
+  }
+
+  a:active,
+  button:active,
+  [role="button"]:active {
+    transform: scale(0.98);
+  }
+
+  .card-sheen:active {
+    transform: scale(0.995);
   }
 }
 
@@ -543,6 +583,50 @@ textarea:-webkit-autofill {
   }
 }
 
+.client-journey-route {
+  opacity: 0.78;
+}
+
+.client-journey-pulse {
+  animation: clientJourneyPulse 5.5s ease-in-out infinite;
+}
+
+@keyframes clientJourneyPulse {
+  0% {
+    opacity: 0;
+    transform: translateY(0);
+  }
+  18% {
+    opacity: 0.72;
+  }
+  52% {
+    opacity: 0.34;
+  }
+  100% {
+    opacity: 0;
+    transform: translateY(520px);
+  }
+}
+
+@media (min-width: 1024px) {
+  @keyframes clientJourneyPulse {
+    0% {
+      opacity: 0;
+      transform: translateX(0);
+    }
+    18% {
+      opacity: 0.72;
+    }
+    52% {
+      opacity: 0.34;
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(920px);
+    }
+  }
+}
+
 .ambient-home-layer {
   position: fixed;
   inset: 0;
@@ -640,7 +724,8 @@ textarea:-webkit-autofill {
   .ambient-home-gradient,
   .ambient-home-haze,
   .ambient-home-sweep,
-  .ambient-home-particles {
+  .ambient-home-particles,
+  .client-journey-pulse {
     animation: none !important;
   }
 }

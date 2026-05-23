@@ -5,7 +5,7 @@ import { brand } from "@/config/brand";
 export default function TopBanner() {
   return (
     <section className="relative mb-6 overflow-hidden rounded-[2.25rem] border border-cyan-400/20 shadow-[0_0_80px_rgba(56,189,248,0.08)]">
-      <div className="absolute inset-0 bg-[url('/bg-banner.png')] bg-cover bg-center bg-no-repeat opacity-80" />
+      <div className="absolute inset-0 bg-[url('/bg-main.png')] bg-cover bg-center bg-no-repeat opacity-80" />
 
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(2,6,23,0.78),rgba(9,9,11,0.38),rgba(9,9,11,0.62))]" />
 

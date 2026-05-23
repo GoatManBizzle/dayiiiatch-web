@@ -3,7 +3,7 @@ import { footerLinks } from "@/config/links";
 
 export default function FooterSection() {
   return (
-    <footer className="mt-14 border-t border-white/10 py-8 md:mt-16">
+    <footer className="mt-10 border-t border-white/10 py-7 md:mt-16 md:py-8">
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
           <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-cyan-400/20 bg-zinc-900/70 shadow-[0_0_20px_rgba(34,211,238,0.12)]">

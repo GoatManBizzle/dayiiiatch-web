@@ -45,9 +45,9 @@ export const metadata: Metadata = {
     images: [siteMeta.ogImage],
   },
   icons: {
-    icon: "/favicon.ico",
-    shortcut: "/favicon.ico",
-    apple: "/favicon.ico",
+    icon: "/dayiiiatch-logo.png",
+    shortcut: "/dayiiiatch-logo.png",
+    apple: "/dayiiiatch-logo.png",
   },
   alternates: {
     canonical: siteMeta.url,

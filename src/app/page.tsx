@@ -10,6 +10,7 @@ import HomepageScrollManager from "@/components/sections/homepage-scroll-manager
 import ScreenshotBannerSection from "@/components/sections/screenshot-banner";
 import HeaderSection from "@/components/sections/header";
 import HeroSection from "@/components/sections/hero";
+import ClientJourneySection from "@/components/sections/client-journey";
 import HowWeWorkSection from "@/components/sections/how-we-work";
 import ProofSystemsSection from "@/components/sections/proof-systems";
 import DigitalLogoBanner from "@/components/sections/digital-logo-banner";
@@ -37,7 +38,7 @@ export default function HomePage() {
   const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
 
   return (
-    <SiteShell>
+    <SiteShell fixedMainBackground compactMobileSpacing>
       <HomepageScrollManager />
       <AmbientMotion />
       <DigitalLogoBanner />
@@ -57,6 +58,9 @@ export default function HomePage() {
       </Reveal>
       <Reveal delayMs={60}>
         <HowWeWorkSection />
+      </Reveal>
+      <Reveal delayMs={70}>
+        <ClientJourneySection />
       </Reveal>
       {isDev && screenshotMode && (
         <Reveal delayMs={60}>

@@ -205,7 +205,7 @@ export default function ContactFormSection() {
   return (
     <section
       id="contact-form"
-      className="relative mt-12 overflow-hidden rounded-[1.6rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)] sm:rounded-[2rem] md:mt-16"
+      className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)] sm:rounded-[2rem] md:mt-16"
     >
       <div
         className="absolute inset-0 bg-cover bg-center"
@@ -219,17 +219,17 @@ export default function ContactFormSection() {
       <div className="pointer-events-none absolute bottom-0 right-0 h-56 w-56 rounded-full bg-blue-500/10 blur-3xl" />
       <div className="pointer-events-none absolute inset-[1px] rounded-[2rem] border border-cyan-300/10" />
 
-      <div className="relative z-10 p-5 sm:p-8 md:p-10">
-        <div className="mb-8 text-center">
+      <div className="relative z-10 p-4 sm:p-8 md:p-10">
+        <div className="mb-6 text-center sm:mb-8">
           <p className="text-xs uppercase tracking-[0.18em] text-cyan-300/80 sm:text-sm sm:tracking-[0.25em]">
             Contact / Inquiry
           </p>
 
-          <h3 className="mt-2 text-3xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
+          <h3 className="mt-2 text-2xl font-black leading-tight text-white sm:text-4xl md:text-5xl">
             Send the project details. Choose the best next step.
           </h3>
 
-          <p className="mx-auto mt-4 max-w-2xl text-sm leading-7 text-zinc-300">
+          <p className="mx-auto mt-3 max-w-2xl text-sm leading-6 text-zinc-300 sm:mt-4 sm:leading-7">
             Use the form for custom website builds, booking systems,
             automation ideas, visual direction, and digital cleanup. Need quick
             clarity first? Book the free call. Need deeper planning? Choose the

@@ -62,7 +62,7 @@ export default function LeadCaptureSection() {
   }
 
   return (
-    <section className="relative mt-12 overflow-hidden rounded-[1.7rem] border border-cyan-300/12 bg-white/[0.035] p-5 shadow-[0_0_46px_rgba(34,211,238,0.06)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8">
+    <section className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-white/[0.035] p-4 shadow-[0_0_46px_rgba(34,211,238,0.06)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8">
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.035),transparent_44%)]" />
       <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
 
@@ -84,7 +84,7 @@ export default function LeadCaptureSection() {
 
         <form
           onSubmit={handleSubmit}
-          className="rounded-[1.5rem] border border-white/10 bg-zinc-950/62 p-4 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl sm:rounded-[1.8rem] sm:p-5"
+          className="rounded-[1.35rem] border border-white/10 bg-zinc-950/62 p-3.5 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl sm:rounded-[1.8rem] sm:p-5"
         >
           <div className="grid gap-3 md:grid-cols-[0.85fr_1fr]">
             <input
@@ -97,7 +97,7 @@ export default function LeadCaptureSection() {
               }
               placeholder="Name optional"
               disabled={submitState === "loading"}
-              className="min-h-12 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50 focus:shadow-[0_0_22px_rgba(34,211,238,0.10)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="min-h-12 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-base text-white outline-none transition focus:border-cyan-400/50 focus:shadow-[0_0_22px_rgba(34,211,238,0.10)] disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
             />
 
             <input
@@ -112,7 +112,7 @@ export default function LeadCaptureSection() {
               }
               placeholder="Email address"
               disabled={submitState === "loading"}
-              className="min-h-12 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-sm text-white outline-none transition focus:border-cyan-400/50 focus:shadow-[0_0_22px_rgba(34,211,238,0.10)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="min-h-12 rounded-2xl border border-white/10 bg-black/35 px-4 py-3 text-base text-white outline-none transition focus:border-cyan-400/50 focus:shadow-[0_0_22px_rgba(34,211,238,0.10)] disabled:cursor-not-allowed disabled:opacity-60 sm:text-sm"
             />
           </div>
 
@@ -120,7 +120,7 @@ export default function LeadCaptureSection() {
             <button
               type="submit"
               disabled={submitState === "loading"}
-              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-5 py-3 text-center text-sm font-bold text-cyan-100 transition duration-300 hover:scale-[1.01] hover:border-cyan-300/50 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)] disabled:cursor-not-allowed disabled:opacity-60"
+              className="inline-flex min-h-12 items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-5 py-3 text-center text-sm font-bold text-cyan-100 transition duration-300 hover:scale-[1.01] hover:border-cyan-300/50 hover:shadow-[0_0_28px_rgba(34,211,238,0.16)] active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-60"
             >
               {submitState === "loading"
                 ? "Sending..."
@@ -139,7 +139,7 @@ export default function LeadCaptureSection() {
                   {message}
                 </p>
 
-                <div className="grid w-full gap-2 sm:w-auto sm:grid-cols-3">
+                <div className="grid w-full max-w-sm gap-2 sm:w-auto sm:max-w-none sm:grid-cols-3">
                   <a
                     href={checklistPdf}
                     download

@@ -30,8 +30,8 @@ export default function ReturnToTop() {
     <button
       type="button"
       onClick={scrollToTop}
-      className={`fixed right-3 z-[840] inline-flex min-h-11 items-center justify-center gap-2 rounded-full border border-cyan-300/22 bg-zinc-950/78 px-4 py-2 text-xs font-black uppercase tracking-[0.12em] text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.12)] backdrop-blur-2xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:shadow-[0_0_34px_rgba(34,211,238,0.18)] focus:outline-none focus:ring-2 focus:ring-cyan-300/40 sm:right-5 sm:text-sm ${
-        isDev ? "bottom-48 sm:bottom-24" : "bottom-24 sm:bottom-5"
+      className={`fixed right-3 z-[840] inline-flex min-h-10 items-center justify-center gap-1.5 rounded-full border border-cyan-300/22 bg-zinc-950/78 px-3 py-2 text-[11px] font-black uppercase tracking-[0.1em] text-cyan-100 shadow-[0_0_28px_rgba(34,211,238,0.12)] backdrop-blur-2xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:shadow-[0_0_34px_rgba(34,211,238,0.18)] focus:outline-none focus:ring-2 focus:ring-cyan-300/40 sm:right-5 sm:min-h-11 sm:gap-2 sm:px-4 sm:text-sm ${
+        isDev ? "bottom-44 sm:bottom-24" : "bottom-20 sm:bottom-5"
       } ${
         visible
           ? "pointer-events-auto translate-y-0 opacity-100"
@@ -46,7 +46,7 @@ export default function ReturnToTop() {
       >
         ↑
       </span>
-      <span>Top</span>
+      <span className="hidden min-[390px]:inline">Top</span>
     </button>
   );
 }

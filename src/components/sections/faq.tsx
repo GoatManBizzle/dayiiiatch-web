@@ -5,7 +5,7 @@ export default function FAQSection() {
   return (
     <section
       id="faq"
-      className="mt-12 grid gap-5 md:mt-16 lg:grid-cols-[0.9fr_1.1fr]"
+      className="mt-10 grid gap-4 md:mt-16 lg:grid-cols-[0.9fr_1.1fr] lg:gap-5"
     >
       <div className="rounded-[1.6rem] border border-white/10 bg-white/5 p-5 sm:rounded-[2rem] sm:p-6">
         <p className="text-xs uppercase tracking-[0.18em] text-zinc-400 sm:text-sm sm:tracking-[0.25em]">

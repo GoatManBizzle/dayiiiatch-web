@@ -26,61 +26,32 @@ type Project = {
   highlights: string[];
   badges: string[];
   imageSlots: ProofImageSlot[];
-  demoVideoSrc: string;
+  demoVideoSrc?: string;
 };
 
-function buildImageSlots(slug: string): ProofImageSlot[] {
+function buildImageSlots(slug?: string): ProofImageSlot[] {
+  const image = (label: string, filename: string): ProofImage[] =>
+    slug
+      ? [
+          {
+            label,
+            src: `/images/proof/${slug}/${filename}`,
+          },
+        ]
+      : [];
+
   return [
     {
       label: "Screenshot slot",
-      images: [
-        {
-          label: "Screenshot slot 1",
-          src: `/images/proof/${slug}/screenshot-01.png`,
-        },
-        {
-          label: "Screenshot slot 2",
-          src: `/images/proof/${slug}/screenshot-01b.png`,
-        },
-        {
-          label: "Screenshot slot 3",
-          src: `/images/proof/${slug}/screenshot-01c.png`,
-        },
-      ],
+      images: image("Screenshot slot", "screenshot-01.png"),
     },
     {
       label: "Workflow visual",
-      images: [
-        {
-          label: "Workflow visual 1",
-          src: `/images/proof/${slug}/screenshot-02.png`,
-        },
-        {
-          label: "Workflow visual 2",
-          src: `/images/proof/${slug}/screenshot-02b.png`,
-        },
-        {
-          label: "Workflow visual 3",
-          src: `/images/proof/${slug}/screenshot-02c.png`,
-        },
-      ],
+      images: image("Workflow visual", "screenshot-02.png"),
     },
     {
       label: "Dashboard preview",
-      images: [
-        {
-          label: "Dashboard preview 1",
-          src: `/images/proof/${slug}/screenshot-03.png`,
-        },
-        {
-          label: "Dashboard preview 2",
-          src: `/images/proof/${slug}/screenshot-03b.png`,
-        },
-        {
-          label: "Dashboard preview 3",
-          src: `/images/proof/${slug}/screenshot-03c.png`,
-        },
-      ],
+      images: image("Dashboard preview", "screenshot-03.png"),
     },
   ];
 }
@@ -108,8 +79,7 @@ const projects: Project[] = [
       "Email diagnostics and reminders",
     ],
     badges: ["Booking flow", "Admin dashboard", "Email alerts", "CSV exports"],
-    imageSlots: buildImageSlots("scheduler"),
-    demoVideoSrc: "/videos/proof/scheduler-demo.mp4",
+    imageSlots: buildImageSlots(),
   },
   {
     title: "Project Damarko",
@@ -151,7 +121,6 @@ const projects: Project[] = [
     ],
     badges: ["Audio workflow", "Creator tools", "AI support", "Dashboard UX"],
     imageSlots: buildImageSlots("echoforge"),
-    demoVideoSrc: "/videos/proof/echoforge-demo.mp4",
   },
 ];
 
@@ -208,7 +177,7 @@ export default function ProofSystemsSection() {
   return (
     <section
       id="proof-systems"
-      className="relative mt-12 overflow-visible rounded-[1.7rem] border border-cyan-300/10 bg-white/[0.035] p-5 shadow-[0_0_52px_rgba(34,211,238,0.07)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
+      className="relative mt-10 overflow-visible rounded-[1.5rem] border border-cyan-300/10 bg-white/[0.035] p-4 shadow-[0_0_52px_rgba(34,211,238,0.07)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,0.14),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_42%)]" />
       <div className="pointer-events-none absolute inset-x-4 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent" />
@@ -325,7 +294,7 @@ function ProjectDetailsModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/78 p-3 backdrop-blur-md sm:p-6"
+      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/78 p-2 backdrop-blur-md sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={`${project.title} details`}
@@ -337,11 +306,11 @@ function ProjectDetailsModal({
         onClick={onClose}
       />
 
-      <div className="relative flex max-h-[90vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.6rem] border border-white/10 bg-[#070a12]/95 text-white shadow-[0_0_70px_rgba(34,211,238,0.16)] backdrop-blur-2xl sm:rounded-[2rem]">
+      <div className="relative flex max-h-[92vh] w-full max-w-5xl flex-col overflow-hidden rounded-[1.25rem] border border-white/10 bg-[#070a12]/95 text-white shadow-[0_0_70px_rgba(34,211,238,0.16)] backdrop-blur-2xl sm:max-h-[90vh] sm:rounded-[2rem]">
         <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_0%,rgba(34,211,238,0.13),transparent_34%),radial-gradient(circle_at_90%_10%,rgba(168,85,247,0.12),transparent_32%)]" />
 
-        <div className="relative overflow-y-auto p-5 sm:p-6">
-          <div className="flex flex-col gap-4 border-b border-white/10 pb-5 sm:flex-row sm:items-start sm:justify-between">
+        <div className="relative overflow-y-auto p-4 sm:p-6">
+          <div className="flex flex-col gap-4 border-b border-white/10 pb-4 sm:flex-row sm:items-start sm:justify-between sm:pb-5">
             <div>
               <StatusPill project={project} />
               <h3 className="mt-3 text-2xl font-black leading-tight sm:text-4xl">
@@ -350,7 +319,7 @@ function ProjectDetailsModal({
               <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-300">
                 {project.summary}
               </p>
-              <p className="mt-4 max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] px-4 py-3 text-sm leading-6 text-zinc-300">
+              <p className="mt-3 max-w-3xl rounded-2xl border border-white/10 bg-white/[0.04] px-3 py-3 text-sm leading-6 text-zinc-300 sm:mt-4 sm:px-4">
                 <span className="font-bold text-cyan-100">
                   Problem solved:
                 </span>{" "}
@@ -460,6 +429,17 @@ function ScreenshotSlot({
   projectTitle: string;
   onOpenScreenshot: (index: number) => void;
 }) {
+  if (!slot.images.length) {
+    return (
+      <div className="rounded-[1.25rem] border border-cyan-300/12 bg-black/25 p-3 shadow-[inset_0_0_28px_rgba(255,255,255,0.025)]">
+        <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-cyan-100">
+          {slot.label}
+        </p>
+        <ScreenshotPlaceholder label={slot.label} index={startIndex} />
+      </div>
+    );
+  }
+
   return (
     <div className="rounded-[1.25rem] border border-cyan-300/12 bg-black/25 p-3 shadow-[inset_0_0_28px_rgba(255,255,255,0.025)]">
       <p className="mb-3 text-xs font-bold uppercase tracking-[0.14em] text-cyan-100">
@@ -543,7 +523,7 @@ function VideoPreview({
   src,
 }: {
   projectTitle: string;
-  src: string;
+  src?: string;
 }) {
   const [failed, setFailed] = useState(false);
 
@@ -558,7 +538,7 @@ function VideoPreview({
         </span>
       </div>
 
-      {failed ? (
+      {!src || failed ? (
         <div className="flex aspect-video items-center justify-center rounded-[1.15rem] border border-white/10 bg-[linear-gradient(135deg,rgba(34,211,238,0.08),rgba(168,85,247,0.08),rgba(0,0,0,0.34))] p-5 text-center">
           <div>
             <div className="mx-auto mb-4 h-1 w-14 rounded-full bg-cyan-300/70 shadow-[0_0_18px_rgba(34,211,238,0.34)]" />
@@ -637,7 +617,7 @@ function ScreenshotLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/88 p-3 backdrop-blur-md sm:p-6"
+      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/88 p-2 backdrop-blur-md sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={`${screenshot.title} ${active.label} screenshot`}
@@ -650,25 +630,25 @@ function ScreenshotLightbox({
       />
 
       <div className="relative w-full max-w-6xl">
-        <div className="mb-3 flex items-center justify-between gap-3">
+        <div className="mb-3 flex flex-col gap-3 min-[420px]:flex-row min-[420px]:items-center min-[420px]:justify-between">
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.18em] text-cyan-200">
               {screenshot.title}
             </p>
-            <h3 className="mt-1 text-xl font-black text-white">
+            <h3 className="mt-1 text-lg font-black text-white sm:text-xl">
               {active.label}
             </h3>
           </div>
 
           <div className="flex items-center gap-2">
-            <span className="inline-flex min-h-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-4 py-2 text-sm font-bold text-cyan-100">
+            <span className="inline-flex min-h-10 items-center justify-center rounded-2xl border border-cyan-300/20 bg-cyan-400/10 px-3 py-2 text-sm font-bold text-cyan-100 sm:px-4">
               {activeIndex + 1} / {total}
             </span>
 
             <button
               type="button"
               onClick={onClose}
-              className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-bold text-white transition hover:border-cyan-300/25 hover:bg-white/12"
+              className="inline-flex min-h-10 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.08] px-4 py-2 text-sm font-bold text-white transition hover:border-cyan-300/25 hover:bg-white/12 active:scale-[0.98]"
             >
               Close
             </button>
@@ -699,7 +679,7 @@ function ScreenshotLightbox({
             <button
               type="button"
               onClick={showPrevious}
-              className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/55 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 sm:h-14 sm:w-14"
+              className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/60 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 active:scale-[0.96] sm:h-14 sm:w-14"
               aria-label="Previous screenshot"
             >
               &lt;
@@ -710,7 +690,7 @@ function ScreenshotLightbox({
             <button
               type="button"
               onClick={showNext}
-              className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/55 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 sm:h-14 sm:w-14"
+              className="pointer-events-auto inline-flex h-11 w-11 items-center justify-center rounded-2xl border border-cyan-300/25 bg-black/60 text-2xl font-black text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.14)] backdrop-blur-xl transition hover:border-cyan-300/45 hover:bg-cyan-400/12 active:scale-[0.96] sm:h-14 sm:w-14"
               aria-label="Next screenshot"
             >
               &gt;
