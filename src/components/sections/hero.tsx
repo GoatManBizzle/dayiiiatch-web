@@ -32,7 +32,10 @@ const services = [
 export default function HeroSection() {
   return (
     <Reveal>
-      <section className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-7">
+      <section
+        id="promo-hero"
+        className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr] lg:items-center lg:gap-7"
+      >
         <div className="space-y-5 sm:space-y-6">
           <div className="inline-flex max-w-full rounded-full border border-cyan-400/20 bg-cyan-400/10 px-3 py-1 text-[11px] font-medium uppercase tracking-[0.18em] text-cyan-200 shadow-[0_0_24px_rgba(34,211,238,0.12)] sm:px-4 sm:text-xs sm:tracking-[0.25em]">
             {brand.heroEyebrow}

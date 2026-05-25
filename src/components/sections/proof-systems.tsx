@@ -124,6 +124,10 @@ const projects: Project[] = [
   },
 ];
 
+function normalizeProjectSlug(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
+
 const statusStyles: Record<Project["statusTone"], string> = {
   green:
     "border-emerald-300/25 bg-emerald-400/10 text-emerald-100 shadow-[0_0_18px_rgba(16,185,129,0.10)]",
@@ -155,6 +159,35 @@ export default function ProofSystemsSection() {
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    if (!mounted) return;
+
+    const params = new URLSearchParams(window.location.search);
+    const captureTarget = params.get("capture");
+    if (captureTarget !== "systems-modal" && captureTarget !== "systems-lightbox") {
+      return;
+    }
+
+    const requestedProject = params.get("project") || "scheduler-platform";
+    const project =
+      projects.find(
+        (item) => normalizeProjectSlug(item.title) === requestedProject
+      ) ?? projects[0];
+
+    setActiveProject(project);
+
+    if (captureTarget === "systems-lightbox") {
+      const screenshots = getProjectImages(project);
+      if (screenshots.length) {
+        setActiveScreenshot({
+          title: project.title,
+          screenshots,
+          index: 0,
+        });
+      }
+    }
+  }, [mounted]);
 
   useEffect(() => {
     if (!activeProject && !activeScreenshot) return;
@@ -242,6 +275,8 @@ export default function ProofSystemsSection() {
                   <button
                     type="button"
                     onClick={() => setActiveProject(project)}
+                    data-growth-event="modal-open"
+                    data-growth-target={normalizeProjectSlug(project.title)}
                     className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-5 py-3 text-center text-sm font-bold text-cyan-100 transition duration-300 hover:scale-[1.01] hover:border-cyan-300/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.18)]"
                   >
                     View Details
@@ -294,7 +329,7 @@ function ProjectDetailsModal({
 }) {
   return (
     <div
-      className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/78 p-2 backdrop-blur-md sm:p-6"
+      className="screenshot-modal fixed inset-0 z-[9999] flex items-center justify-center bg-black/78 p-2 backdrop-blur-md sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={`${project.title} details`}
@@ -394,12 +429,18 @@ function ProjectDetailsModal({
           <div className="mt-5 flex flex-col gap-3 border-t border-white/10 pt-5 sm:flex-row sm:flex-wrap">
             <a
               href="/book?service=free-call"
+              data-growth-event="modal-cta-click"
+              data-cta-type="book-free-call"
+              data-growth-target={normalizeProjectSlug(project.title)}
               className="inline-flex min-h-12 flex-1 items-center justify-center rounded-2xl border border-white/20 bg-white px-5 py-3 text-center text-sm font-bold text-zinc-950 transition hover:shadow-[0_0_28px_rgba(255,255,255,0.16)] sm:flex-none"
             >
               Book Free Call
             </a>
             <a
               href="/book?service=premium-session"
+              data-growth-event="modal-cta-click"
+              data-cta-type="book-premium-session"
+              data-growth-target={normalizeProjectSlug(project.title)}
               className="inline-flex min-h-12 flex-1 items-center justify-center rounded-2xl border border-cyan-400/35 bg-cyan-400/12 px-5 py-3 text-center text-sm font-bold text-cyan-100 transition hover:shadow-[0_0_28px_rgba(34,211,238,0.18)] sm:flex-none"
             >
               Premium Session
@@ -407,6 +448,9 @@ function ProjectDetailsModal({
             <a
               href="#contact-form"
               onClick={onClose}
+              data-growth-event="modal-cta-click"
+              data-cta-type="contact"
+              data-growth-target={normalizeProjectSlug(project.title)}
               className="inline-flex min-h-12 flex-1 items-center justify-center rounded-2xl border border-white/10 bg-white/[0.055] px-5 py-3 text-center text-sm font-bold text-white transition hover:border-violet-300/25 hover:bg-white/10 sm:flex-none"
             >
               Contact
@@ -617,7 +661,7 @@ function ScreenshotLightbox({
 
   return (
     <div
-      className="fixed inset-0 z-[10000] flex items-center justify-center bg-black/88 p-2 backdrop-blur-md sm:p-6"
+      className="screenshot-lightbox fixed inset-0 z-[10000] flex items-center justify-center bg-black/88 p-2 backdrop-blur-md sm:p-6"
       role="dialog"
       aria-modal="true"
       aria-label={`${screenshot.title} ${active.label} screenshot`}

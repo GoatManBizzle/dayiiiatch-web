@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import { normalizeLeadSource } from "@/lib/growth-ops";
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const resendKey = process.env.RESEND_API_KEY;
@@ -321,7 +323,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const email = String(body.email ?? "").trim().toLowerCase();
     const name = String(body.name ?? "").trim();
-    const source = "homepage";
+    const source = normalizeLeadSource(body.source);
     const interest = "audit-checklist";
     const createdAt = new Date().toISOString();
 

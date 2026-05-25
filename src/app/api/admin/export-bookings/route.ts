@@ -4,6 +4,7 @@ import { NextRequest, NextResponse } from "next/server";
 import path from "path";
 
 import { requireAdminApiAuth } from "@/lib/admin-auth";
+import { derivePipelineStage, extractGrowthSource } from "@/lib/growth-ops";
 
 export const runtime = "nodejs";
 
@@ -77,6 +78,8 @@ export async function POST(req: NextRequest) {
       "Client",
       "Email",
       "Company",
+      "Source",
+      "Pipeline",
       "Status",
       "Notes",
     ];
@@ -88,6 +91,12 @@ export async function POST(req: NextRequest) {
       b.name,
       b.email,
       b.company ?? "",
+      extractGrowthSource(b.details),
+      derivePipelineStage({
+        service: b.service,
+        status: b.status,
+        details: b.details,
+      }),
       b.status,
       b.details ?? "",
     ]);

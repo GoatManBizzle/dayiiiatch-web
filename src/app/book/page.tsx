@@ -7,6 +7,7 @@ import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import SiteShell from "@/components/layout/site-shell";
 import HeaderSection from "@/components/sections/header";
 import { GhostButton, PrimaryButton, SolidCTA } from "@/components/ui/buttons";
+import { normalizeLeadSource } from "@/lib/growth-ops";
 
 type SubmitState = "idle" | "loading" | "success" | "error";
 
@@ -110,6 +111,7 @@ function TimeSlotPicker({
 function BookingPageContent() {
   const searchParams = useSearchParams();
   const serviceKey = searchParams.get("service") ?? "free-call";
+  const leadSource = normalizeLeadSource(searchParams.get("source"));
 
   const selected =
     serviceMap[serviceKey as keyof typeof serviceMap] ??
@@ -206,6 +208,7 @@ function BookingPageContent() {
           message: formValues.notes,
           notes: formValues.notes,
           details: formValues.notes,
+          source: leadSource,
         }),
       });
 
@@ -240,7 +243,10 @@ function BookingPageContent() {
     <SiteShell>
       <HeaderSection />
 
-      <section className="mt-6 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start">
+      <section
+        id="booking-flow-teaser"
+        className="mt-6 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start"
+      >
         <div className="space-y-6">
           <div className="inline-flex rounded-full border border-cyan-400/20 bg-cyan-400/10 px-4 py-1 text-xs font-medium uppercase tracking-[0.25em] text-cyan-200">
             {selected.eyebrow}
@@ -274,6 +280,10 @@ function BookingPageContent() {
             <div className="rounded-2xl border border-white/10 bg-zinc-900/70 px-4 py-3 text-sm text-zinc-200">
               Duration: {selected.duration}
             </div>
+
+            <div className="rounded-2xl border border-cyan-300/14 bg-cyan-400/8 px-4 py-3 text-sm text-cyan-100 sm:col-span-2">
+              Lead Source: {leadSource}
+            </div>
           </div>
 
           <div className="hidden lg:block">
@@ -291,6 +301,8 @@ function BookingPageContent() {
             <Link
               href="/"
               className="inline-flex items-center justify-center rounded-2xl border border-cyan-400/20 bg-cyan-400/10 px-8 py-4 text-sm font-bold uppercase tracking-[0.18em] text-cyan-100 transition hover:border-cyan-300/50 hover:bg-cyan-400/20 hover:shadow-[0_0_30px_rgba(34,211,238,0.15)]"
+              data-growth-event="return-to-site"
+              data-growth-source={leadSource}
             >
               Return to Main Site
             </Link>
@@ -420,10 +432,13 @@ function BookingPageContent() {
                 type="submit"
                 disabled={submitState === "loading" || !selectedSlotIsValid}
                 className="rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/20 to-violet-500/20 px-5 py-4 text-sm font-bold text-cyan-100 transition hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-60"
+                data-growth-event="booking-submit"
+                data-growth-source={leadSource}
+                data-cta-type={serviceKey}
               >
                 {submitState === "loading"
-                  ? "Sending Booking..."
-                  : `Request ${selected.label}`}
+                ? "Sending Booking..."
+                : `Request ${selected.label}`}
               </button>
             </form>
           </div>

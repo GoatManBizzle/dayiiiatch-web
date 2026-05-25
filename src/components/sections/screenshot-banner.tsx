@@ -2,11 +2,7 @@
 
 import Image from "next/image";
 
-type Props = {
-  screenshotMode?: boolean;
-};
-
-export default function ScreenshotBanner({ screenshotMode }: Props) {
+export default function ScreenshotBanner() {
   return (
     <section className="screenshot-shell relative mb-12 md:mb-16">
       <div className="pointer-events-none absolute -left-32 -top-32 h-[320px] w-[320px] rounded-full bg-violet-500/20 blur-[120px] md:-left-40 md:-top-40 md:h-[500px] md:w-[500px] md:blur-[160px]" />

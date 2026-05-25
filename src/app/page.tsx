@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import SiteShell from "@/components/layout/site-shell";
 
@@ -11,6 +11,11 @@ import ScreenshotBannerSection from "@/components/sections/screenshot-banner";
 import HeaderSection from "@/components/sections/header";
 import HeroSection from "@/components/sections/hero";
 import ClientJourneySection from "@/components/sections/client-journey";
+import AuthorityStackSection from "@/components/sections/authority-stack";
+import ContentEngineSection from "@/components/sections/content-engine";
+import PlatformConversionSection from "@/components/sections/platform-conversion";
+import InteractiveShowcaseSection from "@/components/sections/interactive-showcase";
+import AgencyIllusionSection from "@/components/sections/agency-illusion";
 import HowWeWorkSection from "@/components/sections/how-we-work";
 import ProofSystemsSection from "@/components/sections/proof-systems";
 import DigitalLogoBanner from "@/components/sections/digital-logo-banner";
@@ -21,6 +26,8 @@ import ServicesSection from "@/components/sections/services";
 import PricingSection from "@/components/sections/pricing";
 import StickyCTA from "@/components/sections/sticky-cta";
 import ReturnToTop from "@/components/sections/return-to-top";
+import DamarkoAssistant from "@/components/sections/damarko-assistant";
+import PromoClipControls from "@/components/sections/promo-clip-controls";
 import TestimonialsSection from "@/components/sections/testimonials";
 import FAQSection from "@/components/sections/faq";
 import ContactFormSection from "@/components/sections/contact-form";
@@ -34,11 +41,28 @@ export default function HomePage() {
   const [screenshotMode, setScreenshotMode] = useState(
     siteSettings.screenshotMode
   );
+  const [promoClipMode, setPromoClipMode] = useState(false);
+  const [promoDockHidden, setPromoDockHidden] = useState(false);
 
   const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
 
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const promoEnabled =
+      params.get("promo") === "1" || params.get("mode") === "promo";
+
+    setPromoClipMode(promoEnabled);
+    setPromoDockHidden(promoEnabled && params.get("dock") === "hide");
+  }, []);
+
   return (
-    <SiteShell fixedMainBackground compactMobileSpacing>
+    <SiteShell
+      fixedMainBackground
+      compactMobileSpacing
+      screenshotMode={isDev && screenshotMode && !promoClipMode}
+      promoClipMode={promoClipMode}
+      promoDockHidden={promoDockHidden}
+    >
       <HomepageScrollManager />
       <AmbientMotion />
       <DigitalLogoBanner />
@@ -62,7 +86,22 @@ export default function HomePage() {
       <Reveal delayMs={70}>
         <ClientJourneySection />
       </Reveal>
-      {isDev && screenshotMode && (
+      <Reveal delayMs={75}>
+        <AuthorityStackSection />
+      </Reveal>
+      <Reveal delayMs={80}>
+        <ContentEngineSection />
+      </Reveal>
+      <Reveal delayMs={85}>
+        <PlatformConversionSection />
+      </Reveal>
+      <Reveal delayMs={90}>
+        <InteractiveShowcaseSection />
+      </Reveal>
+      <Reveal delayMs={95}>
+        <AgencyIllusionSection />
+      </Reveal>
+      {isDev && screenshotMode && !promoClipMode && (
         <Reveal delayMs={60}>
           <ScreenshotBannerSection />
         </Reveal>
@@ -101,17 +140,21 @@ export default function HomePage() {
         <ContactFormSection />
       </Reveal>
       <Reveal delayMs={80}>
-        <FooterSection />
+      <FooterSection />
       </Reveal>
+      <DamarkoAssistant />
       <StickyCTA />
       <ReturnToTop />
+      <PromoClipControls enabled={promoClipMode} />
 
       {isDev && (
-        <DevToggle
-          label="Screenshot Mode"
-          enabled={screenshotMode}
-          onToggle={() => setScreenshotMode((prev) => !prev)}
-        />
+        <div className="screenshot-hide promo-hide">
+          <DevToggle
+            label="Screenshot Mode"
+            enabled={screenshotMode}
+            onToggle={() => setScreenshotMode((prev) => !prev)}
+          />
+        </div>
       )}
     </SiteShell>
   );

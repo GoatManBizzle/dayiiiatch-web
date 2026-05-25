@@ -7,6 +7,8 @@ import AdminLoginForm from "@/components/admin/admin-login-form";
 import AdminLogoutButton from "@/components/admin/admin-logout-button";
 import AdminAnalytics from "@/components/admin/admin-analytics";
 import AdminSummaryPanel from "@/components/admin/admin-summary-panel";
+import GrowthSnapshotPanel from "@/components/admin/growth-snapshot-panel";
+import OperationalInsightsPanel from "@/components/admin/operational-insights-panel";
 import type { Booking } from "@/components/admin/booking-types";
 import BookingsTable from "@/components/admin/bookings-table";
 import { ADMIN_AUTH_COOKIE, isValidAdminToken } from "@/lib/admin-auth";
@@ -130,6 +132,10 @@ export default async function AdminBookingsPage() {
         </div>
 
         <AdminSummaryPanel bookings={bookings} />
+
+        <GrowthSnapshotPanel bookings={bookings} />
+
+        <OperationalInsightsPanel bookings={bookings} />
 
         <AdminAnalytics bookings={bookings} />
 

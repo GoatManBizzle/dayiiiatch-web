@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { links } from "@/config/links";
+import { normalizeLeadSource, type LeadSource } from "@/lib/growth-ops";
 
 const ctas = [
   {
@@ -30,8 +31,17 @@ export default function StickyCTA() {
   const pathname = usePathname();
   const [contactVisible, setContactVisible] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
+  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
   const scrollTimeoutRef = useRef<number | null>(null);
   const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
+
+  useEffect(() => {
+    setLeadSource(
+      normalizeLeadSource(
+        new URLSearchParams(window.location.search).get("source"),
+      ),
+    );
+  }, []);
 
   useEffect(() => {
     const contactSection = document.getElementById("contact-form");
@@ -77,9 +87,15 @@ export default function StickyCTA() {
 
   if (pathname !== "/") return null;
 
+  function withSource(href: string) {
+    if (href.startsWith("#")) return href;
+    const separator = href.includes("?") ? "&" : "?";
+    return `${href}${separator}source=${encodeURIComponent(leadSource)}`;
+  }
+
   return (
     <div
-      className={`fixed left-2.5 right-2.5 z-[850] mx-auto max-w-2xl transition-all duration-500 sm:left-1/2 sm:right-auto sm:w-auto sm:-translate-x-1/2 ${
+      className={`promo-floating fixed left-2.5 right-2.5 z-[80] mx-auto max-w-2xl transition-all duration-500 sm:left-1/2 sm:right-auto sm:w-auto sm:-translate-x-1/2 ${
         isDev ? "bottom-28 sm:bottom-5" : "bottom-3 sm:bottom-5"
       } ${
         contactVisible
@@ -98,7 +114,10 @@ export default function StickyCTA() {
           {ctas.map((cta) => (
             <a
               key={cta.label}
-              href={cta.href}
+              href={withSource(cta.href)}
+              data-growth-source={leadSource}
+              data-growth-event="sticky-cta-click"
+              data-cta-type={cta.label.toLowerCase().replaceAll(" ", "-")}
               className={`inline-flex min-h-11 items-center justify-center rounded-[1rem] border px-2 py-2.5 text-center text-[10px] font-black transition duration-500 ease-out hover:-translate-y-0.5 focus:outline-none focus:ring-2 focus:ring-cyan-300/30 active:scale-[0.97] sm:min-h-12 sm:min-w-[126px] sm:rounded-full sm:px-5 sm:py-3 sm:text-sm ${cta.tone}`}
             >
               <span className="sm:hidden">{cta.shortLabel}</span>

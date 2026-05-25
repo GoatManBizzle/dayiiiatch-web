@@ -4,6 +4,16 @@ import { links } from "@/config/links";
 import { getCtaToneClass } from "@/components/ui/cta-tone";
 import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import NeonImageButton from "../ui/neon-image-button";
+import { normalizeLeadSource, type LeadSource } from "@/lib/growth-ops";
+import {
+  buildSmartIntakeSummary,
+  getComplexityTags,
+  getRecommendedNextStep,
+  serviceQuestions,
+  smartServiceTypes,
+  type SmartIntakeValues,
+  type SmartServiceType,
+} from "@/lib/smart-intake";
 
 type SubmitState = "idle" | "loading" | "success" | "error";
 
@@ -84,11 +94,51 @@ function FloatingField({
   );
 }
 
+function IntakeChipGroup({
+  label,
+  items,
+  selected,
+  onToggle,
+}: {
+  label: string;
+  items: string[];
+  selected: string[];
+  onToggle: (value: string) => void;
+}) {
+  return (
+    <div>
+      <p className="mb-2 text-xs font-bold uppercase tracking-[0.14em] text-zinc-400">
+        {label}
+      </p>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item) => {
+          const active = selected.includes(item);
+          return (
+            <button
+              key={item}
+              type="button"
+              onClick={() => onToggle(item)}
+              className={`rounded-full border px-3 py-2 text-xs font-bold transition duration-300 active:scale-[0.98] ${
+                active
+                  ? "border-cyan-300/45 bg-cyan-400/16 text-cyan-50 shadow-[0_0_18px_rgba(34,211,238,0.12)]"
+                  : "border-white/10 bg-white/[0.045] text-zinc-300 hover:border-cyan-300/24 hover:bg-cyan-400/8"
+              }`}
+            >
+              {item}
+            </button>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 export default function ContactFormSection() {
   const [submitState, setSubmitState] = useState<SubmitState>("idle");
   const [errorMessage, setErrorMessage] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
   const [successExiting, setSuccessExiting] = useState(false);
+  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
 
   const successTimerRef = useRef<number | null>(null);
   const successExitTimerRef = useRef<number | null>(null);
@@ -96,11 +146,31 @@ export default function ContactFormSection() {
   const [formValues, setFormValues] = useState({
     name: "",
     email: "",
-    projectType: "",
     message: "",
   });
+  const [intakeValues, setIntakeValues] = useState<SmartIntakeValues>({
+    serviceType: "",
+    primaryAnswer: "",
+    secondaryAnswer: "",
+    selectedSystems: [],
+    urgency: "",
+    budget: "",
+    goals: [],
+  });
+
+  const activeQuestions = intakeValues.serviceType
+    ? serviceQuestions[intakeValues.serviceType]
+    : null;
+  const complexityTags = getComplexityTags(intakeValues);
+  const recommendedNextStep = getRecommendedNextStep(intakeValues);
 
   useEffect(() => {
+    setLeadSource(
+      normalizeLeadSource(
+        new URLSearchParams(window.location.search).get("source"),
+      ),
+    );
+
     return () => {
       if (successTimerRef.current) {
         window.clearTimeout(successTimerRef.current);
@@ -156,8 +226,13 @@ export default function ContactFormSection() {
         body: JSON.stringify({
           name: formValues.name,
           email: formValues.email,
-          projectType: formValues.projectType,
+          projectType: intakeValues.serviceType,
           message: formValues.message,
+          source: leadSource,
+          pipelineStage: "New Lead",
+          smartIntakeSummary: buildSmartIntakeSummary(intakeValues),
+          complexityTags: complexityTags.join(", "),
+          recommendedNextStep,
         }),
       });
 
@@ -168,8 +243,16 @@ export default function ContactFormSection() {
       setFormValues({
         name: "",
         email: "",
-        projectType: "",
         message: "",
+      });
+      setIntakeValues({
+        serviceType: "",
+        primaryAnswer: "",
+        secondaryAnswer: "",
+        selectedSystems: [],
+        urgency: "",
+        budget: "",
+        goals: [],
       });
 
       setSubmitState("success");
@@ -200,6 +283,36 @@ export default function ContactFormSection() {
         "Something glitched while sending. Hit us directly below.",
       );
     }
+  }
+
+  function withSource(href: string) {
+    if (href.startsWith("#")) return href;
+    const separator = href.includes("?") ? "&" : "?";
+    return `${href}${separator}source=${encodeURIComponent(leadSource)}`;
+  }
+
+  function setServiceType(serviceType: SmartServiceType | "") {
+    setIntakeValues({
+      serviceType,
+      primaryAnswer: "",
+      secondaryAnswer: "",
+      selectedSystems: [],
+      urgency: "",
+      budget: "",
+      goals: [],
+    });
+  }
+
+  function toggleIntakeValue(key: "selectedSystems" | "goals", value: string) {
+    setIntakeValues((current) => {
+      const selected = current[key];
+      return {
+        ...current,
+        [key]: selected.includes(value)
+          ? selected.filter((item) => item !== value)
+          : [...selected, value],
+      };
+    });
   }
 
   return (
@@ -239,14 +352,20 @@ export default function ContactFormSection() {
 
         <div className="mx-auto mb-6 grid max-w-4xl gap-3 md:grid-cols-3">
           <a
-            href={links.freeCall}
+            href={withSource(links.freeCall)}
+            data-growth-source={leadSource}
+            data-growth-event="cta-click"
+            data-cta-type="book-free-call"
             className={`rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.012] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${getCtaToneClass("Book Free Call", links.freeCall)}`}
           >
             Book Free Call
           </a>
 
           <a
-            href={links.premiumSession}
+            href={withSource(links.premiumSession)}
+            data-growth-source={leadSource}
+            data-growth-event="cta-click"
+            data-cta-type="book-premium-session"
             className={`rounded-2xl border px-4 py-3 text-center text-sm font-semibold transition duration-500 ease-out hover:scale-[1.012] focus:outline-none focus:ring-2 focus:ring-cyan-300/30 ${getCtaToneClass("Book Premium Session", links.premiumSession)}`}
           >
             Book Premium Session
@@ -254,6 +373,9 @@ export default function ContactFormSection() {
 
           <a
             href="#services"
+            data-growth-source={leadSource}
+            data-growth-event="cta-click"
+            data-cta-type="return-to-services"
             className="rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-center text-sm font-semibold text-zinc-300 transition duration-500 ease-out hover:scale-[1.008] hover:border-cyan-400/25 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-300/25"
           >
             Return to Services
@@ -301,16 +423,150 @@ export default function ContactFormSection() {
           />
 
           <div className="md:col-span-2">
-            <FloatingField
-              id="projectType"
-              name="project_type"
-              label="Project Type"
-              disabled={submitState === "loading"}
-              value={formValues.projectType}
-              onChange={(value) =>
-                setFormValues((prev) => ({ ...prev, projectType: value }))
-              }
-            />
+            <div className="rounded-[1.5rem] border border-cyan-300/12 bg-black/24 p-4 shadow-[0_0_28px_rgba(34,211,238,0.05)] backdrop-blur-md sm:p-5">
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                  <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
+                    Smart Intake
+                  </p>
+                  <h4 className="mt-2 text-xl font-black text-white">
+                    Route the project before the first call.
+                  </h4>
+                </div>
+                <p className="max-w-md text-xs leading-5 text-zinc-400">
+                  Choose the closest lane. The follow-up questions adapt so the
+                  project arrives with cleaner context.
+                </p>
+              </div>
+
+              <div className="mt-4">
+                <label
+                  htmlFor="projectType"
+                  className="mb-2 block text-xs font-bold uppercase tracking-[0.14em] text-zinc-400"
+                >
+                  Project Type
+                </label>
+                <select
+                  id="projectType"
+                  name="project_type"
+                  value={intakeValues.serviceType}
+                  disabled={submitState === "loading"}
+                  onChange={(event) =>
+                    setServiceType(event.target.value as SmartServiceType | "")
+                  }
+                  className="w-full rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none transition focus:border-cyan-400/50 focus:shadow-[0_0_22px_rgba(34,211,238,0.12)]"
+                >
+                  <option value="">Select a service lane</option>
+                  {smartServiceTypes.map((serviceType) => (
+                    <option key={serviceType} value={serviceType}>
+                      {serviceType}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              {activeQuestions && (
+                <div className="mt-4 grid gap-4 transition-all duration-500 md:grid-cols-2">
+                  <FloatingField
+                    id="primaryAnswer"
+                    name="primary_answer"
+                    label={activeQuestions.primary}
+                    disabled={submitState === "loading"}
+                    value={intakeValues.primaryAnswer}
+                    onChange={(value) =>
+                      setIntakeValues((prev) => ({
+                        ...prev,
+                        primaryAnswer: value,
+                      }))
+                    }
+                  />
+
+                  <FloatingField
+                    id="secondaryAnswer"
+                    name="secondary_answer"
+                    label={activeQuestions.secondary}
+                    disabled={submitState === "loading"}
+                    value={intakeValues.secondaryAnswer}
+                    onChange={(value) =>
+                      setIntakeValues((prev) => ({
+                        ...prev,
+                        secondaryAnswer: value,
+                      }))
+                    }
+                  />
+
+                  <IntakeChipGroup
+                    label="Systems Needed"
+                    items={activeQuestions.systems}
+                    selected={intakeValues.selectedSystems}
+                    onToggle={(value) =>
+                      toggleIntakeValue("selectedSystems", value)
+                    }
+                  />
+
+                  <IntakeChipGroup
+                    label="Project Goals"
+                    items={activeQuestions.goals}
+                    selected={intakeValues.goals}
+                    onToggle={(value) => toggleIntakeValue("goals", value)}
+                  />
+
+                  <select
+                    value={intakeValues.urgency}
+                    disabled={submitState === "loading"}
+                    onChange={(event) =>
+                      setIntakeValues((prev) => ({
+                        ...prev,
+                        urgency: event.target.value,
+                      }))
+                    }
+                    className="rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                  >
+                    <option value="">Urgency</option>
+                    <option value="This week">This week</option>
+                    <option value="This month">This month</option>
+                    <option value="Planning ahead">Planning ahead</option>
+                  </select>
+
+                  <select
+                    value={intakeValues.budget}
+                    disabled={submitState === "loading"}
+                    onChange={(event) =>
+                      setIntakeValues((prev) => ({
+                        ...prev,
+                        budget: event.target.value,
+                      }))
+                    }
+                    className="rounded-2xl border border-white/10 bg-black/35 px-4 py-4 text-sm text-white outline-none transition focus:border-cyan-400/50"
+                  >
+                    <option value="">Budget Range</option>
+                    <option value="$500-$1.5k">$500-$1.5k</option>
+                    <option value="$1.5k-$3k">$1.5k-$3k</option>
+                    <option value="$3k-$5k">$3k-$5k</option>
+                    <option value="$5k+">$5k+</option>
+                  </select>
+
+                  <div className="rounded-2xl border border-violet-300/14 bg-violet-500/8 p-4 md:col-span-2">
+                    <p className="text-xs font-black uppercase tracking-[0.16em] text-violet-100">
+                      Internal Tags
+                    </p>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {complexityTags.map((tag) => (
+                        <span
+                          key={tag}
+                          className="rounded-full border border-cyan-300/18 bg-cyan-400/8 px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100"
+                        >
+                          {tag}
+                        </span>
+                      ))}
+                      <span className="rounded-full border border-white/10 bg-white/[0.045] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-zinc-300">
+                        {recommendedNextStep}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
 
           <div className="md:col-span-2">
@@ -356,7 +612,10 @@ export default function ContactFormSection() {
 
                   <div className="grid gap-3 sm:grid-cols-2 lg:flex lg:flex-wrap lg:justify-end">
                     <NeonImageButton
-                      href={links.freeCall}
+                      href={withSource(links.freeCall)}
+                      data-growth-source={leadSource}
+                      data-growth-event="cta-click"
+                      data-cta-type="book-free-call"
                       disabled={submitState === "loading"}
                       defaultImage="/images/contact-btn-default.png"
                       hoverImage="/images/contact-btn-hover.png"
@@ -365,7 +624,10 @@ export default function ContactFormSection() {
                     </NeonImageButton>
 
                     <NeonImageButton
-                      href={links.premiumSession}
+                      href={withSource(links.premiumSession)}
+                      data-growth-source={leadSource}
+                      data-growth-event="cta-click"
+                      data-cta-type="book-premium-session"
                       minWidthClassName="min-w-[190px]"
                       disabled={submitState === "loading"}
                       defaultImage="/images/contact-btn-default.png"
@@ -376,6 +638,9 @@ export default function ContactFormSection() {
 
                     <NeonImageButton
                       type="submit"
+                      data-growth-source={leadSource}
+                      data-growth-event="contact-submit"
+                      data-cta-type="send-project-inquiry"
                       minWidthClassName="min-w-[210px]"
                       loading={submitState === "loading"}
                       disabled={submitState === "loading"}

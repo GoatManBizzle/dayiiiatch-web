@@ -1,3 +1,3 @@
 export const siteSettings = {
-  screenshotMode: true, // 🔥 toggle this ON/OFF anytime
+  screenshotMode: true, // Toggle this ON/OFF for local presentation captures.
 };

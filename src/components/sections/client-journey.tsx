@@ -42,7 +42,10 @@ const systemIndicators = [
 
 export default function ClientJourneySection() {
   return (
-    <section className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-zinc-950/58 p-4 shadow-[0_0_58px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:rounded-[2.1rem] sm:p-6 md:mt-16 md:p-8">
+    <section
+      id="client-journey"
+      className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-zinc-950/58 p-4 shadow-[0_0_58px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:rounded-[2.1rem] sm:p-6 md:mt-16 md:p-8"
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_14%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_86%_18%,rgba(168,85,247,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_44%)]" />
       <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/55 to-transparent" />
       <div className="pointer-events-none absolute -left-24 top-1/3 h-56 w-56 rounded-full bg-cyan-400/8 blur-3xl" />

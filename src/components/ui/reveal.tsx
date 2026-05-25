@@ -66,6 +66,7 @@ export default function Reveal({
   return (
     <div
       ref={ref}
+      data-reveal
       className={`transition-all duration-700 ease-out will-change-transform motion-reduce:translate-y-0 motion-reduce:scale-100 motion-reduce:opacity-100 motion-reduce:blur-0 motion-reduce:transition-none ${
         visible
           ? "translate-y-0 scale-100 opacity-100 blur-0"

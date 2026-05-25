@@ -66,7 +66,7 @@ export default function BookingStatusSelect({
       <select
         value={currentStatus}
         onChange={handleStatusChange}
-        className={`rounded-2xl border px-4 py-2 text-sm font-bold outline-none transition ${statusStyles[currentStatus]}`}
+        className={`max-w-[128px] rounded-xl border px-2.5 py-2 text-xs font-bold outline-none transition ${statusStyles[currentStatus]}`}
       >
         <option value="pending" className="bg-black text-white">
           Pending

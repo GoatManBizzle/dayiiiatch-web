@@ -1,8 +1,9 @@
 "use client";
 
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 
 import { links } from "@/config/links";
+import { normalizeLeadSource, type LeadSource } from "@/lib/growth-ops";
 
 type SubmitState = "idle" | "loading" | "success" | "error";
 
@@ -15,6 +16,15 @@ export default function LeadCaptureSection() {
     name: "",
     email: "",
   });
+  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
+
+  useEffect(() => {
+    setLeadSource(
+      normalizeLeadSource(
+        new URLSearchParams(window.location.search).get("source"),
+      ),
+    );
+  }, []);
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -32,7 +42,7 @@ export default function LeadCaptureSection() {
         body: JSON.stringify({
           name: formValues.name,
           email: formValues.email,
-          source: "homepage",
+          source: leadSource,
           interest: "audit-checklist",
         }),
       });
@@ -61,8 +71,17 @@ export default function LeadCaptureSection() {
     }
   }
 
+  function withSource(href: string) {
+    if (href.startsWith("#")) return href;
+    const separator = href.includes("?") ? "&" : "?";
+    return `${href}${separator}source=${encodeURIComponent(leadSource)}`;
+  }
+
   return (
-    <section className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-white/[0.035] p-4 shadow-[0_0_46px_rgba(34,211,238,0.06)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8">
+    <section
+      id="checklist-capture"
+      className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-white/[0.035] p-4 shadow-[0_0_46px_rgba(34,211,238,0.06)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.035),transparent_44%)]" />
       <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/45 to-transparent" />
 
@@ -128,7 +147,7 @@ export default function LeadCaptureSection() {
             </button>
 
             <p className="text-xs leading-5 text-zinc-500">
-              Source: homepage / Interest: audit-checklist
+              Source: {leadSource} / Interest: audit-checklist
             </p>
           </div>
 
@@ -144,6 +163,8 @@ export default function LeadCaptureSection() {
                     href={checklistPdf}
                     download
                     data-lead-source="homepage"
+                    data-growth-source={leadSource}
+                    data-growth-event="pdf-download"
                     data-download-trigger="audit-checklist-success"
                     data-cta-type="download-checklist-pdf"
                     className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-white/20 bg-white px-3.5 py-2.5 text-center text-[11px] font-black text-zinc-950 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_26px_rgba(255,255,255,0.16)] active:scale-[0.98] sm:min-w-[150px]"
@@ -152,8 +173,10 @@ export default function LeadCaptureSection() {
                   </a>
 
                   <a
-                    href={links.freeCall}
+                    href={withSource(links.freeCall)}
                     data-lead-source="homepage"
+                    data-growth-source={leadSource}
+                    data-growth-event="cta-click"
                     data-download-trigger="audit-checklist-success"
                     data-cta-type="book-free-call"
                     className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-cyan-300/30 bg-cyan-400/12 px-3.5 py-2.5 text-center text-[11px] font-black text-cyan-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_26px_rgba(34,211,238,0.18)] active:scale-[0.98] sm:min-w-[138px]"
@@ -162,8 +185,10 @@ export default function LeadCaptureSection() {
                   </a>
 
                   <a
-                    href={links.premiumSession}
+                    href={withSource(links.premiumSession)}
                     data-lead-source="homepage"
+                    data-growth-source={leadSource}
+                    data-growth-event="cta-click"
                     data-download-trigger="audit-checklist-success"
                     data-cta-type="book-premium-session"
                     className="inline-flex min-h-11 items-center justify-center rounded-2xl border border-violet-300/30 bg-violet-500/12 px-3.5 py-2.5 text-center text-[11px] font-black text-violet-100 transition duration-300 hover:-translate-y-0.5 hover:shadow-[0_0_26px_rgba(168,85,247,0.18)] active:scale-[0.98] sm:min-w-[138px]"

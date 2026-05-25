@@ -1,5 +1,7 @@
 "use client";
 
+import type { AnchorHTMLAttributes, ButtonHTMLAttributes } from "react";
+
 type NeonImageButtonProps = {
   href?: string;
   children: React.ReactNode;
@@ -13,7 +15,8 @@ type NeonImageButtonProps = {
   defaultImage?: string;
   hoverImage?: string;
   successImage?: string;
-};
+} & ButtonHTMLAttributes<HTMLButtonElement> &
+  AnchorHTMLAttributes<HTMLAnchorElement>;
 
 export default function NeonImageButton({
   href,
@@ -28,6 +31,7 @@ export default function NeonImageButton({
   defaultImage = "/images/btn-default.png",
   hoverImage = "/images/btn-hover.png",
   successImage,
+  ...trackingProps
 }: NeonImageButtonProps) {
   const isDisabled = disabled || loading;
   const activeImage = successPulse && successImage ? successImage : hoverImage;
@@ -120,8 +124,10 @@ export default function NeonImageButton({
         rel={external ? "noreferrer" : undefined}
         aria-disabled={isDisabled}
         className={baseClass}
+        {...trackingProps}
         onClick={(e) => {
           if (isDisabled) e.preventDefault();
+          trackingProps.onClick?.(e);
         }}
       >
         {content}
@@ -130,7 +136,12 @@ export default function NeonImageButton({
   }
 
   return (
-    <button type={type} className={baseClass} disabled={isDisabled}>
+    <button
+      type={type}
+      className={baseClass}
+      disabled={isDisabled}
+      {...trackingProps}
+    >
       {content}
     </button>
   );

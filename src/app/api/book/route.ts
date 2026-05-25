@@ -2,6 +2,8 @@ import { createClient } from "@supabase/supabase-js";
 import { NextRequest, NextResponse } from "next/server";
 import { Resend } from "resend";
 
+import { appendGrowthMetadata, normalizeLeadSource } from "@/lib/growth-ops";
+
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 const resendKey = process.env.RESEND_API_KEY;
@@ -192,6 +194,7 @@ export async function POST(request: NextRequest) {
     const details = String(
       body.details ?? body.notes ?? body.message ?? "",
     ).trim();
+    const source = normalizeLeadSource(body.source ?? body.leadSource);
 
     if (
       !isValidService(service) ||
@@ -233,9 +236,13 @@ export async function POST(request: NextRequest) {
     }
 
     const serviceLabel = SERVICE_LABELS[service];
-    const combinedDetails = phone
+    const baseDetails = phone
       ? `Phone: ${phone}\n\n${details || "No notes provided."}`
       : details || "No notes provided.";
+    const combinedDetails = appendGrowthMetadata(baseDetails, {
+      source,
+      pipelineStage: "New Lead",
+    });
 
     const { data: insertedBooking, error: insertError } = await supabase
       .from("bookings")
@@ -323,6 +330,7 @@ export async function POST(request: NextRequest) {
             <p><strong>Date:</strong> ${safeText(date)}</p>
             <p><strong>Time:</strong> ${safeText(time)}</p>
             <p><strong>Duration:</strong> ${safeText(duration)}</p>
+            <p><strong>Source:</strong> ${safeText(source)}</p>
             <hr />
             <p><strong>Notes:</strong></p>
             <p>${safeText(details || "N/A")}</p>

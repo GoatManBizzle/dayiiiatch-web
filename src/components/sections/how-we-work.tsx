@@ -28,7 +28,10 @@ const trustIndicators = [
 
 export default function HowWeWorkSection() {
   return (
-    <section className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 shadow-[0_0_52px_rgba(139,92,246,0.07)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8">
+    <section
+      id="how-we-work"
+      className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.035] p-4 shadow-[0_0_52px_rgba(139,92,246,0.07)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
+    >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_14%_18%,rgba(34,211,238,0.12),transparent_34%),radial-gradient(circle_at_82%_10%,rgba(168,85,247,0.13),transparent_35%),linear-gradient(135deg,rgba(255,255,255,0.035),transparent_44%)]" />
       <div className="pointer-events-none absolute inset-x-5 top-0 h-px bg-gradient-to-r from-transparent via-violet-300/45 to-transparent" />
 
