@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import PortalActivityWidget from "@/components/portal/portal-activity-widget";
 import {
   portalHealthSignals,
   portalLaunchReadiness,
@@ -221,6 +222,11 @@ export default function PortalSuccessCenterWorkspace() {
               automated executive summaries.
             </p>
           </section>
+
+          <PortalActivityWidget
+            title="Recent Activity"
+            eyebrow="Command Feed"
+          />
         </div>
       </section>
 

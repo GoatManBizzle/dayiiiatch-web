@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 
 import BookingActions from "@/components/admin/booking-actions";
 import BookingsCalendar from "@/components/admin/bookings-calendar";
@@ -71,6 +71,37 @@ const essentialVisibleColumns: ColumnKey[] = [
   "actions",
 ];
 
+function getStoredPipelineOverrides(): PipelineOverrides {
+  if (typeof window === "undefined") return {};
+
+  try {
+    const stored = window.localStorage.getItem(
+      "dayiiiatch_pipeline_overrides",
+    );
+    return stored ? (JSON.parse(stored) as PipelineOverrides) : {};
+  } catch {
+    return {};
+  }
+}
+
+function getStoredVisibleColumns(): ColumnKey[] {
+  if (typeof window === "undefined") return defaultVisibleColumns;
+
+  try {
+    const storedColumns = window.localStorage.getItem(
+      "dayiiiatch_booking_columns",
+    );
+    if (!storedColumns) return defaultVisibleColumns;
+    const parsed = JSON.parse(storedColumns) as ColumnKey[];
+    const valid = parsed.filter((column) =>
+      defaultVisibleColumns.includes(column),
+    );
+    return valid.length ? valid : defaultVisibleColumns;
+  } catch {
+    return defaultVisibleColumns;
+  }
+}
+
 export default function BookingsTable({ bookings }: Props) {
   const router = useRouter();
 
@@ -81,10 +112,10 @@ export default function BookingsTable({ bookings }: Props) {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [pipelineFilter, setPipelineFilter] = useState("all");
   const [pipelineOverrides, setPipelineOverrides] = useState<PipelineOverrides>(
-    {},
+    getStoredPipelineOverrides,
   );
   const [visibleColumns, setVisibleColumns] = useState<ColumnKey[]>(
-    defaultVisibleColumns,
+    getStoredVisibleColumns,
   );
   const [columnPanelOpen, setColumnPanelOpen] = useState(false);
   const [exportMode, setExportMode] = useState<ExportMode>("filtered");
@@ -103,32 +134,6 @@ export default function BookingsTable({ bookings }: Props) {
     pushNotification([], "login", "Admin dashboard session active."),
   );
   const knownBookingIdsRef = useRef<Set<string> | null>(null);
-
-  useEffect(() => {
-    try {
-      const stored = window.localStorage.getItem(
-        "dayiiiatch_pipeline_overrides",
-      );
-      if (!stored) return;
-      setPipelineOverrides(JSON.parse(stored) as PipelineOverrides);
-    } catch {
-      setPipelineOverrides({});
-    }
-
-    try {
-      const storedColumns = window.localStorage.getItem(
-        "dayiiiatch_booking_columns",
-      );
-      if (!storedColumns) return;
-      const parsed = JSON.parse(storedColumns) as ColumnKey[];
-      const valid = parsed.filter((column) =>
-        defaultVisibleColumns.includes(column),
-      );
-      if (valid.length) setVisibleColumns(valid);
-    } catch {
-      setVisibleColumns(defaultVisibleColumns);
-    }
-  }, []);
 
   const liveRefreshPaused =
     activeBooking !== null ||
@@ -187,7 +192,7 @@ export default function BookingsTable({ bookings }: Props) {
     setNotifications([]);
   }
 
-  function getPipelineStage(booking: Booking) {
+  const getPipelineStage = useCallback((booking: Booking) => {
     return (
       pipelineOverrides[booking.id] ??
       derivePipelineStage({
@@ -196,7 +201,7 @@ export default function BookingsTable({ bookings }: Props) {
         details: booking.details,
       })
     );
-  }
+  }, [pipelineOverrides]);
 
   function updatePipelineStage(booking: Booking, stage: PipelineStage) {
     setPipelineOverrides((current) => {
@@ -276,7 +281,7 @@ export default function BookingsTable({ bookings }: Props) {
     serviceFilter,
     sourceFilter,
     pipelineFilter,
-    pipelineOverrides,
+    getPipelineStage,
   ]);
 
   const allSelected =

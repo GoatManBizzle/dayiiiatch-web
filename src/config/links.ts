@@ -3,6 +3,7 @@ export const links = {
   premiumSession: "/book?service=premium-session",
   contactForm: "#contact-form",
   adLanding: "/book",
+  clientLogin: "/portal/access",
 };
 
 export const navLinks = [
@@ -12,6 +13,7 @@ export const navLinks = [
   { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact-form" },
+  { label: "Client Login", href: "/portal/access" },
 ];
 
 export const footerLinks = [
@@ -22,4 +24,5 @@ export const footerLinks = [
     external: false,
   },
   { label: "Send Project Inquiry", href: "#contact-form", external: false },
+  { label: "Client Login", href: "/portal/access", external: false },
 ];

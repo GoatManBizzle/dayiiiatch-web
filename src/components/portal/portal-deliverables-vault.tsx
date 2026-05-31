@@ -148,10 +148,28 @@ export default function PortalDeliverablesVault() {
                   {deliverable.summary}
                 </p>
 
+                <div className="mt-3 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                      Category / Type
+                    </p>
+                    <p className="mt-1 text-xs font-bold uppercase tracking-[0.1em] text-zinc-300">
+                      {deliverable.category} / {deliverable.fileType}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                      Approval Status
+                    </p>
+                    <div className="mt-2">
+                      <StatusPill status={deliverable.approvalStatus} />
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-xs font-bold uppercase tracking-[0.12em] text-zinc-500">
-                  <span>{deliverable.category}</span>
-                  <span>{deliverable.fileType}</span>
-                  <span>{deliverable.added}</span>
+                  <span>Added {deliverable.added}</span>
+                  <span>Vault status {deliverable.status}</span>
                 </div>
 
                 <div className="mt-auto flex flex-wrap gap-2 pt-4">

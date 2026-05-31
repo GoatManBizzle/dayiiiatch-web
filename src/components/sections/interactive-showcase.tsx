@@ -68,11 +68,7 @@ function StatusPill({ system }: { system: DemoSystem }) {
 
 export default function InteractiveShowcaseSection() {
   const [activeDemo, setActiveDemo] = useState<DemoSystem | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   useEffect(() => {
     if (!activeDemo) return;

@@ -1,11 +1,17 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
-import PortalRevisionModal from "@/components/portal/portal-revision-modal";
-import { portalApprovalItems, statusTone } from "@/lib/portal-data";
+import {
+  portalApprovalHistory,
+  portalApprovalQueue,
+  statusTone,
+} from "@/lib/portal-data";
 
-type ApprovalItem = (typeof portalApprovalItems)[number];
+type ApprovalItem = (typeof portalApprovalQueue)[number];
+type ApprovalStatus = "Pending Review" | "Approved" | "Needs Revision" | "Rejected";
+type DecisionType = "approve" | "revision" | "reject";
+type HistoryItem = (typeof portalApprovalHistory)[number];
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -19,121 +25,318 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-export default function PortalApprovalsWorkspace() {
-  const [items, setItems] = useState<ApprovalItem[]>(portalApprovalItems);
-  const [revisionItem, setRevisionItem] = useState<ApprovalItem | null>(null);
+function actionLabel(action: DecisionType) {
+  if (action === "approve") {
+    return "Approve";
+  }
 
-  function setApprovalStatus(title: string, status: string) {
+  if (action === "reject") {
+    return "Reject";
+  }
+
+  return "Request Revision";
+}
+
+function nextStatus(action: DecisionType): ApprovalStatus {
+  if (action === "approve") {
+    return "Approved";
+  }
+
+  if (action === "reject") {
+    return "Rejected";
+  }
+
+  return "Needs Revision";
+}
+
+export default function PortalApprovalsWorkspace() {
+  const [items, setItems] = useState<ApprovalItem[]>(portalApprovalQueue);
+  const [history, setHistory] = useState<HistoryItem[]>(portalApprovalHistory);
+  const [decision, setDecision] = useState<{
+    action: DecisionType;
+    item: ApprovalItem;
+  } | null>(null);
+  const [feedback, setFeedback] = useState("");
+
+  const metrics = useMemo(
+    () => [
+      {
+        label: "Pending Review",
+        value: items.filter((item) => item.status === "Pending Review").length,
+        status: "Pending Review",
+      },
+      {
+        label: "Approved",
+        value: items.filter((item) => item.status === "Approved").length,
+        status: "Approved",
+      },
+      {
+        label: "Needs Revision",
+        value: items.filter((item) => item.status === "Needs Revision").length,
+        status: "Needs Revision",
+      },
+      {
+        label: "Rejected",
+        value: items.filter((item) => item.status === "Rejected").length,
+        status: "Rejected",
+      },
+    ],
+    [items],
+  );
+
+  function openDecision(action: DecisionType, item: ApprovalItem) {
+    setFeedback("");
+    setDecision({ action, item });
+  }
+
+  function confirmDecision() {
+    if (!decision) {
+      return;
+    }
+
+    const status = nextStatus(decision.action);
+    const historyAction =
+      decision.action === "revision" ? "Revision Requested" : status;
+
     setItems((currentItems) =>
       currentItems.map((item) =>
-        item.title === title ? { ...item, status } : item,
+        item.title === decision.item.title ? { ...item, status } : item,
       ),
     );
+
+    setHistory((currentHistory) => [
+      {
+        date: "May 31, 2026",
+        user: "Preview Client",
+        action: historyAction,
+        item: decision.item.title,
+      },
+      ...currentHistory,
+    ]);
+
+    setDecision(null);
+    setFeedback("");
   }
 
   return (
-    <>
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-        {[
-          ["Open Approvals", items.filter((item) => item.status !== "Approved").length],
-          ["Approved", items.filter((item) => item.status === "Approved").length],
-          [
-            "Revisions",
-            items.filter((item) => item.status === "Revision Requested").length,
-          ],
-          ["Due Soon", "3"],
-        ].map(([label, value]) => (
-          <div
-            key={label}
-            className="rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-4 shadow-[0_0_24px_rgba(34,211,238,0.035)]"
-          >
-            <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
-              {label}
+    <div className="grid gap-4">
+      <section className="rounded-[1.5rem] border border-cyan-300/16 bg-[radial-gradient(circle_at_top_left,rgba(34,211,238,0.14),transparent_34%),rgba(255,255,255,0.045)] p-5 shadow-[0_0_34px_rgba(34,211,238,0.055)] backdrop-blur-xl sm:p-6">
+        <div className="flex flex-wrap items-start justify-between gap-4">
+          <div className="max-w-3xl">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+              Approval Dashboard
             </p>
-            <p className="mt-1 text-2xl font-black text-white">{value}</p>
+            <h2 className="mt-3 text-2xl font-black text-white sm:text-3xl">
+              Structured approval pipeline
+            </h2>
+            <p className="mt-3 text-sm leading-6 text-zinc-300">
+              Centralize deliverable decisions, revision feedback, and approval
+              history so launch-critical work does not disappear into email
+              threads.
+            </p>
           </div>
-        ))}
+          <StatusPill status="Pending Review" />
+        </div>
+
+        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+          {metrics.map((metric) => (
+            <div
+              key={metric.label}
+              className="rounded-2xl border border-white/10 bg-black/24 px-4 py-4"
+            >
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                  {metric.label}
+                </p>
+                <StatusPill status={metric.status} />
+              </div>
+              <p className="mt-3 text-3xl font-black text-white">
+                {metric.value}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
 
-      <section className="grid gap-4 lg:grid-cols-2 2xl:grid-cols-3">
-        {items.map((item) => (
-          <article
-            key={item.title}
-            className="flex min-w-0 flex-col rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(124,58,237,0.05)] backdrop-blur-xl transition hover:border-cyan-300/24 hover:bg-cyan-400/[0.045] sm:p-5"
-          >
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="min-w-0">
-                <p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500">
-                  {item.category}
+      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(320px,0.7fr)]">
+        <div className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(124,58,237,0.055)] backdrop-blur-xl sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-200">
+                Approval Queue
+              </p>
+              <h2 className="mt-2 text-2xl font-black text-white">
+                Items ready for decision
+              </h2>
+            </div>
+            <span className="rounded-full border border-cyan-300/18 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
+              {items.length} requests
+            </span>
+          </div>
+
+          <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-2">
+            {items.map((item) => (
+              <article
+                key={item.title}
+                className="flex min-w-0 flex-col rounded-2xl border border-white/10 bg-black/24 p-4 transition hover:border-cyan-300/22 hover:bg-cyan-400/[0.045]"
+              >
+                <div className="flex flex-wrap items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                      {item.category}
+                    </p>
+                    <h3 className="mt-2 break-words text-lg font-black text-white">
+                      {item.title}
+                    </h3>
+                  </div>
+                  <StatusPill status={item.status} />
+                </div>
+
+                <p className="mt-3 text-sm leading-6 text-zinc-300">
+                  {item.description}
                 </p>
-                <h2 className="mt-2 break-words text-xl font-black text-white">
-                  {item.title}
+
+                <div className="mt-4 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                      Date Submitted
+                    </p>
+                    <p className="mt-1 font-bold text-zinc-100">
+                      {item.dateSubmitted}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3">
+                    <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                      Project
+                    </p>
+                    <p className="mt-1 font-bold text-zinc-100">
+                      {item.project}
+                    </p>
+                  </div>
+                </div>
+
+                <div className="mt-auto flex flex-wrap gap-2 pt-5">
+                  <button
+                    type="button"
+                    onClick={() => openDecision("approve", item)}
+                    className="rounded-xl border border-emerald-300/24 bg-emerald-400/10 px-3 py-2 text-xs font-black text-emerald-100 transition hover:bg-emerald-400/16"
+                  >
+                    Approve
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openDecision("revision", item)}
+                    className="rounded-xl border border-amber-300/24 bg-amber-400/10 px-3 py-2 text-xs font-black text-amber-100 transition hover:bg-amber-400/16"
+                  >
+                    Request Revision
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => openDecision("reject", item)}
+                    className="rounded-xl border border-rose-300/24 bg-rose-400/10 px-3 py-2 text-xs font-black text-rose-100 transition hover:bg-rose-400/16"
+                  >
+                    Reject
+                  </button>
+                </div>
+              </article>
+            ))}
+          </div>
+        </div>
+
+        <aside className="grid min-w-0 content-start gap-4">
+          <section className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.04)] backdrop-blur-xl sm:p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+              Approval History
+            </p>
+            <div className="mt-4 grid gap-3">
+              {history.map((entry, index) => (
+                <div
+                  key={`${entry.item}-${entry.action}-${index}`}
+                  className="relative rounded-2xl border border-white/10 bg-black/24 px-4 py-3"
+                >
+                  <div className="flex flex-wrap items-start justify-between gap-2">
+                    <div>
+                      <p className="font-black text-white">{entry.item}</p>
+                      <p className="mt-1 text-xs font-bold text-zinc-400">
+                        {entry.date} / {entry.user}
+                      </p>
+                    </div>
+                    <StatusPill status={entry.action} />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </section>
+
+          <section className="rounded-[1.25rem] border border-violet-300/14 bg-violet-500/[0.06] px-4 py-4 text-sm leading-6 text-zinc-300">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-100">
+              Admin Hooks
+            </p>
+            <p className="mt-2">
+              Future Supabase structure: approval_requests for queue state,
+              approval_comments for revision feedback, and approval_history for
+              immutable decision events.
+            </p>
+            {/* Future: write decisions to approval_requests, append notes to approval_comments, and broadcast approval_history updates over Supabase realtime. */}
+          </section>
+        </aside>
+      </section>
+
+      {decision ? (
+        <div className="fixed inset-0 z-50 grid place-items-center bg-black/70 px-4 py-6 backdrop-blur-sm">
+          <div className="w-full max-w-xl rounded-[1.5rem] border border-white/10 bg-zinc-950/95 p-5 shadow-[0_0_60px_rgba(34,211,238,0.16)]">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+                  Confirm Decision
+                </p>
+                <h2 className="mt-2 text-2xl font-black text-white">
+                  {actionLabel(decision.action)} {decision.item.title}
                 </h2>
               </div>
-              <StatusPill status={item.status} />
+              <StatusPill status={nextStatus(decision.action)} />
             </div>
 
             <p className="mt-3 text-sm leading-6 text-zinc-300">
-              {item.description}
+              This preview updates local portal state only. The future backend
+              will persist this decision to approval_requests and log the event
+              in approval_history.
             </p>
 
-            <div className="mt-4 grid gap-2 sm:grid-cols-2">
-              <div className="rounded-2xl border border-white/10 bg-black/24 px-3 py-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
-                  Project
-                </p>
-                <p className="mt-1 font-bold text-zinc-100">{item.project}</p>
-              </div>
-              <div className="rounded-2xl border border-white/10 bg-black/24 px-3 py-3">
-                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
-                  Due Date
-                </p>
-                <p className="mt-1 font-bold text-zinc-100">{item.dueDate}</p>
-              </div>
-            </div>
+            {decision.action === "revision" ? (
+              <label className="mt-4 block">
+                <span className="text-xs font-black uppercase tracking-[0.16em] text-zinc-400">
+                  Feedback / Requested Changes
+                </span>
+                <textarea
+                  value={feedback}
+                  onChange={(event) => setFeedback(event.target.value)}
+                  rows={5}
+                  placeholder="Describe what needs to change before this item can be approved."
+                  className="mt-2 w-full resize-none rounded-2xl border border-white/10 bg-black/40 px-4 py-3 text-sm text-white outline-none transition placeholder:text-zinc-600 focus:border-cyan-300/35 focus:bg-cyan-400/[0.04]"
+                />
+              </label>
+            ) : null}
 
-            <div className="mt-auto flex flex-wrap gap-2 pt-5">
+            <div className="mt-5 flex flex-wrap justify-end gap-2">
               <button
                 type="button"
-                onClick={() => setApprovalStatus(item.title, "Approved")}
-                className="rounded-xl border border-emerald-300/24 bg-emerald-400/10 px-3 py-2 text-xs font-black text-emerald-100 transition hover:bg-emerald-400/16"
+                onClick={() => setDecision(null)}
+                className="rounded-xl border border-white/10 bg-white/[0.045] px-4 py-2 text-xs font-black text-zinc-200 transition hover:border-white/20 hover:bg-white/[0.07]"
               >
-                Approve
+                Cancel
               </button>
               <button
                 type="button"
-                onClick={() => setRevisionItem(item)}
-                className="rounded-xl border border-violet-300/24 bg-violet-500/10 px-3 py-2 text-xs font-black text-violet-100 transition hover:bg-violet-500/16"
+                onClick={confirmDecision}
+                className="rounded-xl border border-cyan-300/26 bg-cyan-400/12 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/18"
               >
-                Request Revision
-              </button>
-              <button
-                type="button"
-                className="rounded-xl border border-cyan-300/24 bg-cyan-400/10 px-3 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/18"
-              >
-                View Details
+                Confirm {actionLabel(decision.action)}
               </button>
             </div>
-          </article>
-        ))}
-      </section>
-
-      <section className="rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-xs leading-5 text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.04)]">
-        Future approval hooks: approvals table, revision_requests table,
-        project_id, deliverable_id, user_id, and Supabase realtime
-        notifications.
-      </section>
-
-      {revisionItem ? (
-        <PortalRevisionModal
-          itemTitle={revisionItem.title}
-          onClose={() => setRevisionItem(null)}
-          onSubmit={() => {
-            setApprovalStatus(revisionItem.title, "Revision Requested");
-            setRevisionItem(null);
-          }}
-        />
+          </div>
+        </div>
       ) : null}
-    </>
+    </div>
   );
 }

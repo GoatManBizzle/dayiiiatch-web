@@ -154,11 +154,7 @@ export default function ProofSystemsSection() {
     screenshots: ProofImage[];
     index: number;
   } | null>(null);
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  const [mounted] = useState(() => typeof window !== "undefined");
 
   useEffect(() => {
     if (!mounted) return;
@@ -175,18 +171,22 @@ export default function ProofSystemsSection() {
         (item) => normalizeProjectSlug(item.title) === requestedProject
       ) ?? projects[0];
 
-    setActiveProject(project);
+    const timer = window.setTimeout(() => {
+      setActiveProject(project);
 
-    if (captureTarget === "systems-lightbox") {
-      const screenshots = getProjectImages(project);
-      if (screenshots.length) {
-        setActiveScreenshot({
-          title: project.title,
-          screenshots,
-          index: 0,
-        });
+      if (captureTarget === "systems-lightbox") {
+        const screenshots = getProjectImages(project);
+        if (screenshots.length) {
+          setActiveScreenshot({
+            title: project.title,
+            screenshots,
+            index: 0,
+          });
+        }
       }
-    }
+    }, 0);
+
+    return () => window.clearTimeout(timer);
   }, [mounted]);
 
   useEffect(() => {
@@ -622,9 +622,10 @@ function ScreenshotLightbox({
   onClose: () => void;
 }) {
   const [activeIndex, setActiveIndex] = useState(screenshot.index);
-  const [failed, setFailed] = useState(false);
+  const [failedSrc, setFailedSrc] = useState<string | null>(null);
   const active = screenshot.screenshots[activeIndex] ?? screenshot.screenshots[0];
   const total = screenshot.screenshots.length;
+  const failed = failedSrc === active?.src;
 
   function showPrevious() {
     setActiveIndex((current) => (current - 1 + total) % total);
@@ -633,10 +634,6 @@ function ScreenshotLightbox({
   function showNext() {
     setActiveIndex((current) => (current + 1) % total);
   }
-
-  useEffect(() => {
-    setFailed(false);
-  }, [active?.src]);
 
   useEffect(() => {
     function handleKey(event: KeyboardEvent) {
@@ -714,7 +711,7 @@ function ScreenshotLightbox({
             <img
               src={active.src}
               alt={`${screenshot.title} ${active.label}`}
-              onError={() => setFailed(true)}
+              onError={() => setFailedSrc(active.src)}
               className="max-h-[72vh] w-full object-contain sm:max-h-[78vh]"
             />
           )}

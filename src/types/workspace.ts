@@ -1,0 +1,15 @@
+export type {
+  ActivityEventRow,
+  ApprovalRow,
+  BookingRow,
+  ClientRow,
+  ClientWithRelationships,
+  FileRow,
+  FutureWorkspaceTables,
+  InvoiceRow,
+  PortalUserRow,
+  ProjectRow,
+  ProjectWithRelationships,
+  WorkspaceCoreTables,
+  WorkspaceStatus,
+} from "@/lib/supabase-core-types";

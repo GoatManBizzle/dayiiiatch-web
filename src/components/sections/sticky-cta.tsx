@@ -31,17 +31,14 @@ export default function StickyCTA() {
   const pathname = usePathname();
   const [contactVisible, setContactVisible] = useState(false);
   const [isScrolling, setIsScrolling] = useState(false);
-  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
+  const [leadSource] = useState<LeadSource>(() => {
+    if (typeof window === "undefined") return "Direct";
+    return normalizeLeadSource(
+      new URLSearchParams(window.location.search).get("source"),
+    );
+  });
   const scrollTimeoutRef = useRef<number | null>(null);
   const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
-
-  useEffect(() => {
-    setLeadSource(
-      normalizeLeadSource(
-        new URLSearchParams(window.location.search).get("source"),
-      ),
-    );
-  }, []);
 
   useEffect(() => {
     const contactSection = document.getElementById("contact-form");

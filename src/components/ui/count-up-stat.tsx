@@ -17,8 +17,13 @@ export default function CountUpStat({ value, label }: CountUpStatProps) {
 
   useEffect(() => {
     if (numeric === null) {
-      setDisplay(value);
-      return;
+      const timer = window.setTimeout(() => setDisplay(value), 0);
+      return () => window.clearTimeout(timer);
+    }
+
+    if (numeric === 0) {
+      const timer = window.setTimeout(() => setDisplay("0"), 0);
+      return () => window.clearTimeout(timer);
     }
 
     let current = 0;

@@ -138,7 +138,12 @@ export default function ContactFormSection() {
   const [errorMessage, setErrorMessage] = useState("");
   const [successVisible, setSuccessVisible] = useState(false);
   const [successExiting, setSuccessExiting] = useState(false);
-  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
+  const [leadSource] = useState<LeadSource>(() => {
+    if (typeof window === "undefined") return "Direct";
+    return normalizeLeadSource(
+      new URLSearchParams(window.location.search).get("source"),
+    );
+  });
 
   const successTimerRef = useRef<number | null>(null);
   const successExitTimerRef = useRef<number | null>(null);
@@ -165,12 +170,6 @@ export default function ContactFormSection() {
   const recommendedNextStep = getRecommendedNextStep(intakeValues);
 
   useEffect(() => {
-    setLeadSource(
-      normalizeLeadSource(
-        new URLSearchParams(window.location.search).get("source"),
-      ),
-    );
-
     return () => {
       if (successTimerRef.current) {
         window.clearTimeout(successTimerRef.current);
@@ -350,7 +349,7 @@ export default function ContactFormSection() {
           </p>
         </div>
 
-        <div className="mx-auto mb-6 grid max-w-4xl gap-3 md:grid-cols-3">
+        <div className="mx-auto mb-6 grid max-w-5xl gap-3 sm:grid-cols-2 xl:grid-cols-4">
           <a
             href={withSource(links.freeCall)}
             data-growth-source={leadSource}
@@ -379,6 +378,16 @@ export default function ContactFormSection() {
             className="rounded-2xl border border-white/10 bg-white/[0.035] px-4 py-3 text-center text-sm font-semibold text-zinc-300 transition duration-500 ease-out hover:scale-[1.008] hover:border-cyan-400/25 hover:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-300/25"
           >
             Return to Services
+          </a>
+
+          <a
+            href={links.clientLogin}
+            data-growth-source={leadSource}
+            data-growth-event="cta-click"
+            data-cta-type="client-login"
+            className="rounded-2xl border border-violet-300/24 bg-violet-500/10 px-4 py-3 text-center text-sm font-semibold text-violet-100 transition duration-500 ease-out hover:scale-[1.008] hover:border-violet-300/36 hover:bg-violet-500/16 focus:outline-none focus:ring-2 focus:ring-violet-300/25"
+          >
+            Enter Client Portal
           </a>
         </div>
 

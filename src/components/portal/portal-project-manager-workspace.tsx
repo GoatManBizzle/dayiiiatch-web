@@ -1,3 +1,4 @@
+import PortalActivityWidget from "@/components/portal/portal-activity-widget";
 import {
   portalDamarkoInsights,
   portalProjectManagerActions,
@@ -205,31 +206,35 @@ export default function PortalProjectManagerWorkspace() {
           </div>
         </div>
 
-        <div className="min-w-0 rounded-[1.5rem] border border-cyan-300/14 bg-cyan-400/[0.06] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5 xl:col-span-4">
-          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
-            Future AI Hooks
-          </p>
-          <div className="mt-4 grid gap-3">
-            {[
-              "Real project summaries",
-              "Recommendation engine",
-              "Risk scoring",
-              "Launch forecasting",
-              "Damarko AI integration",
-            ].map((hook) => (
-              <div
-                key={hook}
-                className="rounded-2xl border border-white/10 bg-black/24 px-3 py-3 text-sm font-bold text-zinc-200"
-              >
-                {hook}
-              </div>
-            ))}
-          </div>
-          <p className="mt-4 text-xs leading-5 text-cyan-100">
-            Future implementation can replace these rule-based modules with
-            project-aware summaries, scored risks, and client-safe AI
-            recommendations.
-          </p>
+        <div className="grid min-w-0 content-start gap-4 xl:col-span-4">
+          <PortalActivityWidget title="Recent Activity" eyebrow="PM Feed" />
+
+          <section className="rounded-[1.5rem] border border-cyan-300/14 bg-cyan-400/[0.06] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
+            <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+              Future AI Hooks
+            </p>
+            <div className="mt-4 grid gap-3">
+              {[
+                "Real project summaries",
+                "Recommendation engine",
+                "Risk scoring",
+                "Launch forecasting",
+                "Damarko AI integration",
+              ].map((hook) => (
+                <div
+                  key={hook}
+                  className="rounded-2xl border border-white/10 bg-black/24 px-3 py-3 text-sm font-bold text-zinc-200"
+                >
+                  {hook}
+                </div>
+              ))}
+            </div>
+            <p className="mt-4 text-xs leading-5 text-cyan-100">
+              Future implementation can replace these rule-based modules with
+              project-aware summaries, scored risks, and client-safe AI
+              recommendations.
+            </p>
+          </section>
         </div>
       </section>
 

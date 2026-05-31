@@ -26,8 +26,8 @@ export default function Reveal({
     ).matches;
 
     if (prefersReducedMotion) {
-      setVisible(true);
-      return;
+      const timer = window.setTimeout(() => setVisible(true), 0);
+      return () => window.clearTimeout(timer);
     }
 
     const observer = new IntersectionObserver(

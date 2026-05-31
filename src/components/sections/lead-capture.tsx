@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useState } from "react";
 
 import { links } from "@/config/links";
 import { normalizeLeadSource, type LeadSource } from "@/lib/growth-ops";
@@ -16,15 +16,12 @@ export default function LeadCaptureSection() {
     name: "",
     email: "",
   });
-  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
-
-  useEffect(() => {
-    setLeadSource(
-      normalizeLeadSource(
-        new URLSearchParams(window.location.search).get("source"),
-      ),
+  const [leadSource] = useState<LeadSource>(() => {
+    if (typeof window === "undefined") return "Direct";
+    return normalizeLeadSource(
+      new URLSearchParams(window.location.search).get("source"),
     );
-  }, []);
+  });
 
   async function handleSubmit(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();

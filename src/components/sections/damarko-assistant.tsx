@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import { usePathname } from "next/navigation";
 
 import { links } from "@/config/links";
@@ -82,16 +82,13 @@ export default function DamarkoAssistant() {
   const [interest, setInterest] = useState<Interest | "">("");
   const [urgency, setUrgency] = useState<Urgency | "">("");
   const [goal, setGoal] = useState<Goal | "">("");
-  const [leadSource, setLeadSource] = useState<LeadSource>("Direct");
-  const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
-
-  useEffect(() => {
-    setLeadSource(
-      normalizeLeadSource(
-        new URLSearchParams(window.location.search).get("source"),
-      ),
+  const [leadSource] = useState<LeadSource>(() => {
+    if (typeof window === "undefined") return "Direct";
+    return normalizeLeadSource(
+      new URLSearchParams(window.location.search).get("source"),
     );
-  }, []);
+  });
+  const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
 
   if (pathname !== "/") return null;
 

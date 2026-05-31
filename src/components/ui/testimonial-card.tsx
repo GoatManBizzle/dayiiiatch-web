@@ -31,7 +31,7 @@ export default function TestimonialCard({
         </span>
       </div>
 
-      <p className="text-sm leading-7 text-zinc-300">"{quote}"</p>
+      <p className="text-sm leading-7 text-zinc-300">&ldquo;{quote}&rdquo;</p>
     </div>
   );
 }

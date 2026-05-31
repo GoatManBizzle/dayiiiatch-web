@@ -51,7 +51,12 @@ const queueItems = [
 
 export default function AgencyIllusionSection() {
   const [activeQueueIndex, setActiveQueueIndex] = useState(0);
-  const [metricProgress, setMetricProgress] = useState(0);
+  const [metricProgress, setMetricProgress] = useState(() => {
+    if (typeof window === "undefined") return 0;
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches
+      ? 1
+      : 0;
+  });
 
   const metrics = useMemo(
     () =>
@@ -67,10 +72,7 @@ export default function AgencyIllusionSection() {
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    if (prefersReducedMotion) {
-      setMetricProgress(1);
-      return;
-    }
+    if (prefersReducedMotion) return;
 
     let frame = 0;
     const totalFrames = 48;

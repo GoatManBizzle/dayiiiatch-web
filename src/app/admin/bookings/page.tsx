@@ -81,6 +81,13 @@ export default async function AdminBookingsPage() {
 
           <div className="flex gap-3">
             <Link
+              href="/admin/crm"
+              className="rounded-2xl border border-violet-400/30 bg-violet-500/10 px-5 py-3 text-sm font-bold text-violet-100 hover:bg-violet-500/20"
+            >
+              CRM
+            </Link>
+
+            <Link
               href="/"
               className="rounded-2xl border border-white/10 bg-white/5 px-5 py-3 text-sm font-bold hover:border-cyan-400/40 hover:bg-cyan-400/10"
             >

@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import PortalActivityWidget from "@/components/portal/portal-activity-widget";
 import {
   bookingTimelineStages,
   clientProjects,
@@ -10,7 +11,6 @@ import {
   portalDeliverables,
   portalMeetings,
   portalConversations,
-  portalMessages,
   portalPermissionAreas,
   portalProjectMilestones,
   portalRoles,
@@ -98,7 +98,7 @@ export function DashboardOverview() {
         ))}
       </div>
 
-      <div className="grid items-stretch gap-4 lg:grid-cols-2">
+      <div className="grid items-stretch gap-4 lg:grid-cols-3">
         <Panel title="Latest Updates" eyebrow="Operations">
           {portalUpdates.map((update) => (
             <div
@@ -127,6 +127,7 @@ export function DashboardOverview() {
             </div>
           ))}
         </Panel>
+        <PortalActivityWidget title="Recent Activity" eyebrow="Activity" />
       </div>
 
       <div className="rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.04)]">

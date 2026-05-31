@@ -2,12 +2,14 @@ export const portalNavItems = [
   { label: "Dashboard", href: "/portal/dashboard" },
   { label: "Success Center", href: "/portal/success-center" },
   { label: "Projects", href: "/portal/projects" },
+  { label: "Timeline", href: "/portal/timeline" },
   { label: "Files", href: "/portal/files" },
   { label: "Deliverables", href: "/portal/deliverables" },
+  { label: "Invoices", href: "/portal/invoices" },
   { label: "Approvals", href: "/portal/approvals" },
+  { label: "Activity", href: "/portal/activity" },
   { label: "Messages", href: "/portal/messages" },
   { label: "Bookings", href: "/portal/bookings" },
-  { label: "Invoices", href: "/portal/invoices" },
   { label: "Onboarding", href: "/portal/onboarding" },
   { label: "Damarko Concierge", href: "/portal/concierge", icon: "AI" },
   { label: "Project Manager", href: "/portal/project-manager", icon: "PM" },
@@ -122,6 +124,131 @@ export const portalActivityFeed = [
     timestamp: "May 28, 2026 / 3:45 PM",
     status: "Queued",
     icon: "AS",
+  },
+];
+
+export const portalActivityEventTypes = [
+  "All",
+  "Approvals",
+  "Meetings",
+  "Deliverables",
+  "Files",
+  "Invoices",
+  "Timeline",
+];
+
+export const portalMasterActivityEvents = [
+  {
+    id: "evt-homepage-approved",
+    eventType: "Approvals",
+    title: "Homepage Design Approved",
+    description:
+      "The homepage design package was approved and moved into the final launch preparation queue.",
+    timestamp: "2 minutes ago",
+    createdAt: "May 31, 2026 / 3:58 PM",
+    createdBy: "Client Owner",
+    status: "Approved",
+    icon: "AP",
+    relatedProject: "Brand Presence Upgrade",
+    relatedDeliverable: "Final Homepage Export",
+  },
+  {
+    id: "evt-meeting-scheduled",
+    eventType: "Meetings",
+    title: "Meeting Scheduled",
+    description:
+      "A QA review session was scheduled to confirm launch blockers, mobile checks, and approval status.",
+    timestamp: "1 hour ago",
+    createdAt: "May 31, 2026 / 2:44 PM",
+    createdBy: "DAYIIIatch Admin",
+    status: "Confirmed",
+    icon: "MT",
+    relatedProject: "Scheduler Platform Expansion",
+    relatedDeliverable: "Client Portal Walkthrough",
+  },
+  {
+    id: "evt-assets-uploaded",
+    eventType: "Files",
+    title: "Brand Assets Uploaded",
+    description:
+      "Logo references, media files, and brand source materials were added to the client asset center.",
+    timestamp: "Yesterday",
+    createdAt: "May 30, 2026 / 11:25 AM",
+    createdBy: "Team Member",
+    status: "Received",
+    icon: "FL",
+    relatedProject: "Brand Presence Upgrade",
+    relatedDeliverable: "Approved Brand Asset Pack",
+  },
+  {
+    id: "evt-deliverable-updated",
+    eventType: "Deliverables",
+    title: "Deliverable Updated",
+    description:
+      "The launch readiness checklist was refreshed with portal, booking, and admin QA notes.",
+    timestamp: "2 days ago",
+    createdAt: "May 29, 2026 / 4:15 PM",
+    createdBy: "DAYIIIatch Admin",
+    status: "Updated",
+    icon: "DV",
+    relatedProject: "Scheduler Platform Expansion",
+    relatedDeliverable: "Launch Readiness Checklist",
+  },
+  {
+    id: "evt-approval-requested",
+    eventType: "Approvals",
+    title: "Approval Requested",
+    description:
+      "Automation maps were submitted for client review with requested feedback on support routing.",
+    timestamp: "3 days ago",
+    createdAt: "May 28, 2026 / 5:20 PM",
+    createdBy: "DAYIIIatch Admin",
+    status: "Pending Review",
+    icon: "AR",
+    relatedProject: "Automation Support Layer",
+    relatedDeliverable: "Automation Intake Map",
+  },
+  {
+    id: "evt-timeline-active",
+    eventType: "Timeline",
+    title: "Build Phase Marked Active",
+    description:
+      "The project timeline moved from design into active build with homepage approval as the next milestone.",
+    timestamp: "4 days ago",
+    createdAt: "May 27, 2026 / 10:05 AM",
+    createdBy: "Damarko System",
+    status: "Active",
+    icon: "TL",
+    relatedProject: "Scheduler Platform Expansion",
+    relatedDeliverable: "Project Timeline",
+  },
+  {
+    id: "evt-invoice-generated",
+    eventType: "Invoices",
+    title: "Invoice Generated",
+    description:
+      "The premium strategy session invoice was generated and added to the billing workspace.",
+    timestamp: "5 days ago",
+    createdAt: "May 26, 2026 / 9:30 AM",
+    createdBy: "DAYIIIatch Admin",
+    status: "Due Soon",
+    icon: "IN",
+    relatedProject: "Brand Presence Upgrade",
+    relatedDeliverable: "Premium Strategy Session",
+  },
+  {
+    id: "evt-portal-access",
+    eventType: "Portal Access",
+    title: "Portal Access Granted",
+    description:
+      "Preview workspace access was opened for client review and operational walkthroughs.",
+    timestamp: "6 days ago",
+    createdAt: "May 25, 2026 / 1:10 PM",
+    createdBy: "DAYIIIatch Admin",
+    status: "New",
+    icon: "PA",
+    relatedProject: "DAYIIIatch Workspace OS",
+    relatedDeliverable: "Client Portal",
   },
 ];
 
@@ -385,6 +512,7 @@ export const portalDeliverables = [
     category: "Launch Files",
     added: "May 30, 2026",
     status: "Ready",
+    approvalStatus: "Pending Review",
     fileType: "PDF",
     summary:
       "Final pre-launch checks for booking flow, admin tools, client portal routes, and production handoff.",
@@ -394,6 +522,7 @@ export const portalDeliverables = [
     category: "Strategy Docs",
     added: "May 29, 2026",
     status: "Updated",
+    approvalStatus: "Approved",
     fileType: "DOCX",
     summary:
       "Client-facing roadmap for positioning, service flow, proof hierarchy, and next-stage conversion priorities.",
@@ -403,6 +532,7 @@ export const portalDeliverables = [
     category: "Brand Assets",
     added: "May 29, 2026",
     status: "Ready",
+    approvalStatus: "Approved",
     fileType: "ZIP",
     summary:
       "Logo references, proof screenshots, visual accents, and prepared brand assets for launch use.",
@@ -412,6 +542,7 @@ export const portalDeliverables = [
     category: "Automation Docs",
     added: "May 28, 2026",
     status: "In Review",
+    approvalStatus: "Needs Revision",
     fileType: "PDF",
     summary:
       "Workflow map for repeated client tasks, support triggers, and future Damarko-assisted routing.",
@@ -421,6 +552,7 @@ export const portalDeliverables = [
     category: "Videos / Walkthroughs",
     added: "May 27, 2026",
     status: "Needs Approval",
+    approvalStatus: "Pending Review",
     fileType: "MP4",
     summary:
       "Guided walkthrough of dashboard, projects, files, deliverables, messages, and scheduler workspaces.",
@@ -430,9 +562,88 @@ export const portalDeliverables = [
     category: "Final Exports",
     added: "May 26, 2026",
     status: "Updated",
+    approvalStatus: "Approved",
     fileType: "PNG",
     summary:
       "Launch-ready visual export of the public homepage proof stack and conversion sections.",
+  },
+];
+
+export const portalApprovalQueue = [
+  {
+    title: "Homepage Designs",
+    category: "Design",
+    dateSubmitted: "May 31, 2026",
+    status: "Pending Review",
+    project: "Brand Presence Upgrade",
+    description:
+      "Review the homepage proof layout, proof hierarchy, and launch-ready design direction.",
+  },
+  {
+    title: "Brand Guides",
+    category: "Brand Assets",
+    dateSubmitted: "May 30, 2026",
+    status: "Approved",
+    project: "Brand Presence Upgrade",
+    description:
+      "Approved guidance for typography, accent usage, logo handling, and client-facing brand consistency.",
+  },
+  {
+    title: "Strategy Documents",
+    category: "Strategy Docs",
+    dateSubmitted: "May 30, 2026",
+    status: "Pending Review",
+    project: "Scheduler Platform Expansion",
+    description:
+      "Client strategy notes covering project priorities, launch sequence, and post-launch support focus.",
+  },
+  {
+    title: "Automation Maps",
+    category: "Automation Docs",
+    dateSubmitted: "May 29, 2026",
+    status: "Needs Revision",
+    project: "Automation Support Layer",
+    description:
+      "Workflow map needs client feedback on repeated support triggers and approval routing.",
+  },
+  {
+    title: "Videos",
+    category: "Videos / Walkthroughs",
+    dateSubmitted: "May 28, 2026",
+    status: "Pending Review",
+    project: "Scheduler Platform Expansion",
+    description:
+      "Portal walkthrough video is staged for review before it becomes part of the client handoff package.",
+  },
+  {
+    title: "Exports",
+    category: "Final Exports",
+    dateSubmitted: "May 27, 2026",
+    status: "Rejected",
+    project: "Brand Presence Upgrade",
+    description:
+      "One export package was rejected so the final asset naming and dimensions can be corrected.",
+  },
+];
+
+export const portalApprovalHistory = [
+  {
+    date: "May 31, 2026",
+    user: "Client Owner",
+    action: "Revision Requested",
+    item: "Automation Maps",
+  },
+  {
+    date: "May 30, 2026",
+    user: "DAYIIIatch Admin",
+    action: "Approved",
+    item: "Brand Guides",
+  },
+  {
+    date: "May 27, 2026",
+    user: "Client Owner",
+    action: "Rejected",
+    item: "Exports",
   },
 ];
 
@@ -554,44 +765,93 @@ export const portalRoles = [
 ];
 
 export const portalInvoiceSummary = [
-  { label: "Total Due", value: "$2,400" },
-  { label: "Paid This Month", value: "$4,800" },
-  { label: "Upcoming Invoice", value: "Jun 12" },
-  { label: "Payment Status", value: "Due Soon" },
+  { label: "Total Invoiced", value: "$7,950", status: "Outstanding" },
+  { label: "Paid", value: "$4,800", status: "Paid" },
+  { label: "Outstanding", value: "$3,150", status: "Outstanding" },
+  { label: "Due Soon", value: "$2,400", status: "Due Soon" },
 ];
 
 export const portalInvoices = [
   {
-    invoiceNumber: "INV-2401",
-    title: "Website System Build Deposit",
-    amount: "$2,400",
-    dueDate: "Jun 12, 2026",
-    status: "Due Soon",
+    invoiceNumber: "INV-2026-001",
+    title: "Website Build Deposit",
+    amount: "$750",
+    tax: "$0",
+    total: "$750",
+    dueDate: "June 18, 2026",
+    paidDate: "May 29, 2026",
+    status: "Paid",
     project: "Scheduler Platform Expansion",
+    services: ["Website system build deposit", "Portal workspace setup"],
   },
   {
-    invoiceNumber: "INV-2402",
+    invoiceNumber: "INV-2026-002",
     title: "Brand Presence Upgrade",
     amount: "$4,800",
+    tax: "$0",
+    total: "$4,800",
     dueDate: "May 28, 2026",
+    paidDate: "May 28, 2026",
     status: "Paid",
     project: "Brand Presence Upgrade",
+    services: ["Homepage proof system", "Brand asset preparation"],
   },
   {
-    invoiceNumber: "INV-2403",
+    invoiceNumber: "INV-2026-003",
     title: "Automation Support Layer",
-    amount: "$1,750",
-    dueDate: "May 24, 2026",
-    status: "Overdue",
+    amount: "$2,400",
+    tax: "$0",
+    total: "$2,400",
+    dueDate: "June 12, 2026",
+    paidDate: "",
+    status: "Due Soon",
     project: "Automation Support Layer",
+    services: ["Automation intake map", "Support routing architecture"],
   },
   {
-    invoiceNumber: "INV-2404",
+    invoiceNumber: "INV-2026-004",
+    title: "Admin QA Recovery",
+    amount: "$750",
+    tax: "$0",
+    total: "$750",
+    dueDate: "May 24, 2026",
+    paidDate: "",
+    status: "Overdue",
+    project: "Scheduler Platform Expansion",
+    services: ["Admin QA pass", "Reschedule workflow review"],
+  },
+  {
+    invoiceNumber: "INV-2026-005",
     title: "Premium Strategy Session",
     amount: "$650",
-    dueDate: "Jun 18, 2026",
+    tax: "$0",
+    total: "$650",
+    dueDate: "June 18, 2026",
+    paidDate: "",
     status: "Draft",
     project: "Strategy Support",
+    services: ["Premium strategy session", "Executive notes summary"],
+  },
+];
+
+export const portalPaymentHistory = [
+  {
+    invoice: "INV-2026-002",
+    date: "May 28, 2026",
+    amount: "$4,800",
+    status: "Paid",
+  },
+  {
+    invoice: "INV-2026-001",
+    date: "May 29, 2026",
+    amount: "$750",
+    status: "Paid",
+  },
+  {
+    invoice: "INV-2026-003",
+    date: "Scheduled for June 12, 2026",
+    amount: "$2,400",
+    status: "Due Soon",
   },
 ];
 
@@ -1027,6 +1287,127 @@ export const portalDamarkoInsights = [
   },
 ];
 
+export const portalTimelineHeroStats = [
+  { label: "Current Phase", value: "Build", status: "Active" },
+  { label: "Progress", value: "68%", status: "In Progress" },
+  { label: "Estimated Completion", value: "June 18, 2026", status: "Due Soon" },
+  { label: "Next Milestone", value: "Homepage Approval", status: "Awaiting Approval" },
+];
+
+export const portalTimelineMilestones = [
+  {
+    name: "Discovery",
+    status: "Completed",
+    progress: 100,
+    startDate: "May 20, 2026",
+    targetDate: "May 22, 2026",
+    assignedTeam: "DAYIIIatch Strategy",
+    description:
+      "Project goals, audience needs, constraints, and operational context were collected and organized.",
+  },
+  {
+    name: "Strategy",
+    status: "Completed",
+    progress: 100,
+    startDate: "May 23, 2026",
+    targetDate: "May 27, 2026",
+    assignedTeam: "DAYIIIatch Strategy",
+    description:
+      "Offer positioning, service flow, project priorities, and roadmap decisions were translated into a build path.",
+  },
+  {
+    name: "Design",
+    status: "Completed",
+    progress: 92,
+    startDate: "May 28, 2026",
+    targetDate: "June 03, 2026",
+    assignedTeam: "DAYIIIatch Creative",
+    description:
+      "Homepage proof structure, brand presence upgrades, and client-facing presentation patterns were prepared.",
+  },
+  {
+    name: "Build",
+    status: "Active",
+    progress: 68,
+    startDate: "June 04, 2026",
+    targetDate: "June 18, 2026",
+    assignedTeam: "DAYIIIatch Development",
+    description:
+      "Portal workspaces, booking systems, operational dashboards, and client-facing workflows are being assembled.",
+  },
+  {
+    name: "QA",
+    status: "Upcoming",
+    progress: 20,
+    startDate: "June 18, 2026",
+    targetDate: "June 21, 2026",
+    assignedTeam: "DAYIIIatch QA",
+    description:
+      "Mobile checks, booking flow review, portal route checks, approvals, and final launch blockers will be validated.",
+  },
+  {
+    name: "Launch",
+    status: "Blocked",
+    progress: 10,
+    startDate: "June 21, 2026",
+    targetDate: "June 24, 2026",
+    assignedTeam: "DAYIIIatch Launch",
+    description:
+      "Launch depends on homepage approval, final asset review, and confirmation of the launch date.",
+  },
+  {
+    name: "Support",
+    status: "Upcoming",
+    progress: 0,
+    startDate: "June 25, 2026",
+    targetDate: "Ongoing",
+    assignedTeam: "DAYIIIatch Support",
+    description:
+      "Post-launch support, optimization, documentation, and client operating rhythm will continue after launch.",
+  },
+];
+
+export const portalTimelineHealth = [
+  { label: "Assets", status: "Needs Review", detail: "Logo variations and final colors are still open." },
+  { label: "Approvals", status: "Needs Review", detail: "Homepage approval is the next major client action." },
+  { label: "Meetings", status: "Healthy", detail: "Strategy review and QA call are on track." },
+  { label: "Deliverables", status: "Healthy", detail: "Core deliverables are staged and review-ready." },
+];
+
+export const portalTimelineActions = [
+  { title: "Approve Homepage", priority: "High", status: "Awaiting Approval" },
+  { title: "Upload Logo Variations", priority: "High", status: "Pending" },
+  { title: "Review Brand Guide", priority: "Medium", status: "Needs Review" },
+  { title: "Schedule QA Call", priority: "Low", status: "Queued" },
+];
+
+export const portalTimelineActivity = [
+  {
+    title: "Homepage Completed",
+    timestamp: "May 31, 2026 / 10:15 AM",
+    status: "Completed",
+    description: "Homepage proof section moved into approval-ready review.",
+  },
+  {
+    title: "Brand Assets Uploaded",
+    timestamp: "May 30, 2026 / 11:25 AM",
+    status: "Received",
+    description: "Primary logo reference and media files were added to the asset center.",
+  },
+  {
+    title: "QA Scheduled",
+    timestamp: "May 30, 2026 / 2:40 PM",
+    status: "Confirmed",
+    description: "Internal QA window was mapped to follow build completion.",
+  },
+  {
+    title: "Review Requested",
+    timestamp: "May 29, 2026 / 5:05 PM",
+    status: "Needs Review",
+    description: "Automation intake map needs one final review pass.",
+  },
+];
+
 export const statusTone: Record<string, string> = {
   "In Progress": "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
   "Review Ready": "border-violet-300/25 bg-violet-500/10 text-violet-100",
@@ -1054,10 +1435,14 @@ export const statusTone: Record<string, string> = {
   Updated: "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
   "Needs Approval": "border-violet-300/25 bg-violet-500/10 text-violet-100",
   "Awaiting Approval": "border-amber-300/25 bg-amber-400/10 text-amber-100",
+  "Pending Review": "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
+  "Needs Revision": "border-amber-300/25 bg-amber-400/10 text-amber-100",
+  Rejected: "border-rose-300/25 bg-rose-400/10 text-rose-100",
   Paid: "border-emerald-300/25 bg-emerald-400/10 text-emerald-100",
+  Outstanding: "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
   "Due Soon": "border-amber-300/25 bg-amber-400/10 text-amber-100",
   Overdue: "border-rose-300/25 bg-rose-400/10 text-rose-100",
-  Draft: "border-zinc-300/18 bg-white/[0.045] text-zinc-300",
+  Draft: "border-violet-300/25 bg-violet-500/10 text-violet-100",
   Pending: "border-amber-300/25 bg-amber-400/10 text-amber-100",
   Healthy: "border-emerald-300/25 bg-emerald-400/10 text-emerald-100",
   "Needs Attention": "border-amber-300/25 bg-amber-400/10 text-amber-100",
@@ -1065,4 +1450,5 @@ export const statusTone: Record<string, string> = {
   High: "border-rose-300/25 bg-rose-400/10 text-rose-100",
   Medium: "border-amber-300/25 bg-amber-400/10 text-amber-100",
   Low: "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
+  "Upcoming": "border-zinc-300/18 bg-white/[0.045] text-zinc-300",
 };

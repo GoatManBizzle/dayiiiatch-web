@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import SiteShell from "@/components/layout/site-shell";
 
@@ -41,19 +41,20 @@ export default function HomePage() {
   const [screenshotMode, setScreenshotMode] = useState(
     siteSettings.screenshotMode
   );
-  const [promoClipMode, setPromoClipMode] = useState(false);
-  const [promoDockHidden, setPromoDockHidden] = useState(false);
-
-  const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
-
-  useEffect(() => {
+  const [promoClipMode] = useState(() => {
+    if (typeof window === "undefined") return false;
+    const params = new URLSearchParams(window.location.search);
+    return params.get("promo") === "1" || params.get("mode") === "promo";
+  });
+  const [promoDockHidden] = useState(() => {
+    if (typeof window === "undefined") return false;
     const params = new URLSearchParams(window.location.search);
     const promoEnabled =
       params.get("promo") === "1" || params.get("mode") === "promo";
+    return promoEnabled && params.get("dock") === "hide";
+  });
 
-    setPromoClipMode(promoEnabled);
-    setPromoDockHidden(promoEnabled && params.get("dock") === "hide");
-  }, []);
+  const isDev = useMemo(() => process.env.NODE_ENV !== "production", []);
 
   return (
     <SiteShell
@@ -140,7 +141,7 @@ export default function HomePage() {
         <ContactFormSection />
       </Reveal>
       <Reveal delayMs={80}>
-      <FooterSection />
+        <FooterSection />
       </Reveal>
       <DamarkoAssistant />
       <StickyCTA />

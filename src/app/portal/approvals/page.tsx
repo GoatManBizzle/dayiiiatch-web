@@ -5,8 +5,8 @@ export default function PortalApprovalsPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="Approvals"
-        description="Approve deliverables, request revisions, and keep launch-critical decisions moving through a clear client-facing workflow."
+        title="Approval Center"
+        description="Review project items and provide approval decisions."
       />
       <PortalApprovalsWorkspace />
     </div>

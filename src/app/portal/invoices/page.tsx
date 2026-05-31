@@ -5,8 +5,8 @@ export default function PortalInvoicesPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="Invoices & Payments"
-        description="Preview invoice status, payment readiness, billing history, and future Stripe payment workflows in one client billing workspace."
+        title="Invoice Center"
+        description="Manage billing, invoices, and payment activity."
       />
       <PortalInvoicesWorkspace />
     </div>
