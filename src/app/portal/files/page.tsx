@@ -8,8 +8,8 @@ export default function PortalFilesPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="File Upload Center"
-        description="A clean asset hub for images, PDFs, logos, references, contracts, and future Supabase-backed client storage."
+        title="Client Asset Center"
+        description="Upload, review, replace, and organize brand assets, references, contracts, deliverables, and media files in one client workspace."
       />
       <FileCategories />
       <FileUploadCenter />

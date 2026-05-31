@@ -8,6 +8,7 @@ import { portalNavItems } from "@/lib/portal-data";
 
 type PortalShellProps = {
   children: React.ReactNode;
+  sessionMode?: "client" | "preview";
 };
 
 function isActivePath(pathname: string, href: string) {
@@ -18,8 +19,22 @@ function isActivePath(pathname: string, href: string) {
   return pathname === href;
 }
 
-export default function PortalShell({ children }: PortalShellProps) {
+export default function PortalShell({
+  children,
+  sessionMode = "preview",
+}: PortalShellProps) {
   const pathname = usePathname();
+  const sessionLabel =
+    sessionMode === "preview" ? "Preview Mode" : "Client Session";
+  const sessionTone =
+    sessionMode === "preview"
+      ? "border-violet-300/25 bg-violet-500/10 text-violet-100"
+      : "border-emerald-300/25 bg-emerald-400/10 text-emerald-100";
+
+  function clearPortalSession() {
+    window.localStorage.removeItem("dayiiiatch-portal-session");
+    window.location.assign("/portal");
+  }
 
   return (
     <SiteShell fixedMainBackground compactMobileSpacing>
@@ -31,8 +46,10 @@ export default function PortalShell({ children }: PortalShellProps) {
                 <p className="text-xs font-black uppercase tracking-[0.24em] text-cyan-200">
                   DAYIIIatch Client Portal
                 </p>
-                <span className="rounded-full border border-violet-300/25 bg-violet-500/10 px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-violet-100">
-                  Preview Mode
+                <span
+                  className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] ${sessionTone}`}
+                >
+                  {sessionLabel}
                 </span>
               </div>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-300">
@@ -54,6 +71,13 @@ export default function PortalShell({ children }: PortalShellProps) {
               >
                 Schedule Check-In
               </Link>
+              <button
+                type="button"
+                onClick={clearPortalSession}
+                className="rounded-2xl border border-white/10 bg-white/[0.045] px-4 py-3 text-sm font-bold text-zinc-300 transition hover:border-violet-300/28 hover:bg-violet-500/10 hover:text-violet-100"
+              >
+                Exit Portal
+              </button>
             </div>
           </div>
 
@@ -75,7 +99,14 @@ export default function PortalShell({ children }: PortalShellProps) {
                       : "border-white/10 bg-black/24 text-zinc-300 hover:border-cyan-300/28 hover:bg-cyan-400/8 hover:text-cyan-100"
                   }`}
                 >
-                  {item.label}
+                  <span className="inline-flex items-center gap-2">
+                    {item.icon ? (
+                      <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-2 py-0.5 text-[9px] text-cyan-100">
+                        {item.icon}
+                      </span>
+                    ) : null}
+                    <span>{item.label}</span>
+                  </span>
                 </Link>
               );
             })}
@@ -102,7 +133,14 @@ export default function PortalShell({ children }: PortalShellProps) {
                         : "border-white/10 bg-white/[0.035] text-zinc-300 hover:border-violet-300/26 hover:bg-violet-500/8 hover:text-violet-100"
                     }`}
                   >
-                    {item.label}
+                    <span className="inline-flex items-center gap-2">
+                      {item.icon ? (
+                        <span className="rounded-full border border-cyan-300/20 bg-cyan-400/10 px-2 py-0.5 text-[9px] text-cyan-100">
+                          {item.icon}
+                        </span>
+                      ) : null}
+                      <span>{item.label}</span>
+                    </span>
                   </Link>
                 );
               })}

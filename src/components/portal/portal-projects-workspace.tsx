@@ -6,6 +6,24 @@ import { clientProjects, projectStages, statusTone } from "@/lib/portal-data";
 
 type PortalProject = (typeof clientProjects)[number];
 
+const workspaceStats = [
+  { label: "Active Projects", value: clientProjects.length.toString() },
+  {
+    label: "Avg Progress",
+    value: `${Math.round(
+      clientProjects.reduce((total, project) => total + project.progress, 0) /
+        clientProjects.length,
+    )}%`,
+  },
+  { label: "Next Review", value: "Jun 03" },
+];
+
+const projectHealth: Record<string, string> = {
+  "Scheduler Platform Expansion": "QA Stable",
+  "Brand Presence Upgrade": "Client Review",
+  "Automation Support Layer": "Assets Needed",
+};
+
 function StatusPill({ status }: { status: string }) {
   return (
     <span
@@ -14,6 +32,14 @@ function StatusPill({ status }: { status: string }) {
       }`}
     >
       {status}
+    </span>
+  );
+}
+
+function OperationalChip({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="rounded-full border border-cyan-300/16 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
+      {children}
     </span>
   );
 }
@@ -42,14 +68,30 @@ export default function PortalProjectsWorkspace() {
 
   return (
     <>
+      <section className="grid gap-3 sm:grid-cols-3">
+        {workspaceStats.map((stat) => (
+          <div
+            key={stat.label}
+            className="rounded-[1.25rem] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-[0_0_28px_rgba(124,58,237,0.05)] backdrop-blur-xl"
+          >
+            <p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500">
+              {stat.label}
+            </p>
+            <p className="mt-1 text-2xl font-black text-white">
+              {stat.value}
+            </p>
+          </div>
+        ))}
+      </section>
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {clientProjects.map((project) => (
           <article
             key={project.title}
-            className="group flex min-h-[21rem] flex-col rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 shadow-[0_0_30px_rgba(34,211,238,0.05)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/28 hover:shadow-[0_0_34px_rgba(34,211,238,0.1)]"
+            className="group flex min-h-[23rem] min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 shadow-[0_0_30px_rgba(34,211,238,0.05)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/28 hover:shadow-[0_0_34px_rgba(34,211,238,0.1)]"
           >
             <div className="flex items-start justify-between gap-3">
-              <div>
+              <div className="min-w-0">
                 <p className="text-[10px] font-black uppercase tracking-[0.16em] text-zinc-500">
                   Client Project
                 </p>
@@ -60,7 +102,12 @@ export default function PortalProjectsWorkspace() {
               <StatusPill status={project.status} />
             </div>
 
-            <div className="mt-5 grid gap-3">
+            <div className="mt-4 flex flex-wrap gap-2">
+              <OperationalChip>{projectHealth[project.title]}</OperationalChip>
+              <OperationalChip>{project.stage} phase</OperationalChip>
+            </div>
+
+            <div className="mt-5 grid gap-4">
               <ProjectProgress project={project} />
               <div className="grid gap-2 text-sm">
                 <div className="rounded-2xl border border-white/10 bg-black/24 px-3 py-3">
@@ -83,9 +130,9 @@ export default function PortalProjectsWorkspace() {
             </div>
 
             <div className="mt-auto pt-5">
-              <div className="flex flex-wrap items-center justify-between gap-3">
+              <div className="flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-4">
                 <p className="text-xs font-bold uppercase tracking-[0.14em] text-zinc-500">
-                  Updated {project.updated}
+                  Last updated {project.updated}
                 </p>
                 <button
                   type="button"
@@ -113,7 +160,7 @@ export default function PortalProjectsWorkspace() {
             onClick={(event) => event.stopPropagation()}
           >
             <div className="flex flex-wrap items-start justify-between gap-4">
-              <div>
+              <div className="min-w-0">
                 <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">
                   Project Detail
                 </p>
@@ -133,6 +180,33 @@ export default function PortalProjectsWorkspace() {
                 >
                   Close
                 </button>
+              </div>
+            </div>
+
+            <div className="mt-5 grid gap-3 sm:grid-cols-3">
+              <div className="rounded-2xl border border-white/10 bg-black/24 px-4 py-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                  Progress
+                </p>
+                <p className="mt-1 text-xl font-black text-white">
+                  {selectedProject.progress}%
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/24 px-4 py-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                  Current Phase
+                </p>
+                <p className="mt-1 text-xl font-black text-white">
+                  {selectedProject.stage}
+                </p>
+              </div>
+              <div className="rounded-2xl border border-white/10 bg-black/24 px-4 py-3">
+                <p className="text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
+                  Last Updated
+                </p>
+                <p className="mt-1 text-xl font-black text-white">
+                  {selectedProject.updated}
+                </p>
               </div>
             </div>
 
@@ -163,7 +237,7 @@ export default function PortalProjectsWorkspace() {
                     return (
                       <div
                         key={stage}
-                        className={`grid grid-cols-[auto_1fr_auto] items-center gap-3 rounded-2xl border px-3 py-3 ${
+                        className={`grid grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 rounded-2xl border px-3 py-3 ${
                           active
                             ? "border-cyan-300/28 bg-cyan-400/10"
                             : complete
@@ -182,7 +256,9 @@ export default function PortalProjectsWorkspace() {
                         >
                           {index + 1}
                         </span>
-                        <span className="font-bold text-zinc-100">{stage}</span>
+                        <span className="min-w-0 font-bold text-zinc-100">
+                          {stage}
+                        </span>
                         <span className="text-[10px] font-black uppercase tracking-[0.12em] text-zinc-500">
                           {active ? "Active" : complete ? "Done" : "Queued"}
                         </span>

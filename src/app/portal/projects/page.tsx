@@ -7,8 +7,8 @@ export default function PortalProjectsPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="Project Tracker"
-        description="Track milestone movement from discovery through optimization with progress bars, activity stages, and status clarity."
+        title="Project Workspace"
+        description="Track active builds, review status, milestone movement, recent activity, and next actions across the client project pipeline."
       />
       <PortalProjectsWorkspace />
     </div>

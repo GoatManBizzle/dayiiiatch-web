@@ -7,8 +7,8 @@ export default function PortalBookingsPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="Client Bookings"
-        description="Meeting visibility and scheduler actions connected to the existing DAYIIIatch booking path."
+        title="Meeting Scheduler"
+        description="Manage upcoming sessions, agenda notes, confirmation status, reschedule requests, and new booking paths from one client workspace."
       />
       <PortalBookings />
     </div>

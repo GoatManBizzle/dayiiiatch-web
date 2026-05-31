@@ -7,8 +7,8 @@ export default function PortalMessagesPage() {
   return (
     <div className="grid gap-4">
       <PortalPageIntro
-        title="Client Messages"
-        description="Lightweight project communication for update notes, revision requests, and operational comments."
+        title="Communication Workspace"
+        description="Track project updates, asset reviews, revision requests, and launch prep conversations in one clean client message center."
       />
       <MessagesLayer />
     </div>

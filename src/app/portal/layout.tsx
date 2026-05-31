@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import PortalShell from "@/components/portal/portal-shell";
+import PortalAccessGate from "@/components/portal/portal-access-gate";
 
 export const metadata: Metadata = {
   title: "DAYIIIatch Client Portal | Workspace",
@@ -21,5 +21,5 @@ export default function PortalLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return <PortalShell>{children}</PortalShell>;
+  return <PortalAccessGate>{children}</PortalAccessGate>;
 }
