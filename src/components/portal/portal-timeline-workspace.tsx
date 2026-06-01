@@ -12,6 +12,12 @@ import {
 } from "@/lib/portal-data";
 
 type TimelineMilestone = (typeof portalTimelineMilestones)[number];
+type TimelineProjectSnapshot = {
+  currentPhase: string;
+  progress: number;
+  launchReadiness: number;
+  name: string;
+};
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -113,8 +119,31 @@ function MilestoneCard({
   );
 }
 
-export default function PortalTimelineWorkspace() {
+export default function PortalTimelineWorkspace({
+  project,
+  isPreviewData = true,
+}: {
+  project?: TimelineProjectSnapshot | null;
+  isPreviewData?: boolean;
+}) {
+  const heroStats = project
+    ? [
+        { label: "Current Phase", value: project.currentPhase, status: "Active" },
+        { label: "Progress", value: `${project.progress}%`, status: "In Progress" },
+        {
+          label: "Estimated Completion",
+          value: "Supabase Project",
+          status: "Due Soon",
+        },
+        { label: "Next Milestone", value: project.name, status: "Awaiting Approval" },
+      ]
+    : portalTimelineHeroStats;
   const activeMilestone =
+    portalTimelineMilestones.find((milestone) =>
+      project
+        ? milestone.name.toLowerCase() === project.currentPhase.toLowerCase()
+        : milestone.status === "Active",
+    ) ??
     portalTimelineMilestones.find((milestone) => milestone.status === "Active") ??
     portalTimelineMilestones[0];
   const [openMilestone, setOpenMilestone] = useState(activeMilestone.name);
@@ -134,10 +163,19 @@ export default function PortalTimelineWorkspace() {
             <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-300">
               Track every milestone from discovery through launch and support.
             </p>
+            <span
+              className={`mt-4 inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                isPreviewData
+                  ? "border-violet-300/20 bg-violet-500/10 text-violet-100"
+                  : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+              }`}
+            >
+              {isPreviewData ? "Preview Data" : "Supabase Data"}
+            </span>
           </div>
 
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-            {portalTimelineHeroStats.map((stat) => (
+            {heroStats.map((stat) => (
               <article
                 key={stat.label}
                 className="rounded-2xl border border-white/10 bg-black/24 p-4"

@@ -7,11 +7,64 @@ import {
   portalApprovalQueue,
   statusTone,
 } from "@/lib/portal-data";
+import {
+  submitApprovalDecision,
+  type ApprovalHistoryRow,
+  type ApprovalRequestRow,
+} from "@/lib/approval-data";
 
-type ApprovalItem = (typeof portalApprovalQueue)[number];
+type ApprovalItem = (typeof portalApprovalQueue)[number] & {
+  id?: string;
+  client_id?: string | null;
+  project_id?: string | null;
+  deliverable_id?: string | null;
+  raw?: ApprovalRequestRow;
+};
 type ApprovalStatus = "Pending Review" | "Approved" | "Needs Revision" | "Rejected";
 type DecisionType = "approve" | "revision" | "reject";
 type HistoryItem = (typeof portalApprovalHistory)[number];
+
+function displayStatus(status: string): ApprovalStatus {
+  if (status === "approved") return "Approved";
+  if (status === "rejected") return "Rejected";
+  if (status === "needs_revision") return "Needs Revision";
+  return "Pending Review";
+}
+
+function mapApprovalRequest(approval: ApprovalRequestRow): ApprovalItem {
+  return {
+    id: approval.id,
+    client_id: approval.client_id,
+    project_id: approval.project_id,
+    deliverable_id: approval.deliverable_id,
+    title: approval.title,
+    category: approval.category ?? "Approval",
+    dateSubmitted: new Date(approval.submitted_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }),
+    status: displayStatus(approval.status),
+    project: approval.project_id ?? "Linked project",
+    description: approval.due_date
+      ? `Due ${approval.due_date}. Review this item and choose approve, revision, or reject.`
+      : "Review this item and choose approve, revision, or reject.",
+    raw: approval,
+  };
+}
+
+function mapApprovalHistory(history: ApprovalHistoryRow[]): HistoryItem[] {
+  return history.map((entry) => ({
+    date: new Date(entry.created_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }),
+    user: entry.actor_name,
+    action: displayStatus(entry.action),
+    item: entry.approval_id ?? "Approval item",
+  }));
+}
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -49,9 +102,25 @@ function nextStatus(action: DecisionType): ApprovalStatus {
   return "Needs Revision";
 }
 
-export default function PortalApprovalsWorkspace() {
-  const [items, setItems] = useState<ApprovalItem[]>(portalApprovalQueue);
-  const [history, setHistory] = useState<HistoryItem[]>(portalApprovalHistory);
+export default function PortalApprovalsWorkspace({
+  mode = "preview",
+  approvals,
+  approvalHistory,
+  actorName = "Client",
+}: {
+  mode?: "preview" | "auth";
+  approvals?: ApprovalRequestRow[];
+  approvalHistory?: ApprovalHistoryRow[];
+  actorName?: string | null;
+}) {
+  const [items, setItems] = useState<ApprovalItem[]>(
+    approvals?.length ? approvals.map(mapApprovalRequest) : portalApprovalQueue,
+  );
+  const [history, setHistory] = useState<HistoryItem[]>(
+    approvalHistory?.length
+      ? mapApprovalHistory(approvalHistory)
+      : portalApprovalHistory,
+  );
   const [decision, setDecision] = useState<{
     action: DecisionType;
     item: ApprovalItem;
@@ -89,7 +158,7 @@ export default function PortalApprovalsWorkspace() {
     setDecision({ action, item });
   }
 
-  function confirmDecision() {
+  async function confirmDecision() {
     if (!decision) {
       return;
     }
@@ -97,6 +166,20 @@ export default function PortalApprovalsWorkspace() {
     const status = nextStatus(decision.action);
     const historyAction =
       decision.action === "revision" ? "Revision Requested" : status;
+
+    if (mode === "auth" && decision.item.raw) {
+      const result = await submitApprovalDecision({
+        approval: decision.item.raw,
+        action: decision.action,
+        actorName: actorName ?? "Client",
+        feedback,
+      });
+
+      if (result.error) {
+        setFeedback(result.error);
+        return;
+      }
+    }
 
     setItems((currentItems) =>
       currentItems.map((item) =>
@@ -107,7 +190,7 @@ export default function PortalApprovalsWorkspace() {
     setHistory((currentHistory) => [
       {
         date: "May 31, 2026",
-        user: "Preview Client",
+        user: actorName ?? "Client",
         action: historyAction,
         item: decision.item.title,
       },
@@ -298,9 +381,9 @@ export default function PortalApprovalsWorkspace() {
             </div>
 
             <p className="mt-3 text-sm leading-6 text-zinc-300">
-              This preview updates local portal state only. The future backend
-              will persist this decision to approval_requests and log the event
-              in approval_history.
+              {mode === "preview"
+                ? "This preview updates local portal state only."
+                : "This will update the approval request, add history, and create an activity event."}
             </p>
 
             {decision.action === "revision" ? (
@@ -328,7 +411,7 @@ export default function PortalApprovalsWorkspace() {
               </button>
               <button
                 type="button"
-                onClick={confirmDecision}
+                onClick={() => void confirmDecision()}
                 className="rounded-xl border border-cyan-300/26 bg-cyan-400/12 px-4 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/18"
               >
                 Confirm {actionLabel(decision.action)}

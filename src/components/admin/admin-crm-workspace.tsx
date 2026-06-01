@@ -1,5 +1,11 @@
-import Link from "next/link";
+"use client";
 
+import Link from "next/link";
+import { useState } from "react";
+
+import LeadConversionModal, {
+  type LeadConversionTarget,
+} from "@/components/admin/lead-conversion-modal";
 import {
   crmClientRecords,
   crmOverviewCards,
@@ -26,6 +32,11 @@ const statusTone: Record<string, string> = {
   Draft: "border-violet-300/25 bg-violet-500/10 text-violet-100",
   "Invite Pending": "border-amber-300/25 bg-amber-400/10 text-amber-100",
   "Not Created": "border-zinc-300/18 bg-white/[0.045] text-zinc-300",
+  "Portal Ready": "border-emerald-300/25 bg-emerald-400/10 text-emerald-100",
+  "Invite Sent": "border-emerald-300/25 bg-emerald-400/10 text-emerald-100",
+  "Invite Failed": "border-rose-300/25 bg-rose-400/10 text-rose-100",
+  "Not Requested": "border-zinc-300/18 bg-white/[0.045] text-zinc-300",
+  Converted: "border-cyan-300/25 bg-cyan-400/10 text-cyan-100",
 };
 
 const heatTone: Record<string, string> = {
@@ -53,7 +64,52 @@ function Pill({
   );
 }
 
-export default function AdminCrmWorkspace() {
+export default function AdminCrmWorkspace({
+  overviewCards = crmOverviewCards,
+  isPreviewData = true,
+}: {
+  overviewCards?: typeof crmOverviewCards;
+  isPreviewData?: boolean;
+}) {
+  const [conversionLead, setConversionLead] =
+    useState<LeadConversionTarget | null>(null);
+  const [convertedLeads, setConvertedLeads] = useState<
+    Record<
+      string,
+      {
+        portalEnabled: boolean;
+        inviteStatus:
+          | "Portal Ready"
+          | "Invite Sent"
+          | "Invite Failed"
+          | "Not Requested";
+      }
+    >
+  >({});
+  const [successMessage, setSuccessMessage] = useState("");
+
+  function handleConverted(
+    email: string,
+    portalEnabled: boolean,
+    inviteStatus:
+      | "Portal Ready"
+      | "Invite Sent"
+      | "Invite Failed"
+      | "Not Requested",
+  ) {
+    setConvertedLeads((current) => ({
+      ...current,
+      [email]: { portalEnabled, inviteStatus },
+    }));
+    setSuccessMessage(
+      portalEnabled && inviteStatus === "Invite Sent"
+        ? "Lead converted. Starter project created and portal invite sent."
+        : portalEnabled
+          ? `Lead converted. Starter project created. ${inviteStatus}.`
+        : "Lead converted. Starter project created.",
+    );
+  }
+
   return (
     <div className="space-y-6">
       <section className="relative overflow-hidden rounded-[2rem] border border-cyan-300/18 bg-cyan-400/[0.055] p-5 shadow-[0_0_46px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:p-6">
@@ -70,6 +126,15 @@ export default function AdminCrmWorkspace() {
               Connect leads, bookings, clients, projects, approvals, invoices,
               and portal access into one operational business system.
             </p>
+            <span
+              className={`mt-4 inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                isPreviewData
+                  ? "border-violet-300/20 bg-violet-500/10 text-violet-100"
+                  : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+              }`}
+            >
+              {isPreviewData ? "Preview Data" : "Supabase Data"}
+            </span>
           </div>
 
           <div className="flex flex-wrap gap-2">
@@ -90,7 +155,7 @@ export default function AdminCrmWorkspace() {
       </section>
 
       <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
-        {crmOverviewCards.map((card) => (
+        {overviewCards.map((card) => (
           <article
             key={card.label}
             className="rounded-3xl border border-white/10 bg-white/[0.045] p-4 shadow-[0_0_24px_rgba(124,58,237,0.04)]"
@@ -107,6 +172,12 @@ export default function AdminCrmWorkspace() {
           </article>
         ))}
       </section>
+
+      {successMessage ? (
+        <div className="rounded-2xl border border-emerald-300/18 bg-emerald-400/[0.08] px-4 py-3 text-sm font-bold text-emerald-100">
+          {successMessage}
+        </div>
+      ) : null}
 
       <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
@@ -173,6 +244,31 @@ export default function AdminCrmWorkspace() {
                         {card.nextAction}
                       </p>
                     </div>
+                    <div className="mt-3 flex flex-wrap gap-2">
+                      {convertedLeads[card.email] ? (
+                        <Pill
+                          label={
+                            convertedLeads[card.email].portalEnabled
+                              ? convertedLeads[card.email].inviteStatus
+                              : "Converted"
+                          }
+                        />
+                      ) : null}
+                      <button
+                        type="button"
+                        onClick={() => setConversionLead(card)}
+                        className="rounded-xl border border-cyan-300/24 bg-cyan-400/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-400/18"
+                      >
+                        Convert to Client
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConversionLead(card)}
+                        className="rounded-xl border border-violet-300/20 bg-violet-500/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-violet-100 transition hover:bg-violet-500/18"
+                      >
+                        Start Project
+                      </button>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -197,9 +293,8 @@ export default function AdminCrmWorkspace() {
 
           <div className="mt-4 grid gap-3 lg:grid-cols-3">
             {crmClientRecords.map((client) => (
-              <Link
+              <article
                 key={client.email}
-                href="/admin/crm/client/client-dayiiiatch-preview"
                 className="flex min-w-0 flex-col rounded-3xl border border-white/10 bg-black/24 p-4"
               >
                 <h3 className="break-words text-lg font-black text-white">
@@ -232,10 +327,39 @@ export default function AdminCrmWorkspace() {
                 </div>
 
                 <div className="mt-auto flex flex-wrap gap-2 pt-4">
-                  <Pill label={client.portalStatus} />
+                  <Pill
+                    label={
+                      convertedLeads[client.email]?.portalEnabled
+                        ? convertedLeads[client.email].inviteStatus
+                        : client.portalStatus
+                    }
+                  />
                   <Pill label={client.invoiceStatus} />
                 </div>
-              </Link>
+                <div className="mt-3 flex flex-wrap gap-2">
+                  <Link
+                    href="/admin/crm/client/client-dayiiiatch-preview"
+                    className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-zinc-200 transition hover:border-cyan-300/24 hover:text-cyan-100"
+                  >
+                    View Record
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setConversionLead({
+                        name: client.clientName,
+                        email: client.email,
+                        company: client.company,
+                        serviceInterest: client.activeProject,
+                        source: "CRM Record",
+                      })
+                    }
+                    className="rounded-xl border border-cyan-300/24 bg-cyan-400/10 px-3 py-2 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100 transition hover:bg-cyan-400/18"
+                  >
+                    Enable Portal
+                  </button>
+                </div>
+              </article>
             ))}
           </div>
         </div>
@@ -362,6 +486,14 @@ export default function AdminCrmWorkspace() {
           portal_user_id for full operational traceability.
         </p>
       </section>
+
+      {conversionLead ? (
+        <LeadConversionModal
+          lead={conversionLead}
+          onClose={() => setConversionLead(null)}
+          onConverted={handleConverted}
+        />
+      ) : null}
     </div>
   );
 }

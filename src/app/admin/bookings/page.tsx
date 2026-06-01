@@ -30,6 +30,10 @@ export const metadata: Metadata = {
 const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
+type AdminBookingRow = Omit<Booking, "client"> & {
+  client?: Booking["client"] | Booking["client"][];
+};
+
 export default async function AdminBookingsPage() {
   const cookieStore = await cookies();
   const authToken = cookieStore.get(ADMIN_AUTH_COOKIE)?.value;
@@ -51,12 +55,17 @@ export default async function AdminBookingsPage() {
   const { data, error } = await supabase
     .from("bookings")
     .select(
-      "id, service, service_label, date, time, name, email, company, details, status",
+      "id, client_id, service, service_label, date, time, name, email, company, details, status, client:clients(id, name, company, email, status, portal_enabled)",
     )
     .order("date", { ascending: true })
     .order("time", { ascending: true });
 
-  const bookings = (data ?? []) as Booking[];
+  const bookings = ((data ?? []) as AdminBookingRow[]).map((booking) => ({
+    ...booking,
+    client: Array.isArray(booking.client)
+      ? (booking.client[0] ?? null)
+      : (booking.client ?? null),
+  })) satisfies Booking[];
 
   return (
     <main className="min-h-screen bg-[#05070d] px-6 py-10 text-white">

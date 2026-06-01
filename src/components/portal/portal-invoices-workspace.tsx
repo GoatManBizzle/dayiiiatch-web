@@ -1,7 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
+import {
+  createInvoiceActivityEvent,
+  type InvoiceItemRow,
+  type InvoiceRow,
+  type PaymentRow,
+} from "@/lib/invoice-data";
 import {
   portalInvoices,
   portalInvoiceSummary,
@@ -9,7 +15,72 @@ import {
   statusTone,
 } from "@/lib/portal-data";
 
-type PortalInvoice = (typeof portalInvoices)[number];
+type InvoiceMode = "preview" | "auth";
+type PreviewInvoice = (typeof portalInvoices)[number];
+
+type InvoiceView = {
+  id: string;
+  clientId?: string | null;
+  projectId?: string | null;
+  invoiceNumber: string;
+  title: string;
+  amount: string;
+  tax: string;
+  total: string;
+  subtotalValue: number;
+  taxValue: number;
+  totalValue: number;
+  dueDate: string;
+  paidDate: string;
+  status: string;
+  project: string;
+  services: string[];
+  items: InvoiceItemRow[];
+  payments: PaymentRow[];
+  raw?: InvoiceRow;
+};
+
+function formatCurrency(value?: number | null) {
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: 0,
+  }).format(value ?? 0);
+}
+
+function formatDate(value?: string | null) {
+  if (!value) return "Not scheduled";
+
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    year: "numeric",
+  }).format(date);
+}
+
+function displayStatus(status: string) {
+  const normalized = status.toLowerCase().replace(/_/g, " ");
+
+  if (normalized === "paid") return "Paid";
+  if (normalized === "due soon") return "Due Soon";
+  if (normalized === "overdue") return "Overdue";
+  if (normalized === "draft") return "Draft";
+  if (normalized === "outstanding" || normalized === "pending") {
+    return "Outstanding";
+  }
+
+  return status
+    .split(/[\s_-]+/)
+    .filter(Boolean)
+    .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+    .join(" ");
+}
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -23,11 +94,85 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
+function mapPreviewInvoice(invoice: PreviewInvoice): InvoiceView {
+  const total = Number(invoice.total.replace(/[$,]/g, "")) || 0;
+  const tax = Number(invoice.tax.replace(/[$,]/g, "")) || 0;
+
+  return {
+    id: invoice.invoiceNumber,
+    invoiceNumber: invoice.invoiceNumber,
+    title: invoice.title,
+    amount: invoice.amount,
+    tax: invoice.tax,
+    total: invoice.total,
+    subtotalValue: total - tax,
+    taxValue: tax,
+    totalValue: total,
+    dueDate: invoice.dueDate,
+    paidDate: invoice.paidDate || "Not paid yet",
+    status: invoice.status,
+    project: invoice.project,
+    services: invoice.services,
+    items: invoice.services.map((service, index) => ({
+      id: `${invoice.invoiceNumber}-${index}`,
+      invoice_id: invoice.invoiceNumber,
+      description: service,
+      quantity: 1,
+      unit_price: index === 0 ? total : 0,
+      line_total: index === 0 ? total : 0,
+      created_at: "",
+    })),
+    payments: [],
+  };
+}
+
+function mapInvoiceRow({
+  invoice,
+  items,
+  payments,
+}: {
+  invoice: InvoiceRow;
+  items: InvoiceItemRow[];
+  payments: PaymentRow[];
+}): InvoiceView {
+  const invoiceItems = items.filter((item) => item.invoice_id === invoice.id);
+  const invoicePayments = payments.filter(
+    (payment) => payment.invoice_id === invoice.id,
+  );
+  const subtotal = invoice.subtotal || invoice.amount || invoice.total || 0;
+  const total = invoice.total || invoice.amount || subtotal + invoice.tax;
+
+  return {
+    id: invoice.id,
+    clientId: invoice.client_id,
+    projectId: invoice.project_id,
+    invoiceNumber: invoice.invoice_number,
+    title: invoice.title ?? invoice.invoice_number,
+    amount: formatCurrency(subtotal),
+    tax: formatCurrency(invoice.tax),
+    total: formatCurrency(total),
+    subtotalValue: subtotal,
+    taxValue: invoice.tax,
+    totalValue: total,
+    dueDate: formatDate(invoice.due_date),
+    paidDate: formatDate(invoice.paid_at ?? invoice.paid_date ?? null),
+    status: displayStatus(invoice.status),
+    project: invoice.project_id ? "Linked project" : "Workspace billing",
+    services:
+      invoiceItems.length > 0
+        ? invoiceItems.map((item) => item.description)
+        : ["Invoice line items will appear here once billing is fully wired."],
+    items: invoiceItems,
+    payments: invoicePayments,
+    raw: invoice,
+  };
+}
+
 function InvoiceDetailDrawer({
   invoice,
   onClose,
 }: {
-  invoice: PortalInvoice;
+  invoice: InvoiceView;
   onClose: () => void;
 }) {
   return (
@@ -38,7 +183,7 @@ function InvoiceDetailDrawer({
         className="absolute inset-0 cursor-default"
         onClick={onClose}
       />
-      <aside className="relative h-full w-full max-w-xl overflow-y-auto border-l border-white/10 bg-zinc-950/96 p-5 shadow-[0_0_70px_rgba(34,211,238,0.14)] sm:p-6">
+      <aside className="relative h-full w-full max-w-2xl overflow-y-auto border-l border-white/10 bg-zinc-950/96 p-5 shadow-[0_0_70px_rgba(34,211,238,0.14)] sm:p-6">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div className="min-w-0">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
@@ -55,12 +200,12 @@ function InvoiceDetailDrawer({
           {[
             ["Invoice Number", invoice.invoiceNumber],
             ["Project", invoice.project],
-            ["Amount", invoice.amount],
+            ["Subtotal", invoice.amount],
             ["Tax", invoice.tax],
             ["Total", invoice.total],
             ["Due Date", invoice.dueDate],
             ["Payment Status", invoice.status],
-            ["Paid Date", invoice.paidDate || "Not paid yet"],
+            ["Paid Date", invoice.paidDate],
           ].map(([label, value]) => (
             <div
               key={label}
@@ -78,25 +223,56 @@ function InvoiceDetailDrawer({
 
         <section className="mt-5 rounded-[1.25rem] border border-violet-300/14 bg-violet-500/[0.06] p-4">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-100">
-            Services
+            Invoice Items
           </p>
           <div className="mt-3 grid gap-2">
-            {invoice.services.map((service) => (
+            {invoice.items.map((item) => (
               <div
-                key={service}
-                className="grid grid-cols-[auto_minmax(0,1fr)] gap-2 text-sm leading-6 text-zinc-300"
+                key={item.id}
+                className="grid gap-2 rounded-2xl border border-white/10 bg-black/20 p-3 text-sm text-zinc-300 sm:grid-cols-[minmax(0,1fr)_auto_auto]"
               >
-                <span className="mt-2 h-2 w-2 rounded-full bg-cyan-300/80" />
-                <span>{service}</span>
+                <span className="min-w-0 break-words font-bold text-zinc-100">
+                  {item.description}
+                </span>
+                <span>Qty {item.quantity}</span>
+                <span className="font-black text-white">
+                  {formatCurrency(item.line_total)}
+                </span>
               </div>
             ))}
           </div>
         </section>
 
-        <p className="mt-5 rounded-2xl border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-xs leading-5 text-cyan-100">
-          Future-ready invoice detail structure can hydrate from invoices,
-          invoice_items, payments, and payment_history records.
-        </p>
+        <section className="mt-5 rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] p-4">
+          <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">
+            Payment History
+          </p>
+          <div className="mt-3 grid gap-2">
+            {invoice.payments.length > 0 ? (
+              invoice.payments.map((payment) => (
+                <div
+                  key={payment.id}
+                  className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-white/10 bg-black/20 p-3"
+                >
+                  <div>
+                    <p className="font-black text-white">
+                      {formatCurrency(payment.amount)}
+                    </p>
+                    <p className="text-xs font-bold text-zinc-500">
+                      {formatDate(payment.paid_at ?? payment.created_at)}
+                    </p>
+                  </div>
+                  <StatusPill status={displayStatus(payment.status)} />
+                </div>
+              ))
+            ) : (
+              <p className="text-sm leading-6 text-zinc-300">
+                Payment records will appear here after Stripe Checkout and
+                webhook updates are connected.
+              </p>
+            )}
+          </div>
+        </section>
 
         <div className="mt-5 flex justify-end">
           <button
@@ -114,9 +290,11 @@ function InvoiceDetailDrawer({
 
 function PaymentPreviewModal({
   invoice,
+  message,
   onClose,
 }: {
-  invoice: PortalInvoice;
+  invoice: InvoiceView;
+  message: string;
   onClose: () => void;
 }) {
   return (
@@ -166,17 +344,15 @@ function PaymentPreviewModal({
 
         <div className="mt-4 rounded-[1.25rem] border border-violet-300/18 bg-violet-500/[0.06] p-4">
           <p className="text-xs font-black uppercase tracking-[0.18em] text-violet-100">
-            Payment Method Placeholder
+            Stripe Checkout Placeholder
           </p>
-          <p className="mt-2 text-sm leading-6 text-zinc-300">
-            Saved card, ACH, Stripe Checkout, and invoice payment link options
-            will live here once billing is connected.
-          </p>
+          <p className="mt-2 text-sm leading-6 text-zinc-300">{message}</p>
         </div>
 
         <p className="mt-4 rounded-2xl border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-xs leading-5 text-cyan-100">
-          Future Stripe integration: create Checkout sessions, record payment
-          intents, sync invoice status, and attach generated invoice PDFs.
+          Production billing will require STRIPE_SECRET_KEY,
+          NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY, STRIPE_WEBHOOK_SECRET, Checkout
+          session creation, and webhook-driven payment status updates.
         </p>
 
         <div className="mt-5 flex justify-end">
@@ -193,13 +369,126 @@ function PaymentPreviewModal({
   );
 }
 
-export default function PortalInvoicesWorkspace() {
-  const [detailInvoice, setDetailInvoice] = useState<PortalInvoice | null>(
+export default function PortalInvoicesWorkspace({
+  mode = "preview",
+  invoices,
+  items = [],
+  payments = [],
+}: {
+  mode?: InvoiceMode;
+  invoices?: InvoiceRow[];
+  items?: InvoiceItemRow[];
+  payments?: PaymentRow[];
+}) {
+  const invoiceViews = useMemo(
+    () =>
+      mode === "auth" && invoices
+        ? invoices.map((invoice) => mapInvoiceRow({ invoice, items, payments }))
+        : portalInvoices.map(mapPreviewInvoice),
+    [invoices, items, mode, payments],
+  );
+  const [detailInvoice, setDetailInvoice] = useState<InvoiceView | null>(null);
+  const [paymentInvoice, setPaymentInvoice] = useState<InvoiceView | null>(
     null,
   );
-  const [paymentInvoice, setPaymentInvoice] = useState<PortalInvoice | null>(
-    null,
+  const [paymentMessage, setPaymentMessage] = useState(
+    "Preview Mode opens this payment modal only. No real payment is attempted.",
   );
+  const [pdfNotice, setPdfNotice] = useState<string | null>(null);
+
+  const summary =
+    mode === "auth"
+      ? [
+          {
+            label: "Total Invoiced",
+            value: formatCurrency(
+              invoiceViews.reduce((sum, invoice) => sum + invoice.totalValue, 0),
+            ),
+            status: "Outstanding",
+          },
+          {
+            label: "Paid",
+            value: formatCurrency(
+              invoiceViews
+                .filter((invoice) => invoice.status === "Paid")
+                .reduce((sum, invoice) => sum + invoice.totalValue, 0),
+            ),
+            status: "Paid",
+          },
+          {
+            label: "Outstanding",
+            value: formatCurrency(
+              invoiceViews
+                .filter((invoice) => invoice.status !== "Paid")
+                .reduce((sum, invoice) => sum + invoice.totalValue, 0),
+            ),
+            status: "Outstanding",
+          },
+          {
+            label: "Due Soon",
+            value: String(
+              invoiceViews.filter((invoice) => invoice.status === "Due Soon")
+                .length,
+            ),
+            status: "Due Soon",
+          },
+        ]
+      : portalInvoiceSummary;
+
+  async function handleViewInvoice(invoice: InvoiceView) {
+    setDetailInvoice(invoice);
+
+    if (mode === "auth") {
+      await createInvoiceActivityEvent({
+        clientId: invoice.clientId,
+        projectId: invoice.projectId,
+        eventType: "invoice_viewed",
+        title: invoice.title,
+        description: "Client viewed an invoice detail record.",
+      });
+    }
+  }
+
+  async function handlePayNow(invoice: InvoiceView) {
+    if (mode === "preview") {
+      setPaymentMessage(
+        "Preview Mode opens this payment modal only. No Stripe session or payment record is created.",
+      );
+      setPaymentInvoice(invoice);
+      return;
+    }
+
+    setPaymentMessage("Preparing secure Checkout placeholder...");
+    setPaymentInvoice(invoice);
+    await createInvoiceActivityEvent({
+      clientId: invoice.clientId,
+      projectId: invoice.projectId,
+      eventType: "payment_started",
+      title: invoice.title,
+      description: "Client started the invoice payment flow.",
+    });
+
+    const response = await fetch("/api/portal/create-checkout-session", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ invoiceId: invoice.id }),
+    });
+    const result = (await response.json()) as {
+      message?: string;
+      checkoutUrl?: string | null;
+    };
+
+    setPaymentMessage(
+      result.message ??
+        "Stripe Checkout placeholder returned. Configure Stripe keys to create live sessions.",
+    );
+  }
+
+  function handleDownloadPdf(invoice: InvoiceView) {
+    setPdfNotice(
+      `Invoice PDF generation coming soon for ${invoice.invoiceNumber}.`,
+    );
+  }
 
   return (
     <div className="grid gap-4">
@@ -207,9 +496,12 @@ export default function PortalInvoicesWorkspace() {
         <div className="absolute right-8 top-6 h-24 w-24 rounded-full border border-cyan-300/20 bg-cyan-400/10 blur-xl motion-safe:animate-pulse" />
         <div className="relative grid gap-5 xl:grid-cols-[minmax(0,1fr)_minmax(22rem,0.95fr)] xl:items-end">
           <div className="min-w-0">
-            <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">
-              Billing Workspace
-            </p>
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="text-xs font-black uppercase tracking-[0.22em] text-cyan-200">
+                Billing Workspace
+              </p>
+              {mode === "preview" ? <StatusPill status="Preview Data" /> : null}
+            </div>
             <h2 className="mt-2 break-words text-3xl font-black text-white sm:text-5xl">
               Invoice Center
             </h2>
@@ -219,7 +511,7 @@ export default function PortalInvoicesWorkspace() {
           </div>
 
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
-            {portalInvoiceSummary.map((item) => (
+            {summary.map((item) => (
               <article
                 key={item.label}
                 className="rounded-2xl border border-white/10 bg-black/24 p-4"
@@ -239,6 +531,12 @@ export default function PortalInvoicesWorkspace() {
         </div>
       </section>
 
+      {pdfNotice ? (
+        <div className="rounded-2xl border border-cyan-300/16 bg-cyan-400/[0.07] px-4 py-3 text-sm font-bold text-cyan-100">
+          {pdfNotice}
+        </div>
+      ) : null}
+
       <section className="grid gap-4 xl:grid-cols-[minmax(0,1.45fr)_minmax(320px,0.75fr)]">
         <div className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(124,58,237,0.06)] backdrop-blur-xl sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
@@ -251,14 +549,14 @@ export default function PortalInvoicesWorkspace() {
               </h2>
             </div>
             <span className="rounded-full border border-cyan-300/18 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
-              {portalInvoices.length} invoices
+              {invoiceViews.length} invoices
             </span>
           </div>
 
           <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-2">
-            {portalInvoices.map((invoice) => (
+            {invoiceViews.map((invoice) => (
               <article
-                key={invoice.invoiceNumber}
+                key={invoice.id}
                 className="flex min-w-0 flex-col rounded-2xl border border-white/10 bg-black/24 p-4 transition hover:border-cyan-300/22 hover:bg-cyan-400/[0.045]"
               >
                 <div className="flex flex-wrap items-start justify-between gap-2">
@@ -279,7 +577,7 @@ export default function PortalInvoicesWorkspace() {
                       Amount
                     </p>
                     <p className="mt-1 text-lg font-black text-zinc-100">
-                      {invoice.amount}
+                      {invoice.total}
                     </p>
                   </div>
                   <div className="rounded-2xl border border-white/10 bg-white/[0.035] px-3 py-3">
@@ -299,13 +597,14 @@ export default function PortalInvoicesWorkspace() {
                 <div className="mt-auto flex flex-wrap gap-2 pt-4">
                   <button
                     type="button"
-                    onClick={() => setDetailInvoice(invoice)}
+                    onClick={() => void handleViewInvoice(invoice)}
                     className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-black text-zinc-200 transition hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-cyan-100"
                   >
                     View
                   </button>
                   <button
                     type="button"
+                    onClick={() => handleDownloadPdf(invoice)}
                     className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-black text-zinc-200 transition hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-cyan-100"
                   >
                     Download PDF
@@ -313,7 +612,7 @@ export default function PortalInvoicesWorkspace() {
                   {invoice.status !== "Paid" && invoice.status !== "Draft" ? (
                     <button
                       type="button"
-                      onClick={() => setPaymentInvoice(invoice)}
+                      onClick={() => void handlePayNow(invoice)}
                       className="rounded-xl border border-cyan-300/24 bg-cyan-400/10 px-3 py-2 text-xs font-black text-cyan-100 transition hover:bg-cyan-400/18"
                     >
                       Pay Now
@@ -350,27 +649,55 @@ export default function PortalInvoicesWorkspace() {
               Recent Payments
             </p>
             <div className="mt-4 grid gap-3">
-              {portalPaymentHistory.map((payment) => (
-                <article
-                  key={`${payment.invoice}-${payment.date}`}
-                  className="rounded-2xl border border-white/10 bg-black/24 p-3"
-                >
-                  <div className="flex flex-wrap items-start justify-between gap-2">
-                    <div>
-                      <p className="font-black text-white">
-                        {payment.invoice}
-                      </p>
-                      <p className="mt-1 text-xs font-bold text-zinc-500">
-                        {payment.date}
-                      </p>
-                    </div>
-                    <StatusPill status={payment.status} />
-                  </div>
-                  <p className="mt-2 text-lg font-black text-zinc-100">
-                    {payment.amount}
+              {mode === "auth" ? (
+                payments.length > 0 ? (
+                  payments.slice(0, 4).map((payment) => (
+                    <article
+                      key={payment.id}
+                      className="rounded-2xl border border-white/10 bg-black/24 p-3"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-black text-white">
+                            {formatCurrency(payment.amount)}
+                          </p>
+                          <p className="mt-1 text-xs font-bold text-zinc-500">
+                            {formatDate(payment.paid_at ?? payment.created_at)}
+                          </p>
+                        </div>
+                        <StatusPill status={displayStatus(payment.status)} />
+                      </div>
+                    </article>
+                  ))
+                ) : (
+                  <p className="rounded-2xl border border-white/10 bg-black/24 p-3 text-sm leading-6 text-zinc-300">
+                    Payment history will appear here after Stripe Checkout and
+                    webhook updates are connected.
                   </p>
-                </article>
-              ))}
+                )
+              ) : (
+                portalPaymentHistory.map((payment) => (
+                    <article
+                      key={`${payment.invoice}-${payment.date}`}
+                      className="rounded-2xl border border-white/10 bg-black/24 p-3"
+                    >
+                      <div className="flex flex-wrap items-start justify-between gap-2">
+                        <div>
+                          <p className="font-black text-white">
+                            {payment.invoice}
+                          </p>
+                          <p className="mt-1 text-xs font-bold text-zinc-500">
+                            {payment.date}
+                          </p>
+                        </div>
+                        <StatusPill status={payment.status} />
+                      </div>
+                      <p className="mt-2 text-lg font-black text-zinc-100">
+                        {payment.amount}
+                      </p>
+                    </article>
+                  ))
+              )}
             </div>
           </section>
 
@@ -379,9 +706,8 @@ export default function PortalInvoicesWorkspace() {
               Future Billing Hooks
             </p>
             <p className="mt-2">
-              Prepared for invoices, invoice_items, payments, and
-              payment_history with invoice_id, project_id, client_id, status,
-              amount, due_date, and paid_date fields.
+              Prepared for invoices, invoice_items, payments, Stripe Checkout,
+              invoice PDFs, and webhook-driven payment status updates.
             </p>
           </section>
         </aside>
@@ -397,6 +723,7 @@ export default function PortalInvoicesWorkspace() {
       {paymentInvoice ? (
         <PaymentPreviewModal
           invoice={paymentInvoice}
+          message={paymentMessage}
           onClose={() => setPaymentInvoice(null)}
         />
       ) : null}

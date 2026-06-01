@@ -8,8 +8,9 @@ import {
   portalDeliverables,
   statusTone,
 } from "@/lib/portal-data";
-
-type Deliverable = (typeof portalDeliverables)[number];
+import { createFileSignedUrl, downloadWorkspaceFile } from "@/lib/storage-data";
+import type { ApprovalRequestRow } from "@/lib/approval-data";
+import type { FileRow } from "@/types/workspace";
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -23,17 +24,81 @@ function StatusPill({ status }: { status: string }) {
   );
 }
 
-export default function PortalDeliverablesVault() {
-  const [revisionItem, setRevisionItem] = useState<Deliverable | null>(null);
-  const readyCount = portalDeliverables.filter(
+function displayApprovalStatus(status?: string) {
+  if (status === "approved") return "Approved";
+  if (status === "rejected") return "Rejected";
+  if (status === "needs_revision") return "Needs Revision";
+  if (status === "pending_review") return "Pending Review";
+  return "Pending Review";
+}
+
+function mapStorageFile(file: FileRow, approvals: ApprovalRequestRow[] = []) {
+  const approval = approvals.find(
+    (item) => item.deliverable_id === file.id || item.title === file.file_name,
+  );
+
+  return {
+    title: file.file_name,
+    category: file.category,
+    added: new Date(file.uploaded_at).toLocaleDateString("en-US", {
+      month: "short",
+      day: "2-digit",
+      year: "numeric",
+    }),
+    status: file.status === "received" ? "Ready" : file.status,
+    approvalStatus: displayApprovalStatus(approval?.status),
+    fileType: file.file_type ?? "File",
+    summary: `Stored at ${file.storage_path}`,
+    storageFile: file,
+  };
+}
+
+type StorageDeliverable = ReturnType<typeof mapStorageFile>;
+
+function hasStorageFile(
+  deliverable: StorageDeliverable | (typeof portalDeliverables)[number],
+): deliverable is StorageDeliverable {
+  return "storageFile" in deliverable;
+}
+
+export default function PortalDeliverablesVault({
+  files,
+  approvals,
+}: {
+  files?: FileRow[];
+  approvals?: ApprovalRequestRow[];
+}) {
+  const [revisionItem, setRevisionItem] = useState<string | null>(null);
+  const deliverables = files?.length
+    ? files
+        .filter((file) => file.category === "Deliverables")
+        .map((file) => mapStorageFile(file, approvals))
+    : portalDeliverables;
+  const readyCount = deliverables.filter(
     (deliverable) => deliverable.status === "Ready",
   ).length;
-  const reviewCount = portalDeliverables.filter(
+  const reviewCount = deliverables.filter(
     (deliverable) => deliverable.status === "In Review",
   ).length;
-  const approvalCount = portalDeliverables.filter(
+  const approvalCount = deliverables.filter(
     (deliverable) => deliverable.status === "Needs Approval",
   ).length;
+
+  async function openStorageFile(deliverable: (typeof deliverables)[number]) {
+    if (!hasStorageFile(deliverable)) return;
+
+    const result = await createFileSignedUrl(deliverable.storageFile);
+
+    if (result.url) {
+      window.open(result.url, "_blank", "noopener,noreferrer");
+    }
+  }
+
+  async function downloadStorageFile(deliverable: (typeof deliverables)[number]) {
+    if (!hasStorageFile(deliverable)) return;
+
+    await downloadWorkspaceFile(deliverable.storageFile);
+  }
 
   return (
     <div className="grid gap-4">
@@ -48,7 +113,7 @@ export default function PortalDeliverablesVault() {
             </p>
             <p className="mt-2 text-[10px] font-black uppercase tracking-[0.14em] text-zinc-500">
               {
-                portalDeliverables.filter(
+                deliverables.filter(
                   (deliverable) => deliverable.category === category,
                 ).length
               }{" "}
@@ -74,7 +139,7 @@ export default function PortalDeliverablesVault() {
             </p>
             <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2">
               {[
-                ["Total Files", portalDeliverables.length.toString()],
+                ["Total Files", deliverables.length.toString()],
                 ["Ready", readyCount.toString()],
                 ["In Review", reviewCount.toString()],
                 ["Needs Approval", approvalCount.toString()],
@@ -127,12 +192,22 @@ export default function PortalDeliverablesVault() {
               </h2>
             </div>
             <span className="rounded-full border border-cyan-300/18 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
-              {portalDeliverables.length} files
+              {deliverables.length} files
             </span>
           </div>
 
           <div className="mt-4 grid items-stretch gap-3 lg:grid-cols-2">
-            {portalDeliverables.map((deliverable) => (
+            {deliverables.length === 0 ? (
+              <div className="rounded-2xl border border-cyan-300/14 bg-cyan-400/[0.06] p-5 lg:col-span-2">
+                <p className="font-black text-white">
+                  Upload project assets to begin.
+                </p>
+                <p className="mt-2 text-sm leading-6 text-zinc-300">
+                  Deliverables uploaded to the Deliverables category will appear
+                  here with signed URL view and download actions.
+                </p>
+              </div>
+            ) : deliverables.map((deliverable) => (
               <article
                 key={deliverable.title}
                 className="flex min-w-0 flex-col rounded-2xl border border-white/10 bg-black/24 p-4 transition hover:border-cyan-300/22 hover:bg-cyan-400/[0.045]"
@@ -175,19 +250,21 @@ export default function PortalDeliverablesVault() {
                 <div className="mt-auto flex flex-wrap gap-2 pt-4">
                   <button
                     type="button"
+                    onClick={() => void openStorageFile(deliverable)}
                     className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-black text-zinc-200 transition hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-cyan-100"
                   >
                     View
                   </button>
                   <button
                     type="button"
+                    onClick={() => void downloadStorageFile(deliverable)}
                     className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-black text-zinc-200 transition hover:border-cyan-300/28 hover:bg-cyan-400/10 hover:text-cyan-100"
                   >
                     Download
                   </button>
                   <button
                     type="button"
-                    onClick={() => setRevisionItem(deliverable)}
+                    onClick={() => setRevisionItem(deliverable.title)}
                     className="rounded-xl border border-white/10 bg-white/[0.045] px-3 py-2 text-xs font-black text-zinc-200 transition hover:border-violet-300/28 hover:bg-violet-500/10 hover:text-violet-100"
                   >
                     Request Revision
@@ -201,7 +278,7 @@ export default function PortalDeliverablesVault() {
 
       {revisionItem ? (
         <PortalRevisionModal
-          itemTitle={revisionItem.title}
+          itemTitle={revisionItem}
           onClose={() => setRevisionItem(null)}
           onSubmit={() => setRevisionItem(null)}
         />

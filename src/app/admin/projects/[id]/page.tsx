@@ -177,9 +177,10 @@ export default async function AdminProjectProfilePage({
         </section>
 
         <section className="rounded-[1.5rem] border border-violet-300/14 bg-violet-500/[0.06] px-4 py-4 text-sm leading-6 text-zinc-300">
-          Future Supabase hooks: projects, client_projects, approvals,
-          invoices, activity_events, deliverables, and timeline milestones can
-          hydrate this project profile by project_id.
+          Future Supabase hooks: projects, client_projects, approval_requests,
+          approval_comments, approval_history, invoices, activity_events,
+          deliverables, and timeline milestones can hydrate this project profile
+          by project_id.
         </section>
       </section>
     </main>

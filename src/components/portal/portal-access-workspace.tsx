@@ -3,6 +3,12 @@
 import { useState } from "react";
 import Link from "next/link";
 
+import { signInPortalWithPassword } from "@/lib/portal-auth";
+import {
+  createPreviewPortalSession,
+  persistPortalSessionBrowser,
+} from "@/lib/portal-session";
+
 type AccessTab = "sign-in" | "request-access";
 
 const projectTypes = [
@@ -36,6 +42,8 @@ const inputClass =
 export default function PortalAccessWorkspace() {
   const [activeTab, setActiveTab] = useState<AccessTab>("sign-in");
   const [requestSent, setRequestSent] = useState(false);
+  const [signInError, setSignInError] = useState("");
+  const [isSigningIn, setIsSigningIn] = useState(false);
   const [signInValues, setSignInValues] = useState({
     email: "",
     password: "",
@@ -49,14 +57,45 @@ export default function PortalAccessWorkspace() {
   });
 
   function enterPreviewWorkspace() {
-    // Future: replace local session handoff with Supabase Auth, user_accounts, and workspace_members lookup.
-    window.localStorage.setItem("dayiiiatch-portal-session", "preview");
+    persistPortalSessionBrowser(createPreviewPortalSession());
     window.location.assign("/portal/dashboard");
   }
 
-  function signIn() {
+  async function signIn() {
     if (!signInValues.email || !signInValues.password) return;
-    enterPreviewWorkspace();
+
+    setIsSigningIn(true);
+    setSignInError("");
+
+    const resolution = await signInPortalWithPassword(
+      signInValues.email,
+      signInValues.password,
+    );
+
+    if (resolution.session) {
+      persistPortalSessionBrowser(resolution.session);
+      window.location.assign("/portal/dashboard");
+      return;
+    }
+
+    setIsSigningIn(false);
+
+    if (resolution.code === "not_configured") {
+      enterPreviewWorkspace();
+      return;
+    }
+
+    if (resolution.code === "profile_not_found") {
+      setSignInError("Portal profile not found for this email.");
+      return;
+    }
+
+    if (resolution.code === "invalid_login") {
+      setSignInError("Invalid email or password.");
+      return;
+    }
+
+    setSignInError(resolution.error ?? "Unable to sign in. Please try again.");
   }
 
   function submitRequest(event: React.FormEvent<HTMLFormElement>) {
@@ -180,10 +219,12 @@ export default function PortalAccessWorkspace() {
               <button
                 type="button"
                 onClick={signIn}
-                disabled={!signInValues.email || !signInValues.password}
+                disabled={
+                  !signInValues.email || !signInValues.password || isSigningIn
+                }
                 className="rounded-2xl border border-cyan-300/28 bg-cyan-400/12 px-5 py-3 text-sm font-black text-cyan-100 transition hover:-translate-y-0.5 hover:bg-cyan-400/18 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/[0.035] disabled:text-zinc-600"
               >
-                Sign In
+                {isSigningIn ? "Signing In..." : "Sign In"}
               </button>
               <button
                 type="button"
@@ -193,10 +234,17 @@ export default function PortalAccessWorkspace() {
               </button>
             </div>
 
+            {signInError ? (
+              <p className="rounded-2xl border border-rose-300/20 bg-rose-400/[0.08] px-4 py-3 text-xs leading-5 text-rose-100">
+                {signInError}
+              </p>
+            ) : null}
+
             <p className="rounded-2xl border border-white/10 bg-black/24 px-4 py-3 text-xs leading-5 text-zinc-500">
-              Placeholder auth only. Production sign-in should validate through
-              Supabase Auth, server sessions, and workspace membership checks.
-              For now, successful sign-in enters Preview Mode.
+              Sign-in uses Supabase Auth when configured, then resolves the
+              matching portal_users record by email. If Supabase Auth is not
+              configured in this environment, Sign In falls back to Preview
+              Mode for development.
             </p>
           </form>
         ) : null}

@@ -5,10 +5,14 @@ import { usePathname } from "next/navigation";
 
 import SiteShell from "@/components/layout/site-shell";
 import { portalNavItems } from "@/lib/portal-data";
+import { signOutPortalAuth } from "@/lib/portal-auth";
+import type { PortalSession } from "@/lib/portal-session";
+import { clearPortalSessionBrowser } from "@/lib/portal-session";
 
 type PortalShellProps = {
   children: React.ReactNode;
   sessionMode?: "client" | "preview";
+  session?: PortalSession;
 };
 
 function isActivePath(pathname: string, href: string) {
@@ -22,18 +26,26 @@ function isActivePath(pathname: string, href: string) {
 export default function PortalShell({
   children,
   sessionMode = "preview",
+  session,
 }: PortalShellProps) {
   const pathname = usePathname();
+  const activeSession = session ?? { mode: sessionMode };
   const sessionLabel =
-    sessionMode === "preview" ? "Preview Mode" : "Client Session";
+    activeSession.mode === "preview" ? "Preview Mode" : "Client Workspace";
   const sessionTone =
-    sessionMode === "preview"
+    activeSession.mode === "preview"
       ? "border-violet-300/25 bg-violet-500/10 text-violet-100"
       : "border-emerald-300/25 bg-emerald-400/10 text-emerald-100";
+  const clientLabel =
+    activeSession.company ?? activeSession.clientName ?? activeSession.email;
 
-  function clearPortalSession() {
-    window.localStorage.removeItem("dayiiiatch-portal-session");
-    window.location.assign("/portal");
+  async function clearPortalSession() {
+    if (activeSession.mode === "client") {
+      await signOutPortalAuth();
+    }
+
+    clearPortalSessionBrowser();
+    window.location.assign("/portal/access");
   }
 
   return (
@@ -51,6 +63,16 @@ export default function PortalShell({
                 >
                   {sessionLabel}
                 </span>
+                {clientLabel ? (
+                  <span className="rounded-full border border-cyan-300/18 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-cyan-100">
+                    {clientLabel}
+                  </span>
+                ) : null}
+                {activeSession.role ? (
+                  <span className="rounded-full border border-emerald-300/18 bg-emerald-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.14em] text-emerald-100">
+                    {activeSession.role.replaceAll("_", " ")}
+                  </span>
+                ) : null}
               </div>
               <p className="mt-2 max-w-3xl text-sm leading-6 text-zinc-300">
                 Project visibility, files, messages, meetings, and future

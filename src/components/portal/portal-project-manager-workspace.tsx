@@ -1,4 +1,5 @@
 import PortalActivityWidget from "@/components/portal/portal-activity-widget";
+import type { PortalActivityEvent } from "@/lib/activity-events";
 import {
   portalDamarkoInsights,
   portalProjectManagerActions,
@@ -30,7 +31,11 @@ function ProgressBar({ value }: { value: number }) {
   );
 }
 
-export default function PortalProjectManagerWorkspace() {
+export default function PortalProjectManagerWorkspace({
+  activityEvents,
+}: {
+  activityEvents?: PortalActivityEvent[];
+}) {
   const highSeverityCount = portalProjectManagerBlockers.filter(
     (blocker) => blocker.severity === "High",
   ).length;
@@ -207,7 +212,12 @@ export default function PortalProjectManagerWorkspace() {
         </div>
 
         <div className="grid min-w-0 content-start gap-4 xl:col-span-4">
-          <PortalActivityWidget title="Recent Activity" eyebrow="PM Feed" />
+          <PortalActivityWidget
+            title="Recent Activity"
+            eyebrow="PM Feed"
+            events={activityEvents}
+            isPreviewData={!activityEvents?.length}
+          />
 
           <section className="rounded-[1.5rem] border border-cyan-300/14 bg-cyan-400/[0.06] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
             <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-100">

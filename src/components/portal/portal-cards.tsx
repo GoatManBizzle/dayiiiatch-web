@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import PortalActivityWidget from "@/components/portal/portal-activity-widget";
+import type { PortalActivityEvent } from "@/lib/activity-events";
 import {
   bookingTimelineStages,
   clientProjects,
@@ -19,6 +20,17 @@ import {
   projectStages,
   statusTone,
 } from "@/lib/portal-data";
+
+export type PortalProjectCardData = {
+  title: string;
+  status: string;
+  progress: number;
+  nextStep: string;
+  nextAction: string;
+  updated: string;
+  stage: string;
+  activity: string[];
+};
 
 export function StatusPill({ status }: { status: string }) {
   return (
@@ -59,7 +71,7 @@ export function PortalPageIntro({
 export function ProjectCard({
   project,
 }: {
-  project: (typeof clientProjects)[number];
+  project: PortalProjectCardData;
 }) {
   return (
     <article className="flex h-full flex-col rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 shadow-[0_0_28px_rgba(34,211,238,0.04)] backdrop-blur-xl">
@@ -89,11 +101,31 @@ export function ProjectCard({
   );
 }
 
-export function DashboardOverview() {
+export function DashboardOverview({
+  projects = clientProjects,
+  isPreviewData = true,
+  activityEvents,
+}: {
+  projects?: PortalProjectCardData[];
+  isPreviewData?: boolean;
+  activityEvents?: PortalActivityEvent[];
+}) {
   return (
     <div className="grid gap-4">
+      <div className="flex justify-end">
+        <span
+          className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+            isPreviewData
+              ? "border-violet-300/20 bg-violet-500/10 text-violet-100"
+              : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+          }`}
+        >
+          {isPreviewData ? "Preview Data" : "Supabase Data"}
+        </span>
+      </div>
+
       <div className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
-        {clientProjects.map((project) => (
+        {projects.map((project) => (
           <ProjectCard key={project.title} project={project} />
         ))}
       </div>
@@ -127,7 +159,12 @@ export function DashboardOverview() {
             </div>
           ))}
         </Panel>
-        <PortalActivityWidget title="Recent Activity" eyebrow="Activity" />
+        <PortalActivityWidget
+          title="Recent Activity"
+          eyebrow="Activity"
+          events={activityEvents}
+          isPreviewData={!activityEvents?.length}
+        />
       </div>
 
       <div className="rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.04)]">
@@ -135,21 +172,39 @@ export function DashboardOverview() {
         data hooks are ready for the next platform layer.
       </div>
 
-      <PortalOperationsLayer />
+      <PortalOperationsLayer activityEvents={activityEvents} />
     </div>
   );
 }
 
-export function PortalOperationsLayer() {
+export function PortalOperationsLayer({
+  activityEvents,
+}: {
+  activityEvents?: PortalActivityEvent[];
+}) {
   return (
     <section className="grid gap-4 xl:grid-cols-[1.05fr_0.95fr]">
-      <ActivityFeed />
+      <ActivityFeed events={activityEvents} />
       <ProjectMilestoneTimeline />
     </section>
   );
 }
 
-export function ActivityFeed() {
+export function ActivityFeed({
+  events,
+}: {
+  events?: PortalActivityEvent[];
+}) {
+  const feed = events?.length
+    ? events.map((event) => ({
+        title: event.title,
+        description: event.description,
+        timestamp: event.timestamp,
+        status: event.status,
+        icon: event.icon,
+      }))
+    : portalActivityFeed;
+
   return (
     <section className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -167,7 +222,7 @@ export function ActivityFeed() {
       </div>
 
       <div className="mt-4 grid gap-3">
-        {portalActivityFeed.map((activity, index) => (
+        {feed.map((activity, index) => (
           <article
             key={`${activity.title}-${activity.timestamp}`}
             className="group grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-white/10 bg-black/24 p-3 transition hover:border-cyan-300/24 hover:bg-cyan-400/[0.045]"

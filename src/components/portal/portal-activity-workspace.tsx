@@ -7,8 +7,9 @@ import {
   portalMasterActivityEvents,
   statusTone,
 } from "@/lib/portal-data";
+import type { PortalActivityEvent } from "@/lib/activity-events";
 
-type ActivityEvent = (typeof portalMasterActivityEvents)[number];
+type ActivityEvent = (typeof portalMasterActivityEvents)[number] | PortalActivityEvent;
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -50,45 +51,51 @@ function eventTypeTone(type: string) {
   return "border-white/10 bg-white/[0.045] text-zinc-200";
 }
 
-export default function PortalActivityWorkspace() {
+export default function PortalActivityWorkspace({
+  events = portalMasterActivityEvents,
+  isPreviewData = true,
+}: {
+  events?: ActivityEvent[];
+  isPreviewData?: boolean;
+}) {
   const [activeFilter, setActiveFilter] = useState("All");
   const [selectedEvent, setSelectedEvent] = useState<ActivityEvent>(
-    portalMasterActivityEvents[0],
+    events[0] ?? portalMasterActivityEvents[0],
   );
 
   const filteredEvents = useMemo(() => {
     if (activeFilter === "All") {
-      return portalMasterActivityEvents;
+      return events;
     }
 
-    return portalMasterActivityEvents.filter(
+    return events.filter(
       (event) => event.eventType === activeFilter,
     );
-  }, [activeFilter]);
+  }, [activeFilter, events]);
 
   const metrics = [
     {
       label: "Total Events",
-      value: portalMasterActivityEvents.length.toString(),
+      value: events.length.toString(),
       status: "Active",
     },
     {
       label: "Today's Events",
-      value: portalMasterActivityEvents
+      value: events
         .filter((event) => event.createdAt.includes("May 31, 2026"))
         .length.toString(),
       status: "New",
     },
     {
       label: "Approvals",
-      value: portalMasterActivityEvents
+      value: events
         .filter((event) => event.eventType === "Approvals")
         .length.toString(),
       status: "Pending Review",
     },
     {
       label: "Deliverables",
-      value: portalMasterActivityEvents
+      value: events
         .filter((event) => event.eventType === "Deliverables")
         .length.toString(),
       status: "Updated",
@@ -110,6 +117,15 @@ export default function PortalActivityWorkspace() {
             <p className="mt-3 max-w-3xl text-sm leading-6 text-zinc-300">
               Track everything happening across your workspace.
             </p>
+            <span
+              className={`mt-4 inline-flex rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+                isPreviewData
+                  ? "border-violet-300/20 bg-violet-500/10 text-violet-100"
+                  : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+              }`}
+            >
+              {isPreviewData ? "Preview Data" : "Supabase Data"}
+            </span>
           </div>
 
           <div className="grid min-w-0 gap-3 sm:grid-cols-2">
@@ -264,10 +280,11 @@ export default function PortalActivityWorkspace() {
           </div>
 
           <div className="mt-5 rounded-2xl border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-xs leading-5 text-cyan-100">
-            Future activity_events fields: id, workspace_id, event_type, title,
-            description, created_at, and created_by.
+            Future activity_events fields: id, client_id, project_id, actor_id,
+            actor_role, actor_name, event_type, title, description, metadata,
+            and created_at.
           </div>
-          {/* Future: persist activity_events in Supabase and generate events from approvals, uploads, invoices, bookings, timeline changes, and portal access logs. */}
+          {/* Future: stream activity_events through Supabase realtime and generate events from approvals, uploads, invoices, bookings, timeline changes, and portal access logs. */}
         </aside>
       </section>
     </div>

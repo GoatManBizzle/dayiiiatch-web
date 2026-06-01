@@ -102,6 +102,19 @@ function getStoredVisibleColumns(): ColumnKey[] {
   }
 }
 
+function getLinkedClientName(booking: Booking) {
+  return booking.client?.name || booking.name;
+}
+
+function getLinkedClientStatus(booking: Booking) {
+  return booking.client?.status || (booking.client_id ? "linked" : "legacy");
+}
+
+function getPortalStatus(booking: Booking) {
+  if (!booking.client_id) return "No client link";
+  return booking.client?.portal_enabled ? "Portal enabled" : "Portal off";
+}
+
 export default function BookingsTable({ bookings }: Props) {
   const router = useRouter();
 
@@ -252,6 +265,8 @@ export default function BookingsTable({ bookings }: Props) {
         booking.time.toLowerCase().includes(search) ||
         booking.service_label.toLowerCase().includes(search) ||
         (booking.company || "").toLowerCase().includes(search) ||
+        (booking.client?.name || "").toLowerCase().includes(search) ||
+        (booking.client?.status || "").toLowerCase().includes(search) ||
         (booking.details || "").toLowerCase().includes(search);
 
       const matchesStatus =
@@ -734,10 +749,22 @@ export default function BookingsTable({ bookings }: Props) {
                     )}
                     {isColumnVisible("client") && (
                       <td
-                        className="max-w-[130px] truncate px-2.5 py-3 align-top font-semibold"
-                        title={booking.name}
+                        className="max-w-[170px] px-2.5 py-3 align-top"
+                        title={`${getLinkedClientName(booking)} / ${getLinkedClientStatus(booking)} / ${getPortalStatus(booking)}`}
                       >
-                        {booking.name}
+                        <p className="truncate font-semibold text-white">
+                          {getLinkedClientName(booking)}
+                        </p>
+                        <div className="mt-1 flex flex-wrap gap-1">
+                          <span className="inline-flex rounded-full border border-cyan-300/18 bg-cyan-400/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-cyan-100">
+                            {getLinkedClientStatus(booking)}
+                          </span>
+                          <span className="inline-flex rounded-full border border-violet-300/16 bg-violet-500/10 px-2 py-0.5 text-[9px] font-black uppercase tracking-[0.1em] text-violet-100">
+                            {booking.client?.portal_enabled
+                              ? "Portal"
+                              : "No Portal"}
+                          </span>
+                        </div>
                       </td>
                     )}
                     {isColumnVisible("email") && (
@@ -895,6 +922,18 @@ export default function BookingsTable({ bookings }: Props) {
               />
               <Detail label="Email" value={activeBooking.email} cyan />
               <Detail label="Status" value={activeBooking.status} />
+              <Detail
+                label="Linked Client"
+                value={
+                  activeBooking.client_id
+                    ? getLinkedClientName(activeBooking)
+                    : "Legacy booking / no client link"
+                }
+              />
+              <Detail
+                label="Client Status"
+                value={`${getLinkedClientStatus(activeBooking)} / ${getPortalStatus(activeBooking)}`}
+              />
               <Detail
                 label="Lead Source"
                 value={extractGrowthSource(activeBooking.details)}

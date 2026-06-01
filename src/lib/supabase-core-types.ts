@@ -57,9 +57,13 @@ export type ActivityEventRow = {
   id: string;
   client_id: string | null;
   project_id: string | null;
+  actor_id: string | null;
+  actor_role: string;
+  actor_name: string;
   event_type: string;
   title: string;
   description: string | null;
+  metadata: Record<string, unknown>;
   created_at: string;
 };
 
@@ -68,10 +72,40 @@ export type InvoiceRow = {
   client_id: string | null;
   project_id: string | null;
   invoice_number: string;
+  title: string | null;
   amount: number;
   status: string;
+  subtotal: number;
+  tax: number;
+  total: number;
   due_date: string | null;
   paid_date: string | null;
+  paid_at: string | null;
+  stripe_checkout_session_id: string | null;
+  stripe_payment_intent_id: string | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type InvoiceItemRow = {
+  id: string;
+  invoice_id: string | null;
+  description: string;
+  quantity: number;
+  unit_price: number;
+  line_total: number;
+  created_at: string;
+};
+
+export type PaymentRow = {
+  id: string;
+  invoice_id: string | null;
+  client_id: string | null;
+  amount: number;
+  status: string;
+  provider: string;
+  provider_payment_id: string | null;
+  paid_at: string | null;
   created_at: string;
 };
 
@@ -91,6 +125,8 @@ export type FileRow = {
   file_name: string;
   file_type: string | null;
   storage_path: string;
+  category: string;
+  status: string;
   uploaded_at: string;
 };
 
@@ -101,6 +137,8 @@ export type WorkspaceCoreTables = {
   approvals: ApprovalRow;
   activity_events: ActivityEventRow;
   invoices: InvoiceRow;
+  invoice_items: InvoiceItemRow;
+  payments: PaymentRow;
   portal_users: PortalUserRow;
   files: FileRow;
 };

@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import PortalActivityWidget from "@/components/portal/portal-activity-widget";
+import type { PortalActivityEvent } from "@/lib/activity-events";
 import {
   portalHealthSignals,
   portalLaunchReadiness,
@@ -46,7 +47,11 @@ function HealthDot({ status }: { status: string }) {
   return <span className={`mt-1 h-2.5 w-2.5 rounded-full ${tone}`} />;
 }
 
-export default function PortalSuccessCenterWorkspace() {
+export default function PortalSuccessCenterWorkspace({
+  activityEvents,
+}: {
+  activityEvents?: PortalActivityEvent[];
+}) {
   const launchReadinessScore = Math.round(
     portalLaunchReadiness.reduce((total, item) => total + item.score, 0) /
       portalLaunchReadiness.length,
@@ -226,6 +231,8 @@ export default function PortalSuccessCenterWorkspace() {
           <PortalActivityWidget
             title="Recent Activity"
             eyebrow="Command Feed"
+            events={activityEvents}
+            isPreviewData={!activityEvents?.length}
           />
         </div>
       </section>

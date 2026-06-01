@@ -33,6 +33,12 @@ const FROM_EMAIL =
 
 type ServiceKey = "free-call" | "premium-session";
 
+type BookingClientLink = {
+  clientId: string | null;
+  clientCreated: boolean;
+  warning?: string;
+};
+
 const SERVICE_LABELS: Record<ServiceKey, string> = {
   "free-call": "Free Strategy Call",
   "premium-session": "Premium Strategy Session",
@@ -149,6 +155,149 @@ function buildEmailFailureResponse({
   });
 }
 
+async function resolveBookingClient({
+  name,
+  email,
+  phone,
+  company,
+  source,
+}: {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  source: string;
+}): Promise<BookingClientLink> {
+  const normalizedEmail = email.trim().toLowerCase();
+
+  try {
+    const { data: existingClient, error: lookupError } = await supabase
+      .from("clients")
+      .select("id, phone, company")
+      .ilike("email", normalizedEmail)
+      .maybeSingle();
+
+    if (lookupError) {
+      return {
+        clientId: null,
+        clientCreated: false,
+        warning: lookupError.message,
+      };
+    }
+
+    if (existingClient?.id) {
+      const missingUpdates: Record<string, string> = {};
+
+      if (phone && !existingClient.phone) {
+        missingUpdates.phone = phone;
+      }
+
+      if (company && !existingClient.company) {
+        missingUpdates.company = company;
+      }
+
+      if (Object.keys(missingUpdates).length > 0) {
+        await supabase
+          .from("clients")
+          .update({
+            ...missingUpdates,
+            updated_at: new Date().toISOString(),
+          })
+          .eq("id", existingClient.id);
+      }
+
+      return {
+        clientId: existingClient.id,
+        clientCreated: false,
+      };
+    }
+
+    const { data: newClient, error: createError } = await supabase
+      .from("clients")
+      .insert({
+        name,
+        email: normalizedEmail,
+        phone: phone || null,
+        company: company || null,
+        status: "lead",
+        portal_enabled: false,
+        notes: `Created from booking request. Source: ${source}.`,
+      })
+      .select("id")
+      .single();
+
+    if (createError) {
+      const { data: racedClient } = await supabase
+        .from("clients")
+        .select("id")
+        .ilike("email", normalizedEmail)
+        .maybeSingle();
+
+      return {
+        clientId: racedClient?.id ?? null,
+        clientCreated: Boolean(!racedClient?.id),
+        warning: racedClient?.id ? undefined : createError.message,
+      };
+    }
+
+    return {
+      clientId: newClient.id,
+      clientCreated: true,
+    };
+  } catch (error) {
+    return {
+      clientId: null,
+      clientCreated: false,
+      warning:
+        error instanceof Error ? error.message : "Client link lookup failed.",
+    };
+  }
+}
+
+async function createBookingActivityEvent({
+  clientId,
+  bookingId,
+  service,
+  serviceLabel,
+  date,
+  time,
+  source,
+  clientCreated,
+}: {
+  clientId: string | null;
+  bookingId: string;
+  service: string;
+  serviceLabel: string;
+  date: string;
+  time: string;
+  source: string;
+  clientCreated: boolean;
+}) {
+  if (!clientId) return;
+
+  await supabase.from("activity_events").insert({
+    client_id: clientId,
+    actor_role: "public",
+    actor_name: "Booking Form",
+    event_type: "booking_created",
+    title: "New booking request",
+    description: `${serviceLabel} requested for ${date} at ${time}.`,
+    metadata: {
+      booking_id: bookingId,
+      service,
+      service_label: serviceLabel,
+      date,
+      time,
+      source,
+      client_created: clientCreated,
+    },
+  });
+}
+
+// Future CRM pipeline hook:
+// once crm_leads/crm_pipeline tables exist, create a lead record here when
+// resolveBookingClient creates a new client with status = lead.
+
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
   const service = searchParams.get("service") ?? "";
@@ -243,10 +392,18 @@ export async function POST(request: NextRequest) {
       source,
       pipelineStage: "New Lead",
     });
+    const clientLink = await resolveBookingClient({
+      name,
+      email,
+      phone,
+      company,
+      source,
+    });
 
     const { data: insertedBooking, error: insertError } = await supabase
       .from("bookings")
       .insert({
+        client_id: clientLink.clientId,
         service,
         service_label: serviceLabel,
         date,
@@ -257,7 +414,7 @@ export async function POST(request: NextRequest) {
         details: combinedDetails,
         status: "confirmed",
       })
-      .select("id, service_label, date, time, name, email, company, details")
+      .select("id, client_id, service_label, date, time, name, email, company, details")
       .single();
 
     if (insertError) {
@@ -269,6 +426,21 @@ export async function POST(request: NextRequest) {
         },
         { status: 500 },
       );
+    }
+
+    try {
+      await createBookingActivityEvent({
+        clientId: insertedBooking.client_id ?? clientLink.clientId,
+        bookingId: insertedBooking.id,
+        service,
+        serviceLabel,
+        date,
+        time,
+        source,
+        clientCreated: clientLink.clientCreated,
+      });
+    } catch {
+      // Activity is operational telemetry; booking and email delivery remain primary.
     }
 
     const emailConfigIssue = getEmailConfigIssue();

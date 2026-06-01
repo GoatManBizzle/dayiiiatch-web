@@ -162,8 +162,11 @@ export default async function AdminClientProfilePage({
 
         <section className="rounded-[1.5rem] border border-violet-300/14 bg-violet-500/[0.06] px-4 py-4 text-sm leading-6 text-zinc-300">
           Future Supabase hooks: clients, projects, client_projects,
-          portal_users, activity_events, approvals, and invoices can hydrate
-          this relationship view by client_id.
+          portal_users, activity_events, approval_requests, approval_comments,
+          approval_history, and invoices can hydrate this relationship view by
+          client_id. Messaging admin replies can join
+          message_threads and messages by client_id here or move into a future
+          /admin/messages command center.
         </section>
       </section>
     </main>

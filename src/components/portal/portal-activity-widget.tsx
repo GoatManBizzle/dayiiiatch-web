@@ -1,4 +1,5 @@
 import { portalMasterActivityEvents, statusTone } from "@/lib/portal-data";
+import type { PortalActivityEvent } from "@/lib/activity-events";
 
 function StatusPill({ status }: { status: string }) {
   return (
@@ -16,11 +17,17 @@ export default function PortalActivityWidget({
   title = "Recent Activity",
   eyebrow = "Workspace Stream",
   limit = 5,
+  events,
+  isPreviewData = true,
 }: {
   title?: string;
   eyebrow?: string;
   limit?: number;
+  events?: PortalActivityEvent[];
+  isPreviewData?: boolean;
 }) {
+  const feed = events?.length ? events : portalMasterActivityEvents;
+
   return (
     <section className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.045)] backdrop-blur-xl sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -31,12 +38,12 @@ export default function PortalActivityWidget({
           <h2 className="mt-2 text-2xl font-black text-white">{title}</h2>
         </div>
         <span className="rounded-full border border-cyan-300/18 bg-cyan-400/[0.07] px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] text-cyan-100">
-          Latest {limit}
+          {isPreviewData ? "Preview" : "Live"} / Latest {limit}
         </span>
       </div>
 
       <div className="mt-4 grid gap-3">
-        {portalMasterActivityEvents.slice(0, limit).map((event) => (
+        {feed.slice(0, limit).map((event) => (
           <article
             key={event.id}
             className="grid min-w-0 grid-cols-[auto_minmax(0,1fr)] gap-3 rounded-2xl border border-white/10 bg-black/24 p-3"
@@ -59,7 +66,7 @@ export default function PortalActivityWidget({
         ))}
       </div>
 
-      {/* Future: hydrate from activity_events by workspace_id and stream inserts through Supabase realtime. */}
+      {/* Future: hydrate from activity_events by client_id/project_id and stream inserts through Supabase realtime. */}
     </section>
   );
 }

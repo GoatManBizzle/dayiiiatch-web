@@ -3,20 +3,9 @@
 import { useState } from "react";
 
 import { clientProjects, projectStages, statusTone } from "@/lib/portal-data";
+import type { PortalProjectCardData } from "@/components/portal/portal-cards";
 
-type PortalProject = (typeof clientProjects)[number];
-
-const workspaceStats = [
-  { label: "Active Projects", value: clientProjects.length.toString() },
-  {
-    label: "Avg Progress",
-    value: `${Math.round(
-      clientProjects.reduce((total, project) => total + project.progress, 0) /
-        clientProjects.length,
-    )}%`,
-  },
-  { label: "Next Review", value: "Jun 03" },
-];
+type PortalProject = PortalProjectCardData;
 
 const projectHealth: Record<string, string> = {
   "Scheduler Platform Expansion": "QA Stable",
@@ -61,10 +50,27 @@ function ProjectProgress({ project }: { project: PortalProject }) {
   );
 }
 
-export default function PortalProjectsWorkspace() {
+export default function PortalProjectsWorkspace({
+  projects = clientProjects,
+  isPreviewData = true,
+}: {
+  projects?: PortalProject[];
+  isPreviewData?: boolean;
+}) {
   const [selectedProject, setSelectedProject] = useState<PortalProject | null>(
     null,
   );
+  const workspaceStats = [
+    { label: "Active Projects", value: projects.length.toString() },
+    {
+      label: "Avg Progress",
+      value: `${Math.round(
+        projects.reduce((total, project) => total + project.progress, 0) /
+          Math.max(projects.length, 1),
+      )}%`,
+    },
+    { label: "Next Review", value: "Jun 03" },
+  ];
 
   return (
     <>
@@ -84,8 +90,20 @@ export default function PortalProjectsWorkspace() {
         ))}
       </section>
 
+      <div className="flex justify-end">
+        <span
+          className={`rounded-full border px-3 py-1 text-[10px] font-black uppercase tracking-[0.12em] ${
+            isPreviewData
+              ? "border-violet-300/20 bg-violet-500/10 text-violet-100"
+              : "border-emerald-300/20 bg-emerald-400/10 text-emerald-100"
+          }`}
+        >
+          {isPreviewData ? "Preview Data" : "Supabase Data"}
+        </span>
+      </div>
+
       <section className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-        {clientProjects.map((project) => (
+        {projects.map((project) => (
           <article
             key={project.title}
             className="group flex min-h-[23rem] min-w-0 flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-white/[0.045] p-4 shadow-[0_0_30px_rgba(34,211,238,0.05)] backdrop-blur-xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/28 hover:shadow-[0_0_34px_rgba(34,211,238,0.1)]"
@@ -103,7 +121,9 @@ export default function PortalProjectsWorkspace() {
             </div>
 
             <div className="mt-4 flex flex-wrap gap-2">
-              <OperationalChip>{projectHealth[project.title]}</OperationalChip>
+              <OperationalChip>
+                {projectHealth[project.title] ?? "Live Project"}
+              </OperationalChip>
               <OperationalChip>{project.stage} phase</OperationalChip>
             </div>
 
