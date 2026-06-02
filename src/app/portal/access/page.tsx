@@ -11,7 +11,7 @@ export const metadata: Metadata = {
 
 export default function PortalAccessPage() {
   return (
-    <SiteShell fixedMainBackground compactMobileSpacing>
+    <SiteShell fixedMainBackground compactMobileSpacing publicThemeSurface>
       <main className="grid gap-4">
         <PortalAccessWorkspace />
       </main>

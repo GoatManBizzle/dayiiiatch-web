@@ -3,7 +3,10 @@ import { footerLinks } from "@/config/links";
 
 export default function FooterSection() {
   return (
-    <footer className="mt-10 border-t border-white/10 py-7 md:mt-16 md:py-8">
+    <footer
+      data-style-section="footer"
+      className="relative mt-10 border-t border-white/10 py-7 md:mt-16 md:py-8"
+    >
       <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
         <div className="flex flex-col items-center gap-3 text-center sm:flex-row sm:text-left">
           <div className="relative h-12 w-12 overflow-hidden rounded-2xl border border-cyan-400/20 bg-zinc-900/70 shadow-[0_0_20px_rgba(34,211,238,0.12)]">
@@ -22,17 +25,19 @@ export default function FooterSection() {
           </div>
         </div>
 
-        <div className="flex flex-col gap-3 text-sm text-zinc-300 sm:flex-row sm:flex-wrap sm:justify-center md:justify-end">
-          {footerLinks.map((link) => (
-            <a
-              key={link.label}
-              href={link.href}
-              target={link.external ? "_blank" : undefined}
-              rel={link.external ? "noreferrer" : undefined}
-              className="inline-flex min-h-11 items-center justify-center rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-center transition hover:bg-white/10"
-            >
-              {link.label}
-            </a>
+        <div className="flex flex-wrap items-center justify-center gap-x-2 gap-y-2 text-sm text-zinc-300 md:justify-end">
+          {footerLinks.map((link, index) => (
+            <span key={link.label} className="inline-flex items-center gap-2">
+              {index > 0 ? <span className="text-zinc-600">|</span> : null}
+              <a
+                href={link.href}
+                target={link.external ? "_blank" : undefined}
+                rel={link.external ? "noreferrer" : undefined}
+                className="transition hover:text-cyan-100"
+              >
+                {link.label}
+              </a>
+            </span>
           ))}
         </div>
       </div>

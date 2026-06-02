@@ -210,6 +210,7 @@ export default function ProofSystemsSection() {
   return (
     <section
       id="proof-systems"
+      data-style-section="proof"
       className="relative mt-10 overflow-visible rounded-[1.5rem] border border-cyan-300/10 bg-white/[0.035] p-4 shadow-[0_0_52px_rgba(34,211,238,0.07)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_10%,rgba(34,211,238,0.14),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,0.14),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.04),transparent_42%)]" />
@@ -219,11 +220,11 @@ export default function ProofSystemsSection() {
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
             <p className="text-xs uppercase tracking-[0.18em] text-cyan-200 sm:text-sm sm:tracking-[0.25em]">
-              Systems Proof
+              Proof Through Working Systems
             </p>
 
             <h3 className="mt-2 text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
-              Proof We Build Real Systems
+              Proof Through Working Systems
             </h3>
           </div>
 
@@ -271,7 +272,7 @@ export default function ProofSystemsSection() {
                   ))}
                 </div>
 
-                <div className="relative mt-auto pt-6">
+                <div className="relative mt-auto grid gap-3 pt-6">
                   <button
                     type="button"
                     onClick={() => setActiveProject(project)}
@@ -280,6 +281,15 @@ export default function ProofSystemsSection() {
                     className="inline-flex min-h-12 w-full items-center justify-center rounded-2xl border border-cyan-400/30 bg-gradient-to-r from-cyan-400/16 to-violet-500/16 px-5 py-3 text-center text-sm font-bold text-cyan-100 transition duration-300 hover:scale-[1.01] hover:border-cyan-300/50 hover:shadow-[0_0_30px_rgba(34,211,238,0.18)]"
                   >
                     View Details
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setActiveProject(project)}
+                    data-growth-event="demo-launch"
+                    data-growth-target={normalizeProjectSlug(project.title)}
+                    className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-emerald-300/20 bg-emerald-400/10 px-5 py-2.5 text-center text-xs font-black uppercase tracking-[0.12em] text-emerald-100 transition duration-300 hover:-translate-y-0.5 hover:border-emerald-300/42 hover:shadow-[0_0_26px_rgba(16,185,129,0.14)]"
+                  >
+                    Launch Demo
                   </button>
                 </div>
               </article>

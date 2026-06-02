@@ -77,6 +77,7 @@ export default function LeadCaptureSection() {
   return (
     <section
       id="checklist-capture"
+      data-style-section="audit"
       className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-white/[0.035] p-4 shadow-[0_0_46px_rgba(34,211,238,0.06)] backdrop-blur-xl sm:rounded-[2rem] sm:p-6 md:mt-16 md:p-8"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_12%_0%,rgba(34,211,238,0.13),transparent_32%),radial-gradient(circle_at_88%_18%,rgba(168,85,247,0.12),transparent_34%),linear-gradient(135deg,rgba(255,255,255,0.035),transparent_44%)]" />

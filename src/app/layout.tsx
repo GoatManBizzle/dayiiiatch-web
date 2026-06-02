@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { siteMeta } from "@/config/site-meta";
+import RawThemeToggle from "@/components/theme/raw-theme-toggle";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteMeta.url),
@@ -60,8 +61,31 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>{children}</body>
+    <html lang="en" suppressHydrationWarning>
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              (function () {
+                try {
+                  var saved = window.localStorage.getItem("dayiiiatch_public_theme");
+                  var theme = saved === "light" ? "light" : "dark";
+                  document.documentElement.classList.remove("public-theme-light", "public-theme-dark");
+                  document.documentElement.classList.add("public-theme-" + theme);
+                  document.documentElement.style.colorScheme = theme;
+                } catch (_) {
+                  document.documentElement.classList.add("public-theme-dark");
+                  document.documentElement.style.colorScheme = "dark";
+                }
+              })();
+            `,
+          }}
+        />
+      </head>
+      <body>
+        <RawThemeToggle />
+        {children}
+      </body>
     </html>
   );
 }

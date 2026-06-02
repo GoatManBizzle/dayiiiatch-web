@@ -39,9 +39,11 @@ export async function POST(req: NextRequest) {
     const email = String(body.email ?? "").trim().toLowerCase();
     const name = String(body.name ?? "").trim();
     const company = String(body.company ?? "").trim();
-    const portalAccessUrl = String(body.portalAccessUrl ?? "").trim();
+    const portalAccessUrl =
+      String(body.portalAccessUrl ?? "").trim() ||
+      `${req.nextUrl.origin}/portal/setup?email=${encodeURIComponent(email)}`;
 
-    if (!clientId || !name || !isValidInviteEmail(email) || !portalAccessUrl) {
+    if (!clientId || !name || !isValidInviteEmail(email)) {
       return NextResponse.json(
         { error: "Missing or invalid portal invite fields." },
         { status: 400 },

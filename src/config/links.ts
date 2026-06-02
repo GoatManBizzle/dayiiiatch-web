@@ -7,22 +7,20 @@ export const links = {
 };
 
 export const navLinks = [
-  { label: "Services", href: "#services" },
-  { label: "Offers", href: "#offers" },
-  { label: "Proof", href: "#trust" },
-  { label: "Pricing", href: "#pricing" },
-  { label: "FAQ", href: "#faq" },
-  { label: "Contact", href: "#contact-form" },
-  { label: "Client Login", href: "/portal/access" },
+  { label: "Services", href: "/#services" },
+  { label: "Offers", href: "/#offers" },
+  { label: "Proof", href: "/#proof-systems" },
+  { label: "Pricing", href: "/#pricing" },
+  { label: "FAQ", href: "/#faq" },
+  { label: "Contact", href: "/#contact-form" },
+  { label: "How We Work", href: "/how-we-work" },
 ];
 
 export const footerLinks = [
-  { label: "Book Free Call", href: "/book?service=free-call", external: false },
-  {
-    label: "Book Premium Session",
-    href: "/book?service=premium-session",
-    external: false,
-  },
-  { label: "Send Project Inquiry", href: "#contact-form", external: false },
-  { label: "Client Login", href: "/portal/access", external: false },
+  { label: "FAQs", href: "/#faq", external: false },
+  { label: "Contact", href: "/#contact-form", external: false },
+  { label: "Offers", href: "/#offers", external: false },
+  { label: "Services", href: "/#services", external: false },
+  { label: "Proof", href: "/#proof-systems", external: false },
+  { label: "How We Work", href: "/how-we-work", external: false },
 ];

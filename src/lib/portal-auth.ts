@@ -12,6 +12,13 @@ export type PortalAuthResolution = {
   code?: "not_configured" | "invalid_login" | "profile_not_found" | "network";
 };
 
+export type PortalPasswordSetupResult = {
+  success: boolean;
+  mode: "supabase" | "preview";
+  message: string;
+  error?: string;
+};
+
 function getBrowserSupabaseConfig() {
   const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const supabaseAnonKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
@@ -259,5 +266,81 @@ export async function signOutPortalAuth() {
 
   if (supabase) {
     await supabase.auth.signOut();
+  }
+}
+
+export async function setupPortalPassword({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}): Promise<PortalPasswordSetupResult> {
+  const supabase = createBrowserSupabaseClient();
+
+  if (!supabase) {
+    return {
+      success: true,
+      mode: "preview",
+      message: "Workspace password setup preview complete.",
+    };
+  }
+
+  const normalizedEmail = email.trim().toLowerCase();
+
+  try {
+    const { data: userData } = await supabase.auth.getUser();
+
+    if (userData.user) {
+      const { error } = await supabase.auth.updateUser({ password });
+
+      if (error) {
+        return {
+          success: false,
+          mode: "supabase",
+          message: "Unable to update workspace password.",
+          error: error.message,
+        };
+      }
+
+      return {
+        success: true,
+        mode: "supabase",
+        message: "Workspace password updated.",
+      };
+    }
+
+    const { error } = await supabase.auth.signUp({
+      email: normalizedEmail,
+      password,
+      options: {
+        emailRedirectTo:
+          typeof window !== "undefined"
+            ? `${window.location.origin}/portal/access`
+            : undefined,
+      },
+    });
+
+    if (error) {
+      return {
+        success: false,
+        mode: "supabase",
+        message: "Unable to create workspace password.",
+        error: error.message,
+      };
+    }
+
+    return {
+      success: true,
+      mode: "supabase",
+      message: "Workspace password setup complete.",
+    };
+  } catch (error) {
+    return {
+      success: false,
+      mode: "supabase",
+      message: "Workspace password setup failed.",
+      error: error instanceof Error ? error.message : "Unknown auth error.",
+    };
   }
 }

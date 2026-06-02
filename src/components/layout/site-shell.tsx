@@ -7,6 +7,8 @@ type SiteShellProps = {
   screenshotMode?: boolean;
   promoClipMode?: boolean;
   promoDockHidden?: boolean;
+  publicThemeSurface?: boolean;
+  flushTop?: boolean;
 };
 
 export default function SiteShell({
@@ -16,10 +18,14 @@ export default function SiteShell({
   screenshotMode = false,
   promoClipMode = false,
   promoDockHidden = false,
+  publicThemeSurface = false,
+  flushTop = false,
 }: SiteShellProps) {
   return (
     <div
       className={`relative min-h-screen overflow-x-hidden bg-zinc-950 text-white ${
+        publicThemeSurface ? "public-theme-surface" : ""
+      } ${
         screenshotMode ? "screenshot-mode" : ""
       } ${promoClipMode ? "promo-clip-mode" : ""} ${
         promoDockHidden ? "promo-hide-dock" : ""
@@ -27,8 +33,12 @@ export default function SiteShell({
     >
       <BackgroundEffects fixedMainImage={fixedMainBackground} />
       <main
-        className={`relative z-10 mx-auto max-w-7xl sm:px-6 md:px-10 md:py-8 lg:px-16 ${
-          compactMobileSpacing ? "px-3 py-4 sm:py-6" : "px-4 py-6"
+        className={`relative z-10 mx-auto max-w-7xl sm:px-6 md:px-10 lg:px-16 ${
+          flushTop
+            ? "px-3 pb-4 pt-0 sm:pb-6 sm:pt-0 md:pb-8 md:pt-0"
+            : compactMobileSpacing
+              ? "px-3 py-4 sm:py-6 md:py-8"
+              : "px-4 py-6 md:py-8"
         }`}
       >
         {children}

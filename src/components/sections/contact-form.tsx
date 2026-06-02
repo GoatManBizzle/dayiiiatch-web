@@ -317,6 +317,7 @@ export default function ContactFormSection() {
   return (
     <section
       id="contact-form"
+      data-style-section="contact"
       className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-white/10 shadow-[0_0_40px_rgba(34,211,238,0.05)] sm:rounded-[2rem] md:mt-16"
     >
       <div

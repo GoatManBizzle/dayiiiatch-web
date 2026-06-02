@@ -57,7 +57,9 @@ export async function POST(req: NextRequest) {
     const projectType = String(body.projectType ?? serviceInterest).trim();
     const initialPhase = String(body.initialPhase ?? "Discovery").trim();
     const portalAccess = Boolean(body.portalAccess);
-    const portalAccessUrl = `${req.nextUrl.origin}/portal/access`;
+    const portalAccessUrl = `${req.nextUrl.origin}/portal/setup?email=${encodeURIComponent(
+      email,
+    )}`;
 
     if (
       !clientName ||

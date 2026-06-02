@@ -114,20 +114,21 @@ export default function DamarkoAssistant() {
           onClick={() => setOpen(true)}
           data-growth-event="assistant-open"
           data-growth-source={leadSource}
-          className="inline-flex min-h-12 items-center gap-3 rounded-full border border-cyan-300/22 bg-zinc-950/82 px-4 py-3 text-left text-sm font-black text-cyan-100 shadow-[0_0_30px_rgba(34,211,238,0.13)] backdrop-blur-2xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/40 hover:bg-cyan-400/10 active:scale-[0.98]"
+          className="inline-flex min-h-12 items-center gap-3 rounded-full border border-violet-300/30 bg-[#0b0718]/88 px-4 py-3 text-left text-sm font-black text-cyan-50 shadow-[0_0_34px_rgba(168,85,247,0.20),0_0_24px_rgba(34,211,238,0.10)] backdrop-blur-2xl transition duration-300 hover:-translate-y-0.5 hover:border-cyan-300/45 hover:bg-violet-500/16 active:scale-[0.98]"
         >
-          <span className="h-2.5 w-2.5 rounded-full bg-cyan-300 shadow-[0_0_16px_rgba(34,211,238,0.45)]" />
-          Need help choosing?
+          <span className="h-2.5 w-2.5 rounded-full bg-violet-300 shadow-[0_0_16px_rgba(168,85,247,0.55)]" />
+          Ask Damarko
         </button>
       ) : (
-        <div className="overflow-hidden rounded-[1.35rem] border border-cyan-300/18 bg-zinc-950/88 p-3 shadow-[0_0_42px_rgba(34,211,238,0.15)] backdrop-blur-2xl sm:p-4">
+        <div className="relative overflow-hidden rounded-[1.35rem] border border-violet-300/24 bg-[#0b0718]/92 p-3 shadow-[0_0_48px_rgba(168,85,247,0.22),0_0_28px_rgba(34,211,238,0.10)] backdrop-blur-2xl sm:p-4">
+          <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_16%_0%,rgba(168,85,247,0.20),transparent_34%),radial-gradient(circle_at_90%_12%,rgba(34,211,238,0.14),transparent_32%)]" />
           <div className="flex items-start justify-between gap-3 border-b border-white/10 pb-3">
             <div>
-              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-cyan-200">
-                Ask Damarko
+              <p className="text-[10px] font-black uppercase tracking-[0.16em] text-violet-200">
+                Project Damarko AI
               </p>
               <h3 className="mt-1 text-lg font-black text-white">
-                Find your best next step
+                Intelligent next-step routing
               </h3>
             </div>
 
@@ -167,7 +168,7 @@ export default function DamarkoAssistant() {
             )}
           </div>
 
-          <div className="mt-4 rounded-2xl border border-violet-300/16 bg-violet-500/8 p-3">
+          <div className="mt-4 rounded-2xl border border-violet-300/22 bg-violet-500/12 p-3 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)]">
             <p className="text-[10px] font-black uppercase tracking-[0.14em] text-violet-100">
               Recommendation
             </p>
@@ -186,7 +187,7 @@ export default function DamarkoAssistant() {
               data-assistant-urgency={urgency || "Unanswered"}
               data-assistant-goal={goal || "Unanswered"}
               data-recommended-path={recommendation.path}
-              className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-cyan-300/32 bg-cyan-400/12 px-4 py-2.5 text-center text-xs font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200/50 hover:shadow-[0_0_24px_rgba(34,211,238,0.16)] active:scale-[0.98]"
+              className="mt-3 inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-cyan-300/32 bg-gradient-to-r from-violet-500/20 to-cyan-400/14 px-4 py-2.5 text-center text-xs font-black text-cyan-50 transition duration-300 hover:-translate-y-0.5 hover:border-cyan-200/50 hover:shadow-[0_0_24px_rgba(34,211,238,0.16)] active:scale-[0.98]"
             >
               {complete ? recommendation.label : "Start with Checklist"}
             </a>

@@ -92,7 +92,7 @@ export async function sendPortalInviteEmail({
           <p>Welcome to your DAYIIIatch client workspace${company ? ` for ${safeText(company)}` : ""}. This portal gives you one clear place to follow the project, review work, and keep the next steps moving.</p>
           <p>
             <a href="${safeText(portalAccessUrl)}" style="display:inline-block;background:#0891b2;color:#fff;text-decoration:none;padding:12px 18px;border-radius:12px;font-weight:700;">
-              Enter Client Workspace
+              Set Up Workspace Password
             </a>
           </p>
           <p><strong>Inside the workspace you can:</strong></p>
