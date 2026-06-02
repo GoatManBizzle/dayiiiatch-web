@@ -25,6 +25,7 @@ type StyleSection = {
 
 type StyleOverrides = Record<string, string>;
 
+const DEBUG_OUTLINES = false;
 const storageKey = "dayiiiatch_style_editor_overrides";
 const retiredVariables = [
   "--ds-banner-width",
@@ -39,6 +40,34 @@ const retiredVariables = [
   "--ds-banner-object-fit",
   "--ds-banner-object-position-y",
   "--ds-banner-min-height",
+  "--ds-header-wrapper-width",
+  "--ds-header-wrapper-max-width",
+  "--ds-header-wrapper-height",
+  "--ds-header-wrapper-min-height",
+  "--ds-header-wrapper-margin-top",
+  "--ds-header-wrapper-margin-bottom",
+  "--ds-header-wrapper-padding-top",
+  "--ds-header-wrapper-padding-bottom",
+  "--ds-header-wrapper-padding-left",
+  "--ds-header-wrapper-padding-right",
+  "--ds-header-wrapper-border-width",
+  "--ds-header-wrapper-border-color",
+  "--ds-header-wrapper-radius",
+  "--ds-header-wrapper-bg",
+  "--ds-header-wrapper-overflow",
+  "--ds-header-wrapper-display",
+  "--ds-header-media-width",
+  "--ds-header-media-height",
+  "--ds-header-media-margin-top",
+  "--ds-header-media-margin-bottom",
+  "--ds-header-media-object-fit",
+  "--ds-header-media-object-position-x",
+  "--ds-header-media-object-position-y",
+  "--ds-header-media-scale",
+  "--ds-header-media-opacity",
+  "--ds-header-media-radius",
+  "--ds-header-media-repeat",
+  "--ds-header-media-size-mode",
 ];
 
 const sections: StyleSection[] = [
@@ -54,71 +83,27 @@ const sections: StyleSection[] = [
     ],
   },
   {
-    id: "header-wrapper",
-    label: "Header Wrapper / Frame",
+    id: "banner",
+    label: "Banner",
     controls: [
-      text("Wrapper width", "--ds-header-wrapper-width", "min(90rem, calc(100vw - 0.35rem))"),
-      text("Wrapper max width", "--ds-header-wrapper-max-width", "90rem"),
-      text("Wrapper height", "--ds-header-wrapper-height", "auto"),
-      range("Wrapper min height", "--ds-header-wrapper-min-height", "0px", 0, 520, 1, "px"),
-      range("Wrapper margin top", "--ds-header-wrapper-margin-top", "0px", -80, 120, 1, "px"),
-      range("Wrapper margin bottom", "--ds-header-wrapper-margin-bottom", "0px", -80, 120, 1, "px"),
-      range("Wrapper padding top", "--ds-header-wrapper-padding-top", "0px", 0, 120, 1, "px"),
-      range("Wrapper padding bottom", "--ds-header-wrapper-padding-bottom", "0px", 0, 120, 1, "px"),
-      range("Wrapper padding left", "--ds-header-wrapper-padding-left", "0px", 0, 120, 1, "px"),
-      range("Wrapper padding right", "--ds-header-wrapper-padding-right", "0px", 0, 120, 1, "px"),
-      range("Wrapper border width", "--ds-header-wrapper-border-width", "1px", 0, 12, 1, "px"),
-      color("Wrapper border color", "--ds-header-wrapper-border-color", "#22d3ee"),
-      range("Wrapper border radius", "--ds-header-wrapper-radius", "40px", 0, 80, 1, "px"),
-      text("Wrapper background color", "--ds-header-wrapper-bg", "transparent"),
-      select("Wrapper overflow", "--ds-header-wrapper-overflow", "hidden", ["hidden", "visible"]),
-      select("Wrapper display", "--ds-header-wrapper-display", "block", ["block", "flex", "grid"]),
-    ],
-  },
-  {
-    id: "header-media",
-    label: "Header Media / Video",
-    controls: [
-      range("Media width", "--ds-header-media-width", "100%", 10, 160, 1, "%"),
-      text("Media height", "--ds-header-media-height", "340px"),
-      range("Media margin top", "--ds-header-media-margin-top", "0px", -160, 160, 1, "px"),
-      range("Media margin bottom", "--ds-header-media-margin-bottom", "0px", -160, 160, 1, "px"),
-      select("Media object fit", "--ds-header-media-object-fit", "cover", [
+      text("Banner width", "--ds-home-hero-width", "min(90rem, calc(100vw - 0.35rem))"),
+      range("Banner height", "--ds-home-hero-height", "360px", 180, 640, 1, "px"),
+      select("Media object fit", "--ds-home-hero-object-fit", "cover", [
         "cover",
         "contain",
         "fill",
         "none",
         "scale-down",
       ]),
-      select("Media object position X", "--ds-header-media-object-position-x", "center", [
+      select("Media object position X", "--ds-home-hero-object-position-x", "center", [
         "left",
         "center",
         "right",
       ]),
-      select("Media object position Y", "--ds-header-media-object-position-y", "top", [
+      select("Media object position Y", "--ds-home-hero-object-position-y", "center", [
         "top",
         "center",
         "bottom",
-      ]),
-      range("Media scale / zoom", "--ds-header-media-scale", "1", 0.5, 2, 0.01),
-      range("Media opacity", "--ds-header-media-opacity", "1", 0, 1, 0.01),
-      range("Media border radius", "--ds-header-media-radius", "0px", 0, 80, 1, "px"),
-      select("Media background repeat / tile", "--ds-header-media-repeat", "no-repeat", [
-        "no-repeat",
-        "repeat",
-        "repeat-x",
-        "repeat-y",
-      ]),
-      select("Media background size mode", "--ds-header-media-size-mode", "cover", [
-        "cover",
-        "contain",
-        "fill",
-        "fit",
-        "stretch",
-        "tile",
-        "repeat-x",
-        "repeat-y",
-        "auto",
       ]),
     ],
   },
@@ -127,53 +112,13 @@ const sections: StyleSection[] = [
     label: "Navigation",
     controls: [
       range("Nav gap", "--ds-nav-gap", "8px", 0, 36, 1, "px"),
-      range("Nav button padding X", "--ds-nav-button-padding-x", "16px", 4, 32, 1, "px"),
-      range("Nav button padding Y", "--ds-nav-button-padding-y", "8px", 2, 20, 1, "px"),
-      range("Nav radius", "--ds-nav-radius", "999px", 0, 999, 1, "px"),
-      color("Nav accent / border color", "--ds-nav-border-color", "#22d3ee"),
-    ],
-  },
-  {
-    id: "about",
-    label: "About Section",
-    controls: [
-      range("Section max width", "--ds-about-max-width", "1280px", 720, 1500, 10, "px"),
-      range("Section padding", "--ds-about-padding", "32px", 8, 96, 1, "px"),
-      color("Card background color", "--ds-about-card-bg", "#071220"),
-      color("Heading color", "--ds-about-heading", "#ffffff"),
-      color("Body text color", "--ds-about-body", "#cbd5e1"),
-      range("Border radius", "--ds-about-radius", "32px", 0, 64, 1, "px"),
-    ],
-  },
-  {
-    id: "proof",
-    label: "Proof Systems",
-    controls: [
-      range("Card gap", "--ds-proof-card-gap", "16px", 0, 56, 1, "px"),
-      range("Card radius", "--ds-card-radius", "28px", 0, 56, 1, "px"),
-      color("Card background color", "--ds-proof-card-bg", "#071220"),
-      color("Card border color", "--ds-proof-card-border", "#22d3ee"),
-      range("Glow strength", "--ds-proof-glow-strength", "44px", 0, 100, 1, "px"),
     ],
   },
   {
     id: "sticky-cta",
     label: "Sticky CTA",
     controls: [
-      select("Dock width", "--ds-sticky-cta-width", "672px", ["520px", "640px", "672px", "760px"]),
       range("Dock bottom offset", "--ds-sticky-cta-bottom", "20px", 0, 160, 1, "px"),
-      range("Button radius", "--ds-sticky-cta-button-radius", "999px", 0, 999, 1, "px"),
-      color("Dock background color", "--ds-sticky-cta-bg", "#071220"),
-      color("Dock border color", "--ds-sticky-cta-border", "#22d3ee"),
-    ],
-  },
-  {
-    id: "footer",
-    label: "Footer",
-    controls: [
-      range("Footer padding", "--ds-footer-padding", "32px", 8, 96, 1, "px"),
-      color("Footer text color", "--ds-footer-text", "#94a3b8"),
-      color("Footer link color", "--ds-footer-link", "#cbd5e1"),
     ],
   },
 ];
@@ -333,35 +278,6 @@ export default function StyleEditor() {
       [variable]: value,
     }));
     setSaved(false);
-  }
-
-  function updateOverrides(values: StyleOverrides) {
-    setOverrides((current) => ({
-      ...current,
-      ...values,
-    }));
-    setSaved(false);
-  }
-
-  function collapseWrapperGap() {
-    updateOverrides({
-      "--ds-header-wrapper-padding-top": "0px",
-      "--ds-header-wrapper-margin-top": "0px",
-      "--ds-header-wrapper-min-height": "0px",
-      "--ds-header-wrapper-height": "auto",
-      "--ds-header-media-margin-top": "0px",
-    });
-  }
-
-  function fitMediaToFrame() {
-    updateOverrides({
-      "--ds-header-media-width": "100%",
-      "--ds-header-media-height": "100%",
-      "--ds-header-media-object-fit": "cover",
-      "--ds-header-media-object-position-x": "center",
-      "--ds-header-media-object-position-y": "center",
-      "--ds-header-media-scale": "1",
-    });
   }
 
   function savePreview() {
@@ -531,24 +447,10 @@ export default function StyleEditor() {
                 {activeSection.label}
               </h3>
 
-              {activeSection.id === "header-wrapper" ? (
-                <button
-                  type="button"
-                  onClick={collapseWrapperGap}
-                  style={{ ...smallButton(true), width: "100%", marginBottom: "10px" }}
-                >
-                  Collapse Wrapper Gap
-                </button>
-              ) : null}
-
-              {activeSection.id === "header-media" ? (
-                <button
-                  type="button"
-                  onClick={fitMediaToFrame}
-                  style={{ ...smallButton(true), width: "100%", marginBottom: "10px" }}
-                >
-                  Fit Media To Frame
-                </button>
+              {DEBUG_OUTLINES ? (
+                <p style={{ color: "#f8fafc", fontSize: "11px", margin: "0 0 10px" }}>
+                  Debug outlines are enabled.
+                </p>
               ) : null}
 
               <div style={{ display: "grid", gap: "10px" }}>
