@@ -3,6 +3,13 @@
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 
+import {
+  buildDevThemeExport,
+  parseDevThemeJson,
+  type DevThemeExport,
+} from "@/lib/dev-theme-export";
+import { defaultThemePreset, devThemePresets } from "@/lib/dev-theme-presets";
+
 type ControlType = "range" | "color" | "text" | "select";
 
 type StyleControl = {
@@ -27,6 +34,12 @@ type StyleOverrides = Record<string, string>;
 
 const DEBUG_OUTLINES = false;
 const storageKey = "dayiiiatch_style_editor_overrides";
+const knownBackgroundImages = [
+  "/bg-main.png",
+  "/images/bg-main.png",
+  "/images/hero-bg.png",
+  "/images/section-bg.png",
+];
 const retiredVariables = [
   "--ds-banner-width",
   "--ds-banner-height",
@@ -68,6 +81,26 @@ const retiredVariables = [
   "--ds-header-media-radius",
   "--ds-header-media-repeat",
   "--ds-header-media-size-mode",
+  "--ds-about-max-width",
+  "--ds-about-padding",
+  "--ds-about-heading",
+  "--ds-about-body",
+  "--ds-about-card-bg",
+  "--ds-about-radius",
+  "--ds-proof-card-gap",
+  "--ds-card-radius",
+  "--ds-proof-card-bg",
+  "--ds-proof-card-border",
+  "--ds-proof-glow-strength",
+  "--ds-service-card-gap",
+  "--ds-service-card-radius",
+  "--ds-service-card-bg",
+  "--ds-service-card-border",
+  "--ds-service-button-radius",
+  "--ds-footer-padding",
+  "--ds-footer-text",
+  "--ds-footer-link",
+  "--ds-footer-link-gap",
 ];
 
 const sections: StyleSection[] = [
@@ -115,10 +148,54 @@ const sections: StyleSection[] = [
     ],
   },
   {
+    id: "about",
+    label: "About Section",
+    controls: [
+      range("About section max width", "--ds-v11-about-max-width", "1280px", 720, 1500, 10, "px"),
+      range("About section padding", "--ds-v11-about-padding", "32px", 8, 96, 1, "px"),
+      color("About heading color", "--ds-v11-about-heading", "#ffffff"),
+      color("About body text color", "--ds-v11-about-body", "#cbd5e1"),
+      color("About card/background color", "--ds-v11-about-card-bg", "#071220"),
+      range("About border radius", "--ds-v11-about-radius", "32px", 0, 80, 1, "px"),
+    ],
+  },
+  {
+    id: "proof",
+    label: "Proof Systems",
+    controls: [
+      range("Proof card gap", "--ds-v11-proof-card-gap", "16px", 0, 56, 1, "px"),
+      range("Proof card radius", "--ds-v11-proof-card-radius", "28px", 0, 64, 1, "px"),
+      color("Proof card background color", "--ds-v11-proof-card-bg", "#071220"),
+      color("Proof card border color", "--ds-v11-proof-card-border", "#22d3ee"),
+      range("Proof glow strength", "--ds-v11-proof-glow-strength", "44px", 0, 100, 1, "px"),
+    ],
+  },
+  {
+    id: "commercial",
+    label: "Services / Offers",
+    controls: [
+      range("Service card gap", "--ds-v11-service-card-gap", "16px", 0, 56, 1, "px"),
+      range("Service card radius", "--ds-v11-service-card-radius", "24px", 0, 64, 1, "px"),
+      color("Service card background color", "--ds-v11-service-card-bg", "#071220"),
+      color("Service card border color", "--ds-v11-service-card-border", "#22d3ee"),
+      range("Service button radius", "--ds-v11-service-button-radius", "16px", 0, 64, 1, "px"),
+    ],
+  },
+  {
     id: "sticky-cta",
     label: "Sticky CTA",
     controls: [
       range("Dock bottom offset", "--ds-sticky-cta-bottom", "20px", 0, 160, 1, "px"),
+    ],
+  },
+  {
+    id: "footer",
+    label: "Footer",
+    controls: [
+      range("Footer padding", "--ds-v11-footer-padding", "32px", 8, 96, 1, "px"),
+      color("Footer text color", "--ds-v11-footer-text", "#94a3b8"),
+      color("Footer link color", "--ds-v11-footer-link", "#cbd5e1"),
+      range("Footer link gap", "--ds-v11-footer-link-gap", "8px", 0, 32, 1, "px"),
     ],
   },
 ];
@@ -175,7 +252,7 @@ function filterKnownOverrides(overrides: StyleOverrides) {
 
   return Object.fromEntries(
     Object.entries(overrides).filter(([variable, value]) => {
-      return editableVariables.has(variable) && Boolean(value);
+      return editableVariables.has(variable) && typeof value === "string" && Boolean(value);
     }),
   );
 }
@@ -239,6 +316,10 @@ function buildCssOutput(overrides: StyleOverrides) {
   ].join("\n");
 }
 
+function buildThemeJson(themeName: string, overrides: StyleOverrides) {
+  return buildDevThemeExport(themeName, filterKnownOverrides(overrides));
+}
+
 export default function StyleEditor() {
   const [canRender, setCanRender] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -246,6 +327,13 @@ export default function StyleEditor() {
   const [copied, setCopied] = useState(false);
   const [saved, setSaved] = useState(false);
   const [overrides, setOverrides] = useState<StyleOverrides>({});
+  const [browseTarget, setBrowseTarget] = useState<string | null>(null);
+  const [activePreset, setActivePreset] = useState(defaultThemePreset.name);
+  const [themeCopied, setThemeCopied] = useState(false);
+  const [themeMessage, setThemeMessage] = useState("");
+  const [importOpen, setImportOpen] = useState(false);
+  const [importText, setImportText] = useState("");
+  const [themeToolsOpen, setThemeToolsOpen] = useState(false);
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeSectionId) ?? sections[0],
@@ -278,6 +366,20 @@ export default function StyleEditor() {
       [variable]: value,
     }));
     setSaved(false);
+    setActivePreset("Custom");
+  }
+
+  function applyThemeVariables(
+    variables: StyleOverrides,
+    options?: { presetName?: string; message?: string },
+  ) {
+    const next = filterKnownOverrides(variables);
+    setOverrides(next);
+    applyOverrides(next);
+    window.localStorage.setItem(storageKey, JSON.stringify(next));
+    setActivePreset(options?.presetName ?? "Custom");
+    setSaved(false);
+    setThemeMessage(options?.message ?? "");
   }
 
   function savePreview() {
@@ -297,15 +399,70 @@ export default function StyleEditor() {
   }
 
   function resetAll() {
-    window.localStorage.removeItem(storageKey);
-    setOverrides({});
-    applyOverrides({});
+    applyThemeVariables(defaultThemePreset.variables, {
+      presetName: defaultThemePreset.name,
+      message: `Reset to ${defaultThemePreset.name}.`,
+    });
   }
 
   async function copyCssVariables() {
     await window.navigator.clipboard.writeText(buildCssOutput(overrides));
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1400);
+  }
+
+  function currentThemeExport() {
+    return buildThemeJson(activePreset || "Custom Theme", loadOverrides());
+  }
+
+  function exportTheme() {
+    const theme = currentThemeExport();
+    const blob = new Blob([JSON.stringify(theme, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "dayiiiatch-theme-export.json";
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+    setThemeMessage("Theme export downloaded.");
+  }
+
+  async function copyThemeJson() {
+    await window.navigator.clipboard.writeText(JSON.stringify(currentThemeExport(), null, 2));
+    setThemeCopied(true);
+    setThemeMessage("Theme JSON copied.");
+    window.setTimeout(() => setThemeCopied(false), 1400);
+  }
+
+  function importTheme(theme: DevThemeExport) {
+    applyThemeVariables(theme.variables, {
+      presetName: theme.themeName || "Imported Theme",
+      message: `Imported ${theme.themeName || "theme"}.`,
+    });
+    setImportText("");
+    setImportOpen(false);
+  }
+
+  function importThemeFromText() {
+    try {
+      importTheme(parseDevThemeJson(importText));
+    } catch (error) {
+      setThemeMessage(error instanceof Error ? error.message : "Theme import failed.");
+    }
+  }
+
+  async function importThemeFromFile(file: File | null) {
+    if (!file) return;
+
+    try {
+      importTheme(parseDevThemeJson(await file.text()));
+    } catch (error) {
+      setThemeMessage(error instanceof Error ? error.message : "Theme import failed.");
+    }
   }
 
   return (
@@ -343,11 +500,11 @@ export default function StyleEditor() {
           id="dev-style-editor-drawer"
           style={{
             position: "fixed",
-            top: "96px",
+            top: "20px",
             right: "20px",
-            width: "380px",
+            width: "420px",
             maxWidth: "calc(100vw - 40px)",
-            maxHeight: "calc(100vh - 120px)",
+            maxHeight: "calc(100vh - 40px)",
             overflowY: "auto",
             zIndex: 2147483647,
             background: "rgba(5, 8, 20, 0.94)",
@@ -403,6 +560,34 @@ export default function StyleEditor() {
             </div>
 
             <div style={{ display: "grid", gap: "8px", marginTop: "12px" }}>
+              <label style={{ display: "grid", gap: "6px" }}>
+                <span style={{ color: "#cbd5e1", fontSize: "11px", fontWeight: 900 }}>
+                  Theme Presets
+                </span>
+                <select
+                  value={activePreset}
+                  onChange={(event) => {
+                    const preset = devThemePresets.find(
+                      (item) => item.name === event.target.value,
+                    );
+                    if (preset) {
+                      applyThemeVariables(preset.variables, {
+                        presetName: preset.name,
+                        message: `Applied ${preset.name}.`,
+                      });
+                    }
+                  }}
+                  style={inputStyle()}
+                >
+                  {activePreset === "Custom" ? <option value="Custom">Custom</option> : null}
+                  {devThemePresets.map((preset) => (
+                    <option key={preset.name} value={preset.name}>
+                      {preset.name}
+                    </option>
+                  ))}
+                </select>
+              </label>
+
               <select
                 value={activeSectionId}
                 onChange={(event) => setActiveSectionId(event.target.value)}
@@ -415,24 +600,69 @@ export default function StyleEditor() {
                 ))}
               </select>
 
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px" }}>
-                <button type="button" onClick={savePreview} style={smallButton()}>
-                  {saved ? "Saved" : "Save Preview"}
-                </button>
-                <button type="button" onClick={resetCurrentSection} style={smallButton()}>
-                  Reset Current Section
-                </button>
-                <button type="button" onClick={resetAll} style={smallButton()}>
-                  Reset All
-                </button>
-                <button type="button" onClick={copyCssVariables} style={smallButton(true)}>
-                  {copied ? "Copied" : "Copy CSS Variables"}
-                </button>
-              </div>
+              <p style={{ margin: 0, color: "#94a3b8", fontSize: "11px", lineHeight: 1.5 }}>
+                Active preset: <span style={{ color: "#67e8f9" }}>{activePreset}</span>
+                {themeMessage ? ` - ${themeMessage}` : ""}
+              </p>
             </div>
           </div>
 
           <div style={{ paddingTop: "16px" }}>
+            <details
+              open={themeToolsOpen}
+              onToggle={(event) => setThemeToolsOpen(event.currentTarget.open)}
+              style={{
+                marginBottom: "14px",
+                border: "1px solid rgba(255, 255, 255, 0.1)",
+                borderRadius: "12px",
+                background: "rgba(0, 0, 0, 0.18)",
+                padding: "10px",
+              }}
+            >
+              <summary
+                style={{
+                  cursor: "pointer",
+                  color: "#67e8f9",
+                  fontSize: "12px",
+                  fontWeight: 900,
+                  letterSpacing: "0.08em",
+                  textTransform: "uppercase",
+                }}
+              >
+                Theme Tools
+              </summary>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "6px",
+                  marginTop: "10px",
+                }}
+              >
+                <button type="button" onClick={savePreview} style={compactButton()}>
+                  {saved ? "Saved" : "Save Preview"}
+                </button>
+                <button type="button" onClick={resetCurrentSection} style={compactButton()}>
+                  Reset Section
+                </button>
+                <button type="button" onClick={resetAll} style={compactButton()}>
+                  Reset All
+                </button>
+                <button type="button" onClick={copyCssVariables} style={compactButton(true)}>
+                  {copied ? "Copied" : "Copy CSS"}
+                </button>
+                <button type="button" onClick={exportTheme} style={compactButton(true)}>
+                  Export Theme
+                </button>
+                <button type="button" onClick={() => setImportOpen(true)} style={compactButton()}>
+                  Import Theme
+                </button>
+                <button type="button" onClick={copyThemeJson} style={compactButton(true)}>
+                  {themeCopied ? "Copied" : "Copy JSON"}
+                </button>
+              </div>
+            </details>
+
             <section key={activeSection.id} style={{ marginBottom: "18px" }}>
               <h3
                 style={{
@@ -455,16 +685,133 @@ export default function StyleEditor() {
 
               <div style={{ display: "grid", gap: "10px" }}>
                 {activeSection.controls.map((control) => (
-                  <ControlField
-                    key={control.variable}
-                    control={control}
-                    value={overrides[control.variable] ?? control.defaultValue}
-                    onChange={(value) => updateOverride(control.variable, value)}
-                  />
-                ))}
+                    <ControlField
+                      key={control.variable}
+                      control={control}
+                      value={overrides[control.variable] ?? control.defaultValue}
+                      onChange={(value) => updateOverride(control.variable, value)}
+                      onBrowse={
+                        control.variable === "--ds-bg-image"
+                          ? () => setBrowseTarget(control.variable)
+                          : undefined
+                      }
+                    />
+                  ))}
               </div>
             </section>
           </div>
+
+          {browseTarget ? (
+            <div
+              style={{
+                position: "sticky",
+                bottom: 0,
+                zIndex: 3,
+                margin: "16px -16px -16px",
+                padding: "14px 16px 16px",
+                background: "rgba(5, 8, 20, 0.98)",
+                borderTop: "1px solid rgba(34, 211, 238, 0.28)",
+              }}
+            >
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                <p style={{ margin: 0, color: "#67e8f9", fontSize: "12px", fontWeight: 900 }}>
+                  Choose Background
+                </p>
+                <button type="button" onClick={() => setBrowseTarget(null)} style={smallButton()}>
+                  Close
+                </button>
+              </div>
+              <div style={{ display: "grid", gap: "8px", marginTop: "10px" }}>
+                {knownBackgroundImages.map((path) => (
+                  <button
+                    key={path}
+                    type="button"
+                    onClick={() => {
+                      updateOverride(browseTarget, path);
+                      setBrowseTarget(null);
+                    }}
+                    style={{ ...smallButton(true), textAlign: "left" }}
+                  >
+                    {path}
+                  </button>
+                ))}
+              </div>
+              {/* Future: replace this list with a real file picker/upload flow for public assets. */}
+            </div>
+          ) : null}
+
+          {importOpen ? (
+            <div
+              style={{
+                position: "fixed",
+                inset: "0",
+                zIndex: 2147483647,
+                display: "grid",
+                placeItems: "center",
+                background: "rgba(0, 0, 0, 0.62)",
+                padding: "20px",
+              }}
+            >
+              <div
+                style={{
+                  width: "min(560px, calc(100vw - 40px))",
+                  maxHeight: "calc(100vh - 80px)",
+                  overflowY: "auto",
+                  border: "1px solid rgba(34, 211, 238, 0.5)",
+                  borderRadius: "16px",
+                  background: "rgba(5, 8, 20, 0.98)",
+                  color: "#ffffff",
+                  padding: "16px",
+                  boxShadow: "0 24px 80px rgba(0, 0, 0, 0.55)",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", gap: "12px" }}>
+                  <div>
+                    <p style={{ margin: "0 0 4px", color: "#67e8f9", fontSize: "11px", fontWeight: 900 }}>
+                      Theme Import
+                    </p>
+                    <h3 style={{ margin: 0, fontSize: "18px", fontWeight: 900 }}>
+                      Import Theme JSON
+                    </h3>
+                  </div>
+                  <button type="button" onClick={() => setImportOpen(false)} style={smallButton()}>
+                    Close
+                  </button>
+                </div>
+
+                <textarea
+                  value={importText}
+                  onChange={(event) => setImportText(event.target.value)}
+                  placeholder='Paste theme JSON with "themeName", "createdAt", and "variables".'
+                  style={{
+                    ...inputStyle(),
+                    minHeight: "180px",
+                    marginTop: "14px",
+                    padding: "12px",
+                    resize: "vertical",
+                    fontFamily: "monospace",
+                    lineHeight: 1.5,
+                  }}
+                />
+
+                <input
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={(event) => importThemeFromFile(event.target.files?.[0] ?? null)}
+                  style={{ marginTop: "12px", width: "100%", color: "#cbd5e1" }}
+                />
+
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "12px" }}>
+                  <button type="button" onClick={importThemeFromText} style={smallButton(true)}>
+                    Apply Pasted JSON
+                  </button>
+                  <button type="button" onClick={() => setImportText("")} style={smallButton()}>
+                    Clear
+                  </button>
+                </div>
+              </div>
+            </div>
+          ) : null}
         </aside>
       ) : null}
     </>
@@ -487,6 +834,22 @@ function smallButton(accent = false): CSSProperties {
   };
 }
 
+function compactButton(accent = false): CSSProperties {
+  return {
+    minHeight: "30px",
+    border: accent
+      ? "1px solid rgba(34, 211, 238, 0.46)"
+      : "1px solid rgba(255, 255, 255, 0.16)",
+    borderRadius: "8px",
+    background: accent ? "rgba(34, 211, 238, 0.12)" : "rgba(255, 255, 255, 0.07)",
+    color: "#ffffff",
+    padding: "6px 8px",
+    cursor: "pointer",
+    fontSize: "10px",
+    fontWeight: 800,
+  };
+}
+
 function inputStyle(): CSSProperties {
   return {
     width: "100%",
@@ -504,10 +867,12 @@ function ControlField({
   control,
   value,
   onChange,
+  onBrowse,
 }: {
   control: StyleControl;
   value: string;
   onChange: (value: string) => void;
+  onBrowse?: () => void;
 }) {
   if (control.type === "range") {
     return (
@@ -579,12 +944,19 @@ function ControlField({
   return (
     <label style={fieldStyle()}>
       <span style={labelStyle()}>{control.label}</span>
-      <input
-        type="text"
-        value={value}
-        onChange={(event) => onChange(event.target.value)}
-        style={inputStyle()}
-      />
+      <div style={{ display: "grid", gridTemplateColumns: onBrowse ? "1fr auto" : "1fr", gap: "8px" }}>
+        <input
+          type="text"
+          value={value}
+          onChange={(event) => onChange(event.target.value)}
+          style={inputStyle()}
+        />
+        {onBrowse ? (
+          <button type="button" onClick={onBrowse} style={smallButton(true)}>
+            Browse
+          </button>
+        ) : null}
+      </div>
     </label>
   );
 }

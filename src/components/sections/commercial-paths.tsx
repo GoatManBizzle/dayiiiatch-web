@@ -17,7 +17,7 @@ export default function CommercialPathsSection() {
       <div className="relative z-10">
         <div className="mb-6 grid gap-4 lg:grid-cols-[0.9fr_1.1fr] lg:items-end">
           <div>
-            <p className="text-xs uppercase tracking-[0.18em] text-violet-200 sm:text-sm sm:tracking-[0.25em]">
+            <p className="style-editor-section-label text-xs uppercase tracking-[0.18em] text-violet-200 sm:text-sm sm:tracking-[0.25em]">
               Services / Offers / Packages
             </p>
             <h3 className="mt-2 text-2xl font-black leading-tight text-white sm:text-3xl md:text-4xl">
@@ -40,10 +40,10 @@ export default function CommercialPathsSection() {
               </span>
             </div>
 
-            <div className="grid gap-3 md:grid-cols-2">
+            <div className="style-editor-service-grid grid gap-3 md:grid-cols-2">
               {serviceSummary.map((service, index) => (
                 <Reveal key={service.title} delayMs={index * 45}>
-                  <article className="card-sheen h-full rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-4 transition duration-500 hover:-translate-y-1 hover:border-cyan-300/28 hover:bg-white/[0.065]">
+                  <article className="style-editor-service-card card-sheen h-full rounded-[1.25rem] border border-white/10 bg-white/[0.045] p-4 transition duration-500 hover:-translate-y-1 hover:border-cyan-300/28 hover:bg-white/[0.065]">
                     <h5 className="text-base font-black text-white">
                       {service.title}
                     </h5>
@@ -65,10 +65,10 @@ export default function CommercialPathsSection() {
                 </span>
               </div>
 
-              <div className="grid gap-3">
+              <div className="style-editor-service-grid grid gap-3">
                 {offers.map((offer, index) => (
                   <Reveal key={offer.title} delayMs={index * 65}>
-                    <div className="rounded-[1.25rem] border border-white/10 bg-black/24 p-4">
+                    <div className="style-editor-service-card rounded-[1.25rem] border border-white/10 bg-black/24 p-4">
                       <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between">
                         <h5 className="text-base font-black text-white">
                           {offer.title}
@@ -83,7 +83,7 @@ export default function CommercialPathsSection() {
                       <Magnetic className="mt-4 inline-flex w-full" strength={0.08}>
                         <a
                           href={offer.href}
-                          className="inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-cyan-300/28 bg-cyan-400/12 px-4 py-2.5 text-center text-xs font-black text-cyan-50 transition hover:-translate-y-0.5 hover:border-cyan-200/48"
+                          className="style-editor-service-button inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-cyan-300/28 bg-cyan-400/12 px-4 py-2.5 text-center text-xs font-black text-cyan-50 transition hover:-translate-y-0.5 hover:border-cyan-200/48"
                         >
                           {offer.cta}
                         </a>
@@ -112,11 +112,11 @@ export default function CommercialPathsSection() {
             </p>
           </div>
 
-          <div className="grid gap-4 md:grid-cols-3">
+          <div className="style-editor-service-grid grid gap-4 md:grid-cols-3">
             {packages.map((pkg, index) => (
               <Reveal key={pkg.title} delayMs={index * 70}>
                 <article
-                  className={`h-full rounded-[1.35rem] border p-4 ${
+                  className={`style-editor-service-card h-full rounded-[1.35rem] border p-4 ${
                     pkg.featured
                       ? "border-violet-300/30 bg-violet-500/12 shadow-[0_0_34px_rgba(168,85,247,0.12)]"
                       : "border-white/10 bg-white/[0.045]"
@@ -138,7 +138,7 @@ export default function CommercialPathsSection() {
                   </p>
                   <a
                     href={pkg.href}
-                    className="mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-white/15 bg-white px-4 py-2.5 text-center text-xs font-black text-zinc-950 transition hover:shadow-[0_0_26px_rgba(255,255,255,0.14)]"
+                    className="style-editor-service-button mt-5 inline-flex min-h-11 w-full items-center justify-center rounded-2xl border border-white/15 bg-white px-4 py-2.5 text-center text-xs font-black text-zinc-950 transition hover:shadow-[0_0_26px_rgba(255,255,255,0.14)]"
                   >
                     {pkg.cta}
                   </a>

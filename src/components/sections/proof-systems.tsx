@@ -219,7 +219,7 @@ export default function ProofSystemsSection() {
       <div className="relative z-10">
         <div className="mb-6 flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
           <div className="max-w-2xl">
-            <p className="text-xs uppercase tracking-[0.18em] text-cyan-200 sm:text-sm sm:tracking-[0.25em]">
+            <p className="style-editor-section-label text-xs uppercase tracking-[0.18em] text-cyan-200 sm:text-sm sm:tracking-[0.25em]">
               Proof Through Working Systems
             </p>
 
@@ -235,10 +235,10 @@ export default function ProofSystemsSection() {
           </p>
         </div>
 
-        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+        <div className="style-editor-proof-grid grid gap-4 md:grid-cols-2 xl:grid-cols-3">
           {projects.map((project, index) => (
             <Reveal key={project.title} delayMs={index * 110}>
-              <article className="card-sheen group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950/65 p-4 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl transition duration-500 ease-out hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07] hover:shadow-[0_0_42px_rgba(34,211,238,0.13)] sm:rounded-[1.8rem] sm:p-5">
+              <article className="style-editor-proof-card card-sheen group relative flex h-full flex-col overflow-hidden rounded-[1.5rem] border border-white/10 bg-zinc-950/65 p-4 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl transition duration-500 ease-out hover:-translate-y-1 hover:border-cyan-300/35 hover:bg-white/[0.07] hover:shadow-[0_0_42px_rgba(34,211,238,0.13)] sm:rounded-[1.8rem] sm:p-5">
                 <div className="pointer-events-none absolute inset-0 opacity-0 transition duration-700 group-hover:translate-x-1 group-hover:translate-y-[-2px] group-hover:opacity-100">
                   <div className="absolute inset-0 bg-[radial-gradient(circle_at_18%_18%,rgba(34,211,238,0.10),transparent_32%),radial-gradient(circle_at_82%_10%,rgba(168,85,247,0.10),transparent_30%)]" />
                 </div>
