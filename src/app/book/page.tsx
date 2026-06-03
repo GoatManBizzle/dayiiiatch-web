@@ -69,7 +69,10 @@ function TimeSlotPicker({
   onSelectSlot,
 }: TimeSlotPickerProps) {
   return (
-    <div className="rounded-[2rem] border border-cyan-400/10 bg-white/[0.04] p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+    <div
+      data-style-section="booking-slots"
+      className="rounded-[2rem] border border-cyan-400/10 bg-white/[0.04] p-5 shadow-2xl backdrop-blur-xl sm:p-6"
+    >
       <p className="text-xs uppercase tracking-[0.24em] text-cyan-200">
         Available Time Slots
       </p>
@@ -245,6 +248,7 @@ function BookingPageContent() {
 
       <section
         id="booking-flow-teaser"
+        data-style-section="booking-hero"
         className="mt-6 grid gap-8 lg:grid-cols-[1.12fr_0.88fr] lg:items-start"
       >
         <div className="space-y-6">
@@ -311,6 +315,7 @@ function BookingPageContent() {
 
         <div
           id="booking-form"
+          data-style-section="booking-form"
           className="relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 shadow-2xl backdrop-blur-xl"
         >
           <div className="absolute inset-0 rounded-[2rem] bg-gradient-to-br from-violet-500/10 via-transparent to-cyan-400/10" />

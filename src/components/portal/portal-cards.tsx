@@ -54,7 +54,7 @@ export function PortalPageIntro({
   description: string;
 }) {
   return (
-    <section className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl sm:p-5">
+    <section data-style-section="portal-page-intro" className="rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_30px_rgba(34,211,238,0.04)] backdrop-blur-xl sm:p-5">
       <p className="text-xs font-black uppercase tracking-[0.2em] text-cyan-200">
         {eyebrow}
       </p>
@@ -124,7 +124,7 @@ export function DashboardOverview({
         </span>
       </div>
 
-      <div className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
+      <div data-style-section="project-cards" className="grid items-stretch gap-4 md:grid-cols-2 lg:grid-cols-3">
         {projects.map((project) => (
           <ProjectCard key={project.title} project={project} />
         ))}
@@ -167,7 +167,7 @@ export function DashboardOverview({
         />
       </div>
 
-      <div className="rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.04)]">
+      <div data-style-section="cta-panels" className="rounded-[1.25rem] border border-cyan-300/14 bg-cyan-400/[0.06] px-4 py-3 text-center text-xs font-bold uppercase tracking-[0.16em] text-cyan-100 shadow-[0_0_24px_rgba(34,211,238,0.04)]">
         Secure workspace preview: permissions, client auth, and project-specific
         data hooks are ready for the next platform layer.
       </div>
@@ -206,7 +206,7 @@ export function ActivityFeed({
     : portalActivityFeed;
 
   return (
-    <section className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
+    <section data-style-section="activity-feed" className="min-w-0 rounded-[1.5rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
       <div className="flex flex-wrap items-start justify-between gap-3">
         <div>
           <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">

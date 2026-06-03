@@ -12,7 +12,7 @@ export default async function PortalFilesPage() {
   const portalClient = await getCurrentPortalClient();
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-files" className="grid gap-4">
       <PortalPageIntro
         title="Client Asset Center"
         description="Upload, review, replace, and organize brand assets, references, contracts, deliverables, and media files in one client workspace."

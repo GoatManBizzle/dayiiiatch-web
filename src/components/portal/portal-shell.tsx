@@ -50,7 +50,7 @@ export default function PortalShell({
 
   return (
     <SiteShell fixedMainBackground compactMobileSpacing>
-      <div className="grid gap-4 lg:grid-cols-[15rem_1fr]">
+      <div data-style-section="portal-shell" className="grid gap-4 lg:grid-cols-[15rem_1fr]">
         <header className="rounded-[1.6rem] border border-white/10 bg-zinc-950/76 p-4 shadow-[0_0_46px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:rounded-[2rem] sm:p-5 lg:col-span-2">
           <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
             <div>
@@ -135,7 +135,7 @@ export default function PortalShell({
           </nav>
         </header>
 
-        <aside className="hidden lg:block">
+        <aside data-style-section="portal-sidebar" className="hidden lg:block">
           <div className="sticky top-6 rounded-[1.5rem] border border-white/10 bg-zinc-950/66 p-3 shadow-[0_0_34px_rgba(124,58,237,0.08)] backdrop-blur-xl">
             <p className="px-3 pt-2 text-[10px] font-black uppercase tracking-[0.2em] text-zinc-500">
               Workspace

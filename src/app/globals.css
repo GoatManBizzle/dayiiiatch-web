@@ -110,22 +110,32 @@ html.public-theme-light body {
   opacity: var(--ds-bg-overlay-opacity);
 }
 
-[data-style-section="about"],
-[data-style-section="proof"],
-[data-style-section="damarko"],
-[data-style-section="commercial"],
-[data-style-section="faq"],
-[data-style-section="audit"],
-[data-style-section="contact"],
-[data-style-section="footer"] {
+.public-theme-surface [data-style-section="about"],
+.public-theme-surface [data-style-section="proof"],
+.public-theme-surface [data-style-section="damarko"],
+.public-theme-surface [data-style-section="commercial"],
+.public-theme-surface [data-style-section="faq"],
+.public-theme-surface [data-style-section="audit"],
+.public-theme-surface [data-style-section="contact"],
+.public-theme-surface [data-style-section="footer"],
+[data-style-scope="public.homepage"] [data-style-section="about"],
+[data-style-scope="public.homepage"] [data-style-section="proof"],
+[data-style-scope="public.homepage"] [data-style-section="damarko"],
+[data-style-scope="public.homepage"] [data-style-section="commercial"],
+[data-style-scope="public.homepage"] [data-style-section="faq"],
+[data-style-scope="public.homepage"] [data-style-section="audit"],
+[data-style-scope="public.homepage"] [data-style-section="contact"],
+[data-style-scope="public.homepage"] [data-style-section="footer"] {
   margin-top: var(--ds-section-gap) !important;
 }
 
-[data-style-section="nav"] {
+.public-theme-surface [data-style-section="nav"],
+[data-style-scope="public.homepage"] [data-style-section="nav"] {
   gap: var(--ds-nav-gap) !important;
 }
 
-[data-style-section="sticky-cta"] {
+.public-theme-surface [data-style-section="sticky-cta"],
+[data-style-scope="public.homepage"] [data-style-section="sticky-cta"] {
   bottom: var(--ds-sticky-cta-bottom) !important;
 }
 

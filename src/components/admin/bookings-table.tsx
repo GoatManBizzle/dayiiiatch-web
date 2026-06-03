@@ -442,8 +442,8 @@ export default function BookingsTable({ bookings }: Props) {
 
   return (
     <>
-      <div className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-xl">
-        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 p-5">
+      <div data-style-section="booking-table" className="overflow-hidden rounded-[2rem] border border-white/10 bg-white/[0.04] shadow-2xl backdrop-blur-xl">
+        <div data-style-section="booking-filters" className="flex flex-wrap items-center justify-between gap-3 border-b border-white/10 p-5">
           <div>
             <h2 className="text-2xl font-black">Bookings</h2>
             <p
@@ -720,7 +720,7 @@ export default function BookingsTable({ bookings }: Props) {
 
               <tbody>
                 {filteredBookings.map((booking) => (
-                  <tr key={booking.id} className="border-t border-white/10">
+                  <tr key={booking.id} data-style-section="booking-row" className="border-t border-white/10">
                     <td className="px-2.5 py-3 align-top">
                       <input
                         type="checkbox"
@@ -776,7 +776,7 @@ export default function BookingsTable({ bookings }: Props) {
                       </td>
                     )}
                     {isColumnVisible("source") && (
-                      <td className="px-2.5 py-3 align-top">
+                      <td data-style-section="action-buttons" className="px-2.5 py-3 align-top">
                         <span className="inline-flex rounded-full border border-violet-300/18 bg-violet-500/10 px-2 py-1 text-[10px] font-black uppercase tracking-[0.1em] text-violet-100">
                           {extractGrowthSource(booking.details)}
                         </span>

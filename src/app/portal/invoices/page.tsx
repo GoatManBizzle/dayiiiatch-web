@@ -14,7 +14,7 @@ export default async function PortalInvoicesPage() {
       : { invoices: [], items: [], payments: [], source: "preview" as const };
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-invoices" className="grid gap-4">
       <PortalPageIntro
         title="Invoice Center"
         description="Manage billing, invoices, and payment activity."

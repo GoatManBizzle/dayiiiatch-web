@@ -11,7 +11,7 @@ export default async function PortalBookingsPage() {
   const portalClient = await getCurrentPortalClient();
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-bookings" className="grid gap-4">
       <PortalPageIntro
         title="Meeting Scheduler"
         description="Manage upcoming sessions, agenda notes, confirmation status, reschedule requests, and new booking paths from one client workspace."

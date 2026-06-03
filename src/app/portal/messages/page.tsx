@@ -13,7 +13,7 @@ export default async function PortalMessagesPage() {
       : { threads: [], messages: [], source: "preview" as const };
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-messages" className="grid gap-4">
       <PortalPageIntro
         title="Communication Workspace"
         description="Track project updates, asset reviews, revision requests, and launch prep conversations in one clean client message center."

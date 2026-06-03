@@ -112,7 +112,7 @@ export default function AdminCrmWorkspace({
 
   return (
     <div className="space-y-6">
-      <section className="relative overflow-hidden rounded-[2rem] border border-cyan-300/18 bg-cyan-400/[0.055] p-5 shadow-[0_0_46px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:p-6">
+      <section data-style-section="crm-hero" className="relative overflow-hidden rounded-[2rem] border border-cyan-300/18 bg-cyan-400/[0.055] p-5 shadow-[0_0_46px_rgba(34,211,238,0.08)] backdrop-blur-xl sm:p-6">
         <div className="absolute right-8 top-6 h-24 w-24 rounded-full border border-cyan-300/20 bg-cyan-400/10 blur-xl" />
         <div className="relative flex flex-wrap items-start justify-between gap-4">
           <div className="max-w-3xl">
@@ -154,7 +154,7 @@ export default function AdminCrmWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
+      <section data-style-section="crm-overview" className="grid gap-3 sm:grid-cols-2 xl:grid-cols-6">
         {overviewCards.map((card) => (
           <article
             key={card.label}
@@ -179,7 +179,7 @@ export default function AdminCrmWorkspace({
         </div>
       ) : null}
 
-      <section className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
+      <section data-style-section="crm-pipeline" className="rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(34,211,238,0.05)] backdrop-blur-xl sm:p-5">
         <div className="flex flex-wrap items-start justify-between gap-3">
           <div>
             <p className="text-xs font-black uppercase tracking-[0.18em] text-cyan-200">
@@ -277,7 +277,7 @@ export default function AdminCrmWorkspace({
         </div>
       </section>
 
-      <section className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.75fr)]">
+      <section data-style-section="crm-panels" className="grid gap-4 xl:grid-cols-[minmax(0,1.35fr)_minmax(320px,0.75fr)]">
         <div className="min-w-0 rounded-[2rem] border border-white/10 bg-white/[0.04] p-4 shadow-[0_0_34px_rgba(124,58,237,0.06)] backdrop-blur-xl sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>

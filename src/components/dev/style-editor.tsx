@@ -1,5 +1,6 @@
 "use client";
 
+import { usePathname } from "next/navigation";
 import { useEffect, useMemo, useState } from "react";
 import type { CSSProperties } from "react";
 
@@ -31,9 +32,19 @@ type StyleSection = {
 };
 
 type StyleOverrides = Record<string, string>;
+type CustomTheme = {
+  id: string;
+  name: string;
+  createdAt: string;
+  updatedAt: string;
+  variables: StyleOverrides;
+  scopes?: Record<string, { variables?: StyleOverrides }>;
+};
 
 const DEBUG_OUTLINES = false;
 const storageKey = "dayiiiatch_style_editor_overrides";
+const customThemesKey = "dayiiiatch_custom_themes";
+const activeThemeKey = "dayiiiatch_active_theme";
 const knownBackgroundImages = [
   "/bg-main.png",
   "/images/bg-main.png",
@@ -320,7 +331,80 @@ function buildThemeJson(themeName: string, overrides: StyleOverrides) {
   return buildDevThemeExport(themeName, filterKnownOverrides(overrides));
 }
 
+function createThemeId() {
+  return `theme-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
+function formatDate(value: string) {
+  try {
+    return new Intl.DateTimeFormat(undefined, {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    }).format(new Date(value));
+  } catch {
+    return value;
+  }
+}
+
+function sanitizeFilename(value: string) {
+  return value.trim().replace(/[^a-z0-9]+/gi, "-").replace(/^-|-$/g, "") || "theme";
+}
+
+function themeVariables(theme: CustomTheme) {
+  return filterKnownOverrides(
+    theme.variables ??
+      theme.scopes?.["public.homepage"]?.variables ??
+      {},
+  );
+}
+
+function buildEffectiveVariables(overrides: StyleOverrides) {
+  const knownOverrides = filterKnownOverrides(overrides);
+
+  return Object.fromEntries(
+    getAllControls().map((control) => [
+      control.variable,
+      knownOverrides[control.variable] ?? control.defaultValue,
+    ]),
+  );
+}
+
+function loadCustomThemes(): CustomTheme[] {
+  try {
+    const saved = window.localStorage.getItem(customThemesKey);
+    const parsed = saved ? (JSON.parse(saved) as CustomTheme[]) : [];
+    return Array.isArray(parsed)
+      ? parsed
+          .filter((theme) => theme.id && theme.name)
+          .map((theme) => ({
+            ...theme,
+            variables: themeVariables(theme),
+          }))
+      : [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomThemes(themes: CustomTheme[]) {
+  window.localStorage.setItem(customThemesKey, JSON.stringify(themes));
+}
+
+function buildSavedThemeJson(theme: CustomTheme): DevThemeExport {
+  return {
+    id: theme.id,
+    name: theme.name,
+    themeName: theme.name,
+    createdAt: theme.createdAt,
+    updatedAt: theme.updatedAt,
+    variables: themeVariables(theme),
+  };
+}
+
 export default function StyleEditor() {
+  const pathname = usePathname();
+  const isHomepage = pathname === "/";
   const [canRender, setCanRender] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState(sections[0].id);
@@ -334,6 +418,8 @@ export default function StyleEditor() {
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState("");
   const [themeToolsOpen, setThemeToolsOpen] = useState(false);
+  const [customThemes, setCustomThemes] = useState<CustomTheme[]>([]);
+  const [deleteTarget, setDeleteTarget] = useState<CustomTheme | null>(null);
 
   const activeSection = useMemo(
     () => sections.find((section) => section.id === activeSectionId) ?? sections[0],
@@ -344,21 +430,27 @@ export default function StyleEditor() {
     const allowed = isLocalhost();
     setCanRender(allowed);
 
-    if (allowed) {
+    if (allowed && isHomepage) {
       const savedOverrides = loadOverrides();
+      const savedActiveTheme = window.localStorage.getItem(activeThemeKey);
+      setCustomThemes(loadCustomThemes());
       setOverrides(savedOverrides);
+      if (savedActiveTheme) {
+        setActivePreset(savedActiveTheme);
+      }
       applyOverrides(savedOverrides);
     }
-  }, []);
+  }, [isHomepage]);
 
   useEffect(() => {
-    if (!canRender) return;
+    if (!canRender || !isHomepage) return;
 
     applyOverrides(overrides);
     window.localStorage.setItem(storageKey, JSON.stringify(overrides));
-  }, [canRender, overrides]);
+  }, [canRender, isHomepage, overrides]);
 
   if (!canRender) return null;
+  if (!isHomepage) return null;
 
   function updateOverride(variable: string, value: string) {
     setOverrides((current) => ({
@@ -367,6 +459,7 @@ export default function StyleEditor() {
     }));
     setSaved(false);
     setActivePreset("Custom");
+    window.localStorage.setItem(activeThemeKey, "Custom");
   }
 
   function applyThemeVariables(
@@ -378,8 +471,110 @@ export default function StyleEditor() {
     applyOverrides(next);
     window.localStorage.setItem(storageKey, JSON.stringify(next));
     setActivePreset(options?.presetName ?? "Custom");
+    window.localStorage.setItem(activeThemeKey, options?.presetName ?? "Custom");
     setSaved(false);
     setThemeMessage(options?.message ?? "");
+  }
+
+  function persistCustomThemes(nextThemes: CustomTheme[]) {
+    setCustomThemes(nextThemes);
+    saveCustomThemes(nextThemes);
+  }
+
+  function saveCurrentTheme() {
+    const name = window.prompt(
+      "Theme Name",
+      activePreset === "Custom" ? "Goat Neon" : `${activePreset} Custom`,
+    );
+    if (!name?.trim()) return;
+
+    const now = new Date().toISOString();
+    const theme: CustomTheme = {
+      id: createThemeId(),
+      name: name.trim(),
+      createdAt: now,
+      updatedAt: now,
+      variables: buildEffectiveVariables(overrides),
+    };
+    persistCustomThemes([theme, ...customThemes]);
+    setActivePreset(theme.name);
+    window.localStorage.setItem(activeThemeKey, theme.name);
+    setThemeMessage(`Saved ${theme.name}.`);
+  }
+
+  function applyCustomTheme(theme: CustomTheme) {
+    applyThemeVariables(themeVariables(theme), {
+      presetName: theme.name,
+      message: `Applied ${theme.name}.`,
+    });
+  }
+
+  function renameCustomTheme(theme: CustomTheme) {
+    const name = window.prompt("New Theme Name", theme.name);
+    if (!name?.trim()) return;
+
+    const nextThemes = customThemes.map((item) =>
+      item.id === theme.id
+        ? { ...item, name: name.trim(), updatedAt: new Date().toISOString() }
+        : item,
+    );
+    persistCustomThemes(nextThemes);
+    if (activePreset === theme.name) {
+      setActivePreset(name.trim());
+      window.localStorage.setItem(activeThemeKey, name.trim());
+    }
+    setThemeMessage(`Renamed ${theme.name}.`);
+  }
+
+  function duplicateCustomTheme(theme: CustomTheme) {
+    const now = new Date().toISOString();
+    const copy: CustomTheme = {
+      ...theme,
+      id: createThemeId(),
+      name: `${theme.name} Copy`,
+      createdAt: now,
+      updatedAt: now,
+      variables: themeVariables(theme),
+    };
+    persistCustomThemes([copy, ...customThemes]);
+    setThemeMessage(`Duplicated ${theme.name}.`);
+  }
+
+  function deleteCustomTheme(theme: CustomTheme) {
+    persistCustomThemes(customThemes.filter((item) => item.id !== theme.id));
+    if (activePreset === theme.name) {
+      applyThemeVariables(defaultThemePreset.variables, {
+        presetName: defaultThemePreset.name,
+        message: `Deleted ${theme.name}. Reset to ${defaultThemePreset.name}.`,
+      });
+    } else {
+      setThemeMessage(`Deleted ${theme.name}.`);
+    }
+  }
+
+  function confirmDeleteCustomTheme() {
+    if (!deleteTarget) return;
+
+    deleteCustomTheme(deleteTarget);
+    setDeleteTarget(null);
+  }
+
+  function exportThemeJson(themeName: string, theme: DevThemeExport) {
+    const blob = new Blob([JSON.stringify(theme, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = `${sanitizeFilename(themeName)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    URL.revokeObjectURL(url);
+  }
+
+  function exportSavedThemeFile(theme: CustomTheme) {
+    exportThemeJson(theme.name, buildSavedThemeJson(theme));
   }
 
   function savePreview() {
@@ -412,22 +607,11 @@ export default function StyleEditor() {
   }
 
   function currentThemeExport() {
-    return buildThemeJson(activePreset || "Custom Theme", loadOverrides());
+    return buildThemeJson(activePreset || "Custom Theme", buildEffectiveVariables(overrides));
   }
 
   function exportTheme() {
-    const theme = currentThemeExport();
-    const blob = new Blob([JSON.stringify(theme, null, 2)], {
-      type: "application/json",
-    });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = "dayiiiatch-theme-export.json";
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    URL.revokeObjectURL(url);
+    exportThemeJson(activePreset || "dayiiiatch-theme-export", currentThemeExport());
     setThemeMessage("Theme export downloaded.");
   }
 
@@ -439,9 +623,23 @@ export default function StyleEditor() {
   }
 
   function importTheme(theme: DevThemeExport) {
-    applyThemeVariables(theme.variables, {
-      presetName: theme.themeName || "Imported Theme",
-      message: `Imported ${theme.themeName || "theme"}.`,
+    const now = new Date().toISOString();
+    const importedVariables = filterKnownOverrides(
+      Object.keys(theme.variables).length
+        ? theme.variables
+        : (theme.scopes?.["public.homepage"]?.variables ?? {}),
+    );
+    const customTheme: CustomTheme = {
+      id: createThemeId(),
+      name: theme.name || theme.themeName || "Imported Theme",
+      createdAt: theme.createdAt || now,
+      updatedAt: theme.updatedAt || now,
+      variables: importedVariables,
+    };
+    persistCustomThemes([customTheme, ...customThemes]);
+    applyThemeVariables(importedVariables, {
+      presetName: customTheme.name,
+      message: `Imported ${customTheme.name}.`,
     });
     setImportText("");
     setImportOpen(false);
@@ -587,6 +785,106 @@ export default function StyleEditor() {
                   ))}
                 </select>
               </label>
+
+              <section
+                style={{
+                  border: "1px solid rgba(255, 255, 255, 0.1)",
+                  borderRadius: "12px",
+                  background: "rgba(0, 0, 0, 0.18)",
+                  padding: "10px",
+                }}
+              >
+                <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: "10px" }}>
+                  <div>
+                    <p style={{ margin: 0, color: "#67e8f9", fontSize: "11px", fontWeight: 900 }}>
+                      Theme Library
+                    </p>
+                    <p style={{ margin: "4px 0 0", color: "#94a3b8", fontSize: "10px" }}>
+                      Active Theme:
+                      <span style={{ color: "#ffffff" }}> {activePreset}</span>
+                    </p>
+                  </div>
+                  <button type="button" onClick={saveCurrentTheme} style={compactButton(true)}>
+                    Save Current Theme
+                  </button>
+                </div>
+
+                <div
+                  style={{
+                    display: "grid",
+                    gap: "8px",
+                    marginTop: "10px",
+                    maxHeight: "160px",
+                    overflowY: "auto",
+                    paddingRight: "2px",
+                  }}
+                >
+                  <p style={{ margin: 0, color: "#cbd5e1", fontSize: "10px", fontWeight: 900 }}>
+                    Custom Themes
+                  </p>
+                  {customThemes.length ? (
+                    customThemes.map((theme) => (
+                      <article
+                        key={theme.id}
+                        style={{
+                          border: "1px solid rgba(255, 255, 255, 0.1)",
+                          borderRadius: "10px",
+                          background: "rgba(255, 255, 255, 0.055)",
+                          padding: "8px",
+                        }}
+                      >
+                        <div style={{ display: "flex", justifyContent: "space-between", gap: "8px" }}>
+                          <div>
+                            <p style={{ margin: 0, color: "#ffffff", fontSize: "12px", fontWeight: 900 }}>
+                              {theme.name}
+                            </p>
+                            <p style={{ margin: "3px 0 0", color: "#94a3b8", fontSize: "10px" }}>
+                              Created {formatDate(theme.createdAt)}
+                            </p>
+                          </div>
+                          {activePreset === theme.name ? (
+                            <span style={{ color: "#67e8f9", fontSize: "10px", fontWeight: 900 }}>
+                              Active
+                            </span>
+                          ) : null}
+                        </div>
+                        <div
+                          style={{
+                            display: "grid",
+                            gridTemplateColumns: "repeat(3, 1fr)",
+                            gap: "5px",
+                            marginTop: "8px",
+                          }}
+                        >
+                          <button type="button" onClick={() => applyCustomTheme(theme)} style={compactButton(true)}>
+                            Apply
+                          </button>
+                          <button type="button" onClick={() => renameCustomTheme(theme)} style={compactButton()}>
+                            Rename
+                          </button>
+                          <button type="button" onClick={() => duplicateCustomTheme(theme)} style={compactButton()}>
+                            Duplicate
+                          </button>
+                          <button type="button" onClick={() => setDeleteTarget(theme)} style={compactButton()}>
+                            Delete
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => exportSavedThemeFile(theme)}
+                            style={compactButton(true)}
+                          >
+                            Export
+                          </button>
+                        </div>
+                      </article>
+                    ))
+                  ) : (
+                    <p style={{ margin: 0, color: "#94a3b8", fontSize: "11px" }}>
+                      No custom themes saved yet.
+                    </p>
+                  )}
+                </div>
+              </section>
 
               <select
                 value={activeSectionId}
@@ -737,6 +1035,55 @@ export default function StyleEditor() {
                 ))}
               </div>
               {/* Future: replace this list with a real file picker/upload flow for public assets. */}
+            </div>
+          ) : null}
+
+          {deleteTarget ? (
+            <div
+              style={{
+                position: "fixed",
+                inset: "0",
+                zIndex: 2147483647,
+                display: "grid",
+                placeItems: "center",
+                background: "rgba(0, 0, 0, 0.62)",
+                padding: "20px",
+              }}
+            >
+              <div
+                style={{
+                  width: "min(360px, calc(100vw - 40px))",
+                  border: "1px solid rgba(248, 113, 113, 0.5)",
+                  borderRadius: "12px",
+                  background: "rgba(5, 8, 20, 0.98)",
+                  color: "#ffffff",
+                  padding: "16px",
+                  boxShadow: "0 24px 80px rgba(0, 0, 0, 0.55)",
+                }}
+              >
+                <p style={{ margin: 0, color: "#fecaca", fontSize: "12px", fontWeight: 900 }}>
+                  Delete Theme?
+                </p>
+                <p style={{ margin: "8px 0 0", color: "#cbd5e1", fontSize: "12px", lineHeight: 1.5 }}>
+                  {deleteTarget.name}
+                </p>
+                <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "8px", marginTop: "14px" }}>
+                  <button type="button" onClick={() => setDeleteTarget(null)} style={smallButton()}>
+                    Cancel
+                  </button>
+                  <button
+                    type="button"
+                    onClick={confirmDeleteCustomTheme}
+                    style={{
+                      ...smallButton(),
+                      border: "1px solid rgba(248, 113, 113, 0.6)",
+                      background: "rgba(127, 29, 29, 0.55)",
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              </div>
             </div>
           ) : null}
 

@@ -14,7 +14,7 @@ export default async function PortalApprovalsPage() {
       : { approvals: [], comments: [], history: [], source: "preview" as const };
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-approvals" className="grid gap-4">
       <PortalPageIntro
         title="Approval Center"
         description="Review project items and provide approval decisions."

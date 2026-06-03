@@ -14,7 +14,7 @@ export default async function PortalDeliverablesPage() {
       : { approvals: [], comments: [], history: [], source: "preview" as const };
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="portal-deliverables" className="grid gap-4">
       <PortalPageIntro
         title="Deliverables Vault"
         description="View launch-ready files, strategy docs, brand assets, automation notes, walkthroughs, final exports, and revision-ready materials."

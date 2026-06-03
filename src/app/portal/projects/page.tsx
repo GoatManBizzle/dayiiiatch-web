@@ -40,7 +40,7 @@ export default async function PortalProjectsPage() {
       : undefined;
 
   return (
-    <div className="grid gap-4">
+    <div data-style-section="project-workspace" className="grid gap-4">
       <PortalPageIntro
         title="Project Workspace"
         description="Track active builds, review status, milestone movement, recent activity, and next actions across the client project pipeline."

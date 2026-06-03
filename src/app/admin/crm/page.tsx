@@ -75,9 +75,9 @@ export default async function AdminCrmPage() {
       : undefined;
 
   return (
-    <main className="min-h-screen bg-[#05070d] px-6 py-10 text-white">
+    <main data-style-section="admin-page-shell" className="min-h-screen bg-[#05070d] px-6 py-10 text-white">
       <section className="mx-auto max-w-[92rem] space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-2xl backdrop-blur-xl">
+        <div data-style-section="crm-nav" className="flex flex-wrap items-center justify-between gap-3 rounded-[1.5rem] border border-white/10 bg-white/[0.04] px-4 py-3 shadow-2xl backdrop-blur-xl">
           <div className="flex flex-wrap gap-2">
             <a
               href="/admin/bookings"

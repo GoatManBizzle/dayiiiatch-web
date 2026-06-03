@@ -68,9 +68,9 @@ export default async function AdminBookingsPage() {
   })) satisfies Booking[];
 
   return (
-    <main className="min-h-screen bg-[#05070d] px-6 py-10 text-white">
+    <main data-style-section="admin-page-shell" className="min-h-screen bg-[#05070d] px-6 py-10 text-white">
       <section className="mx-auto max-w-7xl space-y-8">
-        <div className="flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl">
+        <div data-style-section="admin-hero" className="flex flex-wrap items-center justify-between gap-4 rounded-[2rem] border border-white/10 bg-white/[0.04] p-6 shadow-2xl backdrop-blur-xl">
           <div>
             <p className="text-xs uppercase tracking-[0.3em] text-cyan-200">
               DAYIIIatch Admin
@@ -120,7 +120,7 @@ export default async function AdminBookingsPage() {
           </div>
         )}
 
-        <div className="grid gap-4 md:grid-cols-3">
+        <div data-style-section="admin-panels" className="grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-white/10 bg-white/[0.04] p-5">
             <p className="text-sm uppercase tracking-[0.25em] text-zinc-400">
               Total Bookings

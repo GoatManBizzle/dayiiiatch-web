@@ -25,12 +25,18 @@ export default async function PortalActivityPage() {
     activityData.events.length === 0
   ) {
     return (
+      <div data-style-section="activity-feed">
       <PortalEmptyState
         title="No activity yet. Project events will appear here."
         description="Approvals, uploads, messages, invoices, bookings, and project updates will populate this operational timeline once records are created."
       />
+      </div>
     );
   }
 
-  return <PortalActivityWorkspace events={events} isPreviewData={!events} />;
+  return (
+    <div data-style-section="activity-feed">
+      <PortalActivityWorkspace events={events} isPreviewData={!events} />
+    </div>
+  );
 }

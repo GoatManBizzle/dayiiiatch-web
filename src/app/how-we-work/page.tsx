@@ -6,7 +6,6 @@ import HeaderSection from "@/components/sections/header";
 import HowWeWorkSection from "@/components/sections/how-we-work";
 import ReturnToTop from "@/components/sections/return-to-top";
 import StickyCTA from "@/components/sections/sticky-cta";
-import StyleEditor from "@/components/dev/style-editor";
 
 const timeline = [
   {
@@ -110,7 +109,6 @@ export default function HowWeWorkPage() {
       <FooterSection />
       <StickyCTA />
       <ReturnToTop />
-      <StyleEditor />
     </SiteShell>
   );
 }
