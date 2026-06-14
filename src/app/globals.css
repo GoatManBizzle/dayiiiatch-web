@@ -37,6 +37,11 @@
   --ds-v11-footer-text: #94a3b8;
   --ds-v11-footer-link: #cbd5e1;
   --ds-v11-footer-link-gap: 8px;
+  --z-nav: 30;
+  --z-damarko: 55;
+  --z-sticky-cta: 60;
+  --z-theme-tools: 70;
+  --z-style-editor: 100;
 }
 
 @theme inline {
@@ -141,7 +146,7 @@ html.public-theme-light body {
 
 .public-theme-surface .home-hero,
 [data-style-scope="public.homepage"] .home-hero {
-  margin: 0 auto !important;
+  margin: 0 auto clamp(32px, 5vw, 72px) !important;
   padding: 0 !important;
   width: 100% !important;
   max-width: var(--ds-home-hero-width) !important;
@@ -180,9 +185,16 @@ html.public-theme-light body {
 
 .public-theme-surface .home-hero-nav,
 [data-style-scope="public.homepage"] .home-hero-nav {
-  margin-top: 0 !important;
+  position: relative !important;
+  z-index: var(--z-nav) !important;
+  margin-top: 16px !important;
   margin-right: auto !important;
   margin-left: auto !important;
+}
+
+[data-style-scope="public.homepage"] [data-style-section="damarko"] {
+  position: relative;
+  z-index: var(--z-damarko);
 }
 
 html.public-theme-light .main-public-background {

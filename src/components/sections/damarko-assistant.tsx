@@ -103,7 +103,7 @@ export default function DamarkoAssistant() {
 
   return (
     <aside
-      className={`promo-floating fixed left-3 z-[75] w-[calc(100vw-1.5rem)] max-w-sm transition duration-500 sm:left-5 ${
+      className={`promo-floating fixed left-3 z-[var(--z-damarko)] w-[calc(100vw-1.5rem)] max-w-sm transition duration-500 sm:left-5 ${
         isDev ? "bottom-56 sm:bottom-24" : "bottom-24 sm:bottom-5"
       }`}
       aria-label="Damarko guided assistant"

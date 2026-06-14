@@ -93,7 +93,7 @@ export default function StickyCTA() {
   return (
     <div
       data-style-section="sticky-cta"
-      className={`promo-floating fixed left-2.5 right-2.5 z-[80] mx-auto max-w-2xl transition-all duration-500 sm:left-1/2 sm:right-auto sm:w-auto sm:-translate-x-1/2 ${
+      className={`promo-floating fixed left-2.5 right-2.5 z-[var(--z-sticky-cta)] mx-auto max-w-2xl transition-all duration-500 sm:left-1/2 sm:right-auto sm:w-auto sm:-translate-x-1/2 ${
         isDev ? "bottom-28 sm:bottom-5" : "bottom-3 sm:bottom-5"
       } ${
         contactVisible

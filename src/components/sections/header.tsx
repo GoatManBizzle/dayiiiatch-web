@@ -80,7 +80,7 @@ export default function HeaderSection() {
   return (
     <nav
       data-style-section="nav"
-      className={`home-hero-nav sticky top-2 z-[760] mb-4 mt-0 flex w-full max-w-5xl flex-wrap items-center justify-center gap-1.5 rounded-[1.35rem] border px-2 py-2 backdrop-blur-xl transition-all duration-300 ease-out sm:top-3 sm:w-auto sm:rounded-full sm:gap-2 ${
+      className={`home-hero-nav relative z-[var(--z-nav)] mx-auto mb-0 mt-4 flex w-full max-w-5xl flex-wrap items-center justify-center gap-1.5 rounded-[1.35rem] border px-2 py-2 backdrop-blur-xl transition-all duration-300 ease-out sm:w-auto sm:rounded-full sm:gap-2 ${
         scrolled
           ? "border-cyan-300/22 bg-zinc-950/88 shadow-[0_10px_36px_rgba(0,0,0,0.28),0_0_28px_rgba(34,211,238,0.15)] sm:px-2.5 sm:py-1.5"
           : "border-white/10 bg-zinc-950/70 shadow-[0_0_36px_rgba(34,211,238,0.12)] sm:px-3 sm:py-2"

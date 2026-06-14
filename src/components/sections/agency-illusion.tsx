@@ -107,7 +107,7 @@ export default function AgencyIllusionSection() {
     <section
       id="agency-operations"
       data-style-section="damarko"
-      className="relative mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-zinc-950/58 p-4 shadow-[0_0_58px_rgba(34,211,238,0.07)] backdrop-blur-xl sm:rounded-[2.1rem] sm:p-6 md:mt-16 md:p-8"
+      className="relative z-[var(--z-damarko)] mt-10 overflow-hidden rounded-[1.5rem] border border-cyan-300/12 bg-zinc-950/58 p-4 shadow-[0_0_58px_rgba(34,211,238,0.07)] backdrop-blur-xl sm:rounded-[2.1rem] sm:p-6 md:mt-16 md:p-8"
     >
       <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_10%_12%,rgba(34,211,238,0.13),transparent_31%),radial-gradient(circle_at_90%_10%,rgba(168,85,247,0.13),transparent_34%),linear-gradient(145deg,rgba(255,255,255,0.035),transparent_48%)]" />
       <div className="pointer-events-none absolute inset-x-6 top-0 h-px bg-gradient-to-r from-transparent via-cyan-300/50 to-transparent" />
