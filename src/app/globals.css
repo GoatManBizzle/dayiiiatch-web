@@ -139,7 +139,8 @@ html.public-theme-light body {
   bottom: var(--ds-sticky-cta-bottom) !important;
 }
 
-.home-hero {
+.public-theme-surface .home-hero,
+[data-style-scope="public.homepage"] .home-hero {
   margin: 0 auto !important;
   padding: 0 !important;
   width: 100% !important;
@@ -147,7 +148,8 @@ html.public-theme-light body {
   background: transparent !important;
 }
 
-.home-hero-media-frame {
+.public-theme-surface .home-hero-media-frame,
+[data-style-scope="public.homepage"] .home-hero-media-frame {
   margin: 0 !important;
   padding: 0 !important;
   width: 100% !important;
@@ -162,7 +164,8 @@ html.public-theme-light body {
   line-height: 0 !important;
 }
 
-.home-hero-video {
+.public-theme-surface .home-hero-video,
+[data-style-scope="public.homepage"] .home-hero-video {
   display: block !important;
   width: 100% !important;
   height: 100% !important;
@@ -175,7 +178,8 @@ html.public-theme-light body {
   opacity: 1 !important;
 }
 
-.home-hero-nav {
+.public-theme-surface .home-hero-nav,
+[data-style-scope="public.homepage"] .home-hero-nav {
   margin-top: 0 !important;
   margin-right: auto !important;
   margin-left: auto !important;
@@ -1366,37 +1370,48 @@ textarea:-webkit-autofill {
   }
 }
 
-.style-editor-section-label,
-.home-hero-nav a[aria-current="true"] {
+.public-theme-surface .style-editor-section-label,
+.public-theme-surface .home-hero-nav a[aria-current="true"],
+[data-style-scope="public.homepage"] .style-editor-section-label,
+[data-style-scope="public.homepage"] .home-hero-nav a[aria-current="true"] {
   color: var(--ds-accent) !important;
 }
 
-.home-hero-nav a[aria-current="true"] {
+.public-theme-surface .home-hero-nav a[aria-current="true"],
+[data-style-scope="public.homepage"] .home-hero-nav a[aria-current="true"] {
   border-color: var(--ds-accent) !important;
   box-shadow: 0 0 22px color-mix(in srgb, var(--ds-accent) 38%, transparent) !important;
 }
 
-.home-hero-nav a:hover,
-.style-editor-service-button:hover,
-[data-style-section="sticky-cta"] a:hover,
-[data-style-section="proof"] button:hover {
+.public-theme-surface .home-hero-nav a:hover,
+.public-theme-surface .style-editor-service-button:hover,
+.public-theme-surface [data-style-section="sticky-cta"] a:hover,
+.public-theme-surface [data-style-section="proof"] button:hover,
+[data-style-scope="public.homepage"] .home-hero-nav a:hover,
+[data-style-scope="public.homepage"] .style-editor-service-button:hover,
+[data-style-scope="public.homepage"] [data-style-section="sticky-cta"] a:hover,
+[data-style-scope="public.homepage"] [data-style-section="proof"] button:hover {
   border-color: var(--ds-accent) !important;
 }
 
-.home-hero {
+.public-theme-surface .home-hero,
+[data-style-scope="public.homepage"] .home-hero {
   max-width: var(--ds-home-hero-width) !important;
 }
 
-.home-hero-media-frame {
+.public-theme-surface .home-hero-media-frame,
+[data-style-scope="public.homepage"] .home-hero-media-frame {
   height: var(--ds-home-hero-height) !important;
 }
 
-.home-hero-video {
+.public-theme-surface .home-hero-video,
+[data-style-scope="public.homepage"] .home-hero-video {
   object-fit: var(--ds-home-hero-object-fit) !important;
   object-position: var(--ds-home-hero-object-position-x) var(--ds-home-hero-object-position-y) !important;
 }
 
-.style-editor-about-section {
+.public-theme-surface .style-editor-about-section,
+[data-style-scope="public.homepage"] .style-editor-about-section {
   max-width: var(--ds-v11-about-max-width) !important;
   margin-right: auto !important;
   margin-left: auto !important;
@@ -1405,52 +1420,63 @@ textarea:-webkit-autofill {
   background-color: var(--ds-v11-about-card-bg) !important;
 }
 
-.style-editor-about-heading {
+.public-theme-surface .style-editor-about-heading,
+[data-style-scope="public.homepage"] .style-editor-about-heading {
   color: var(--ds-v11-about-heading) !important;
 }
 
-.style-editor-about-body {
+.public-theme-surface .style-editor-about-body,
+[data-style-scope="public.homepage"] .style-editor-about-body {
   color: var(--ds-v11-about-body) !important;
 }
 
-.style-editor-proof-grid {
+.public-theme-surface .style-editor-proof-grid,
+[data-style-scope="public.homepage"] .style-editor-proof-grid {
   gap: var(--ds-v11-proof-card-gap) !important;
 }
 
-.style-editor-proof-card {
+.public-theme-surface .style-editor-proof-card,
+[data-style-scope="public.homepage"] .style-editor-proof-card {
   border-radius: var(--ds-v11-proof-card-radius) !important;
   background-color: var(--ds-v11-proof-card-bg) !important;
   border-color: var(--ds-v11-proof-card-border) !important;
   box-shadow: 0 0 var(--ds-v11-proof-glow-strength) color-mix(in srgb, var(--ds-accent) 18%, transparent) !important;
 }
 
-.style-editor-service-grid {
+.public-theme-surface .style-editor-service-grid,
+[data-style-scope="public.homepage"] .style-editor-service-grid {
   gap: var(--ds-v11-service-card-gap) !important;
 }
 
-.style-editor-service-card {
+.public-theme-surface .style-editor-service-card,
+[data-style-scope="public.homepage"] .style-editor-service-card {
   border-radius: var(--ds-v11-service-card-radius) !important;
   background-color: var(--ds-v11-service-card-bg) !important;
   border-color: var(--ds-v11-service-card-border) !important;
 }
 
-.style-editor-service-button {
+.public-theme-surface .style-editor-service-button,
+[data-style-scope="public.homepage"] .style-editor-service-button {
   border-radius: var(--ds-v11-service-button-radius) !important;
 }
 
-.style-editor-footer {
+.public-theme-surface .style-editor-footer,
+[data-style-scope="public.homepage"] .style-editor-footer {
   padding-top: var(--ds-v11-footer-padding) !important;
   padding-bottom: var(--ds-v11-footer-padding) !important;
 }
 
-.style-editor-footer-text {
+.public-theme-surface .style-editor-footer-text,
+[data-style-scope="public.homepage"] .style-editor-footer-text {
   color: var(--ds-v11-footer-text) !important;
 }
 
-.style-editor-footer-links {
+.public-theme-surface .style-editor-footer-links,
+[data-style-scope="public.homepage"] .style-editor-footer-links {
   column-gap: var(--ds-v11-footer-link-gap) !important;
 }
 
-.style-editor-footer-link {
+.public-theme-surface .style-editor-footer-link,
+[data-style-scope="public.homepage"] .style-editor-footer-link {
   color: var(--ds-v11-footer-link) !important;
 }

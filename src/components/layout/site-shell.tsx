@@ -8,6 +8,7 @@ type SiteShellProps = {
   promoClipMode?: boolean;
   promoDockHidden?: boolean;
   publicThemeSurface?: boolean;
+  styleScope?: "public.homepage";
   flushTop?: boolean;
 };
 
@@ -19,10 +20,12 @@ export default function SiteShell({
   promoClipMode = false,
   promoDockHidden = false,
   publicThemeSurface = false,
+  styleScope,
   flushTop = false,
 }: SiteShellProps) {
   return (
     <div
+      data-style-scope={styleScope}
       className={`relative min-h-screen overflow-x-hidden bg-zinc-950 text-white ${
         publicThemeSurface ? "public-theme-surface" : ""
       } ${

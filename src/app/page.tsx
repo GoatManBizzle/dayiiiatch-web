@@ -57,6 +57,7 @@ export default function HomePage() {
       promoClipMode={promoClipMode}
       promoDockHidden={promoDockHidden}
       publicThemeSurface
+      styleScope="public.homepage"
       flushTop
     >
       <HomepageScrollManager />

@@ -41,7 +41,6 @@ type CustomTheme = {
   scopes?: Record<string, { variables?: StyleOverrides }>;
 };
 
-const DEBUG_OUTLINES = false;
 const storageKey = "dayiiiatch_style_editor_overrides";
 const customThemesKey = "dayiiiatch_custom_themes";
 const activeThemeKey = "dayiiiatch_active_theme";
@@ -285,21 +284,35 @@ function cssValue(variable: string, value: string) {
   return value;
 }
 
-function applyOverrides(overrides: StyleOverrides) {
-  const root = document.documentElement;
-  const knownOverrides = filterKnownOverrides(overrides);
+function getThemeSurface() {
+  return document.querySelector<HTMLElement>('[data-style-scope="public.homepage"]');
+}
 
+function clearEditorVariables(target: HTMLElement) {
   for (const control of getAllControls()) {
-    root.style.removeProperty(control.variable);
+    target.style.removeProperty(control.variable);
   }
 
   for (const variable of retiredVariables) {
-    root.style.removeProperty(variable);
+    target.style.removeProperty(variable);
   }
+}
+
+function clearGlobalEditorVariables() {
+  clearEditorVariables(document.documentElement);
+}
+
+function applyOverrides(overrides: StyleOverrides) {
+  const target = getThemeSurface();
+  const knownOverrides = filterKnownOverrides(overrides);
+
+  clearGlobalEditorVariables();
+  if (!target) return;
+  clearEditorVariables(target);
 
   for (const [variable, value] of Object.entries(knownOverrides)) {
     if (value) {
-      root.style.setProperty(variable, cssValue(variable, value));
+      target.style.setProperty(variable, cssValue(variable, value));
     }
   }
 }
@@ -315,11 +328,12 @@ function formatRangeValue(value: string, control: StyleControl) {
 
 function buildCssOutput(overrides: StyleOverrides) {
   const entries = Object.entries(filterKnownOverrides(overrides));
+  const selector = '.public-theme-surface, [data-style-scope="public.homepage"]';
 
-  if (!entries.length) return ":root {\n  /* No style overrides yet. */\n}";
+  if (!entries.length) return `${selector} {\n  /* No style overrides yet. */\n}`;
 
   return [
-    ":root {",
+    `${selector} {`,
     ...entries.map(
       ([variable, value]) => `  ${variable}: ${cssValue(variable, value)};`,
     ),
@@ -405,6 +419,10 @@ function buildSavedThemeJson(theme: CustomTheme): DevThemeExport {
 export default function StyleEditor() {
   const pathname = usePathname();
   const isHomepage = pathname === "/";
+  const isProtectedEditorRoute =
+    pathname.startsWith("/admin") || pathname.startsWith("/portal");
+  const pausedEditorMessage =
+    "Editor support for this page is paused until controls are safely wired.";
   const [canRender, setCanRender] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [activeSectionId, setActiveSectionId] = useState(sections[0].id);
@@ -440,6 +458,13 @@ export default function StyleEditor() {
       }
       applyOverrides(savedOverrides);
     }
+
+    return () => {
+      if (typeof document === "undefined") return;
+      clearGlobalEditorVariables();
+      const target = getThemeSurface();
+      if (target) clearEditorVariables(target);
+    };
   }, [isHomepage]);
 
   useEffect(() => {
@@ -450,7 +475,71 @@ export default function StyleEditor() {
   }, [canRender, isHomepage, overrides]);
 
   if (!canRender) return null;
-  if (!isHomepage) return null;
+  if (!isHomepage) {
+    if (isProtectedEditorRoute) return null;
+
+    return (
+      <>
+        <button
+          type="button"
+          onClick={() => setIsOpen((current) => !current)}
+          style={{
+            position: "fixed",
+            top: "150px",
+            left: "16px",
+            zIndex: 2147483647,
+            minWidth: "110px",
+            height: "44px",
+            padding: "0 14px",
+            border: "2px solid yellow",
+            borderRadius: "8px",
+            background: "red",
+            color: "#ffffff",
+            fontSize: "12px",
+            fontWeight: 900,
+            lineHeight: 1,
+            letterSpacing: "0.08em",
+            cursor: "pointer",
+            boxShadow: "0 12px 30px rgba(0, 0, 0, 0.35)",
+          }}
+          aria-expanded={isOpen}
+          aria-controls="dev-style-editor-paused"
+        >
+          STYLE EDITOR
+        </button>
+        {isOpen ? (
+          <aside
+            id="dev-style-editor-paused"
+            style={{
+              position: "fixed",
+              top: "20px",
+              right: "20px",
+              width: "min(360px, calc(100vw - 40px))",
+              zIndex: 2147483647,
+              border: "1px solid rgba(34, 211, 238, 0.5)",
+              borderRadius: "16px",
+              background: "rgba(5, 8, 20, 0.96)",
+              color: "#ffffff",
+              padding: "16px",
+              boxShadow: "0 22px 70px rgba(0, 0, 0, 0.5)",
+            }}
+            aria-label="Dev Style Editor paused"
+          >
+            <p style={{ margin: 0, color: "#cbd5e1", fontSize: "13px", lineHeight: 1.5 }}>
+              {pausedEditorMessage}
+            </p>
+            <button
+              type="button"
+              onClick={() => setIsOpen(false)}
+              style={{ ...smallButton(), marginTop: "12px" }}
+            >
+              Close
+            </button>
+          </aside>
+        ) : null}
+      </>
+    );
+  }
 
   function updateOverride(variable: string, value: string) {
     setOverrides((current) => ({
@@ -907,7 +996,7 @@ export default function StyleEditor() {
 
           <div style={{ paddingTop: "16px" }}>
             <details
-              open={themeToolsOpen}
+              open={themeToolsOpen || undefined}
               onToggle={(event) => setThemeToolsOpen(event.currentTarget.open)}
               style={{
                 marginBottom: "14px",
@@ -929,36 +1018,38 @@ export default function StyleEditor() {
               >
                 Theme Tools
               </summary>
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "6px",
-                  marginTop: "10px",
-                }}
-              >
-                <button type="button" onClick={savePreview} style={compactButton()}>
-                  {saved ? "Saved" : "Save Preview"}
-                </button>
-                <button type="button" onClick={resetCurrentSection} style={compactButton()}>
-                  Reset Section
-                </button>
-                <button type="button" onClick={resetAll} style={compactButton()}>
-                  Reset All
-                </button>
-                <button type="button" onClick={copyCssVariables} style={compactButton(true)}>
-                  {copied ? "Copied" : "Copy CSS"}
-                </button>
-                <button type="button" onClick={exportTheme} style={compactButton(true)}>
-                  Export Theme
-                </button>
-                <button type="button" onClick={() => setImportOpen(true)} style={compactButton()}>
-                  Import Theme
-                </button>
-                <button type="button" onClick={copyThemeJson} style={compactButton(true)}>
-                  {themeCopied ? "Copied" : "Copy JSON"}
-                </button>
-              </div>
+              {themeToolsOpen ? (
+                <div
+                  style={{
+                    display: "grid",
+                    gridTemplateColumns: "1fr 1fr",
+                    gap: "6px",
+                    marginTop: "10px",
+                  }}
+                >
+                  <button type="button" onClick={savePreview} style={compactButton()}>
+                    {saved ? "Saved" : "Save Preview"}
+                  </button>
+                  <button type="button" onClick={resetCurrentSection} style={compactButton()}>
+                    Reset Section
+                  </button>
+                  <button type="button" onClick={resetAll} style={compactButton()}>
+                    Reset All
+                  </button>
+                  <button type="button" onClick={copyCssVariables} style={compactButton(true)}>
+                    {copied ? "Copied" : "Copy CSS"}
+                  </button>
+                  <button type="button" onClick={exportTheme} style={compactButton(true)}>
+                    Export Theme
+                  </button>
+                  <button type="button" onClick={() => setImportOpen(true)} style={compactButton()}>
+                    Import Theme
+                  </button>
+                  <button type="button" onClick={copyThemeJson} style={compactButton(true)}>
+                    {themeCopied ? "Copied" : "Copy JSON"}
+                  </button>
+                </div>
+              ) : null}
             </details>
 
             <section key={activeSection.id} style={{ marginBottom: "18px" }}>
@@ -974,12 +1065,6 @@ export default function StyleEditor() {
               >
                 {activeSection.label}
               </h3>
-
-              {DEBUG_OUTLINES ? (
-                <p style={{ color: "#f8fafc", fontSize: "11px", margin: "0 0 10px" }}>
-                  Debug outlines are enabled.
-                </p>
-              ) : null}
 
               <div style={{ display: "grid", gap: "10px" }}>
                 {activeSection.controls.map((control) => (

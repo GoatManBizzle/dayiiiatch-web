@@ -34,17 +34,29 @@ function formatCssValue(cssVar: string, value: string) {
   return value;
 }
 
+function isHomepageConfig(pageConfig: DevStylePageConfig) {
+  return pageConfig.pageId === "home";
+}
+
+function getPublicThemeSurface() {
+  return document.querySelector<HTMLElement>('[data-style-scope="public.homepage"]');
+}
+
 export function applyDevStyleOverrides(
   pageConfig: DevStylePageConfig,
   overrides: DevStyleOverrides,
 ) {
   if (typeof document === "undefined") return;
+  if (!isHomepageConfig(pageConfig)) return;
+
+  const publicSurface = getPublicThemeSurface();
+  if (!publicSurface) return;
 
   for (const section of pageConfig.sections) {
     const target =
       section.selector === ":root"
-        ? document.documentElement
-        : document.querySelector<HTMLElement>(section.selector);
+        ? publicSurface
+        : publicSurface.querySelector<HTMLElement>(section.selector);
 
     if (!target) continue;
 
@@ -69,6 +81,10 @@ export function buildDevStyleCssOutput(
   pageConfig: DevStylePageConfig,
   overrides: DevStyleOverrides,
 ) {
+  if (!isHomepageConfig(pageConfig)) {
+    return "/* Editor support for this page is paused until controls are safely wired. */";
+  }
+
   const blocks: string[] = [];
 
   for (const section of pageConfig.sections) {
@@ -81,8 +97,8 @@ export function buildDevStyleCssOutput(
 
     const selector =
       section.selector === ":root"
-        ? ":root"
-        : `[data-style-section="${section.id}"]`;
+        ? '.public-theme-surface, [data-style-scope="public.homepage"]'
+        : `.public-theme-surface [data-style-section="${section.id}"], [data-style-scope="public.homepage"] [data-style-section="${section.id}"]`;
 
     blocks.push(
       [
