@@ -1,10 +1,12 @@
 export type DevThemeExport = {
   id?: string;
   name?: string;
+  activeTheme?: string;
   themeName: string;
   createdAt: string;
   updatedAt?: string;
   activePageScope?: string;
+  global?: { variables: Record<string, string> };
   variables: Record<string, string>;
   scopes?: Record<string, { variables: Record<string, string> }>;
 };
@@ -35,13 +37,28 @@ export function parseDevThemeJson(input: string): DevThemeExport {
     parsed.scopes && typeof parsed.scopes === "object"
       ? (parsed.scopes as Record<string, { variables?: Record<string, unknown> }>)
       : undefined;
+  const parsedGlobalVariables =
+    parsed.global &&
+    typeof parsed.global === "object" &&
+    "variables" in parsed.global &&
+    parsed.global.variables &&
+    typeof parsed.global.variables === "object"
+      ? (parsed.global.variables as Record<string, unknown>)
+      : undefined;
 
-  if ((!parsed.variables || typeof parsed.variables !== "object") && !parsedScopes) {
-    throw new Error("Theme JSON must include a variables object or scoped variables.");
+  if (
+    (!parsed.variables || typeof parsed.variables !== "object") &&
+    !parsedGlobalVariables &&
+    !parsedScopes
+  ) {
+    throw new Error("Theme JSON must include a variables object, global variables, or scoped variables.");
   }
 
   const variables = Object.fromEntries(
-    Object.entries(parsed.variables ?? {}).filter((entry): entry is [string, string] => {
+    Object.entries({
+      ...parsedGlobalVariables,
+      ...(parsed.variables ?? {}),
+    }).filter((entry): entry is [string, string] => {
       const [variable, value] = entry;
       return typeof variable === "string" && typeof value === "string";
     }),
@@ -74,6 +91,8 @@ export function parseDevThemeJson(input: string): DevThemeExport {
   const themeName =
     typeof parsed.name === "string"
       ? parsed.name
+      : typeof parsed.activeTheme === "string"
+        ? parsed.activeTheme
       : typeof parsed.themeName === "string"
         ? parsed.themeName
         : "Imported Theme";
@@ -81,6 +100,7 @@ export function parseDevThemeJson(input: string): DevThemeExport {
   return {
     id: typeof parsed.id === "string" ? parsed.id : undefined,
     name: themeName,
+    activeTheme: typeof parsed.activeTheme === "string" ? parsed.activeTheme : undefined,
     themeName,
     createdAt: typeof parsed.createdAt === "string" ? parsed.createdAt : new Date().toISOString(),
     updatedAt: typeof parsed.updatedAt === "string" ? parsed.updatedAt : undefined,

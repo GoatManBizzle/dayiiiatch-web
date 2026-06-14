@@ -24,6 +24,7 @@ import FooterSection from "@/components/sections/footer";
 import AboutSummarySection from "@/components/sections/about-summary";
 import ClientLoginButton from "@/components/sections/client-login-button";
 import CommercialPathsSection from "@/components/sections/commercial-paths";
+import ProductionThemeLoader from "@/components/theme/production-theme-loader";
 
 import DevToggle from "@/components/dev/dev-toggle";
 import StyleEditor from "@/components/dev/style-editor";
@@ -60,6 +61,7 @@ export default function HomePage() {
       styleScope="public.homepage"
       flushTop
     >
+      <ProductionThemeLoader />
       <HomepageScrollManager />
       <AmbientMotion />
       <ClientLoginButton />

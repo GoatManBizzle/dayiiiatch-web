@@ -1,0 +1,11 @@
+{
+  "activeTheme": "Default Production Theme",
+  "global": {
+    "variables": {}
+  },
+  "scopes": {
+    "public.homepage": {
+      "variables": {}
+    }
+  }
+}

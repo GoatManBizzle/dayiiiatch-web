@@ -10,6 +10,11 @@ import {
   type DevThemeExport,
 } from "@/lib/dev-theme-export";
 import { defaultThemePreset, devThemePresets } from "@/lib/dev-theme-presets";
+import {
+  buildProductionThemeExport,
+  getProductionThemeVariables,
+  localPreviewThemeStorageKey,
+} from "@/lib/production-theme";
 
 type ControlType = "range" | "color" | "text" | "select";
 
@@ -41,7 +46,7 @@ type CustomTheme = {
   scopes?: Record<string, { variables?: StyleOverrides }>;
 };
 
-const storageKey = "dayiiiatch_style_editor_overrides";
+const storageKey = localPreviewThemeStorageKey;
 const customThemesKey = "dayiiiatch_custom_themes";
 const activeThemeKey = "dayiiiatch_active_theme";
 const knownBackgroundImages = [
@@ -304,7 +309,10 @@ function clearGlobalEditorVariables() {
 
 function applyOverrides(overrides: StyleOverrides) {
   const target = getThemeSurface();
-  const knownOverrides = filterKnownOverrides(overrides);
+  const knownOverrides = filterKnownOverrides({
+    ...getProductionThemeVariables(),
+    ...overrides,
+  });
 
   clearGlobalEditorVariables();
   if (!target) return;
@@ -345,6 +353,10 @@ function buildThemeJson(themeName: string, overrides: StyleOverrides) {
   return buildDevThemeExport(themeName, filterKnownOverrides(overrides));
 }
 
+function buildProductionThemeJson(themeName: string, overrides: StyleOverrides) {
+  return buildProductionThemeExport(themeName, filterKnownOverrides(overrides));
+}
+
 function createThemeId() {
   return `theme-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
@@ -375,12 +387,25 @@ function themeVariables(theme: CustomTheme) {
 
 function buildEffectiveVariables(overrides: StyleOverrides) {
   const knownOverrides = filterKnownOverrides(overrides);
+  const productionVariables = filterKnownOverrides(getProductionThemeVariables());
 
   return Object.fromEntries(
     getAllControls().map((control) => [
       control.variable,
-      knownOverrides[control.variable] ?? control.defaultValue,
+      knownOverrides[control.variable] ??
+        productionVariables[control.variable] ??
+        control.defaultValue,
     ]),
+  );
+}
+
+function controlValue(control: StyleControl, overrides: StyleOverrides) {
+  const productionVariables = filterKnownOverrides(getProductionThemeVariables());
+
+  return (
+    filterKnownOverrides(overrides)[control.variable] ??
+    productionVariables[control.variable] ??
+    control.defaultValue
   );
 }
 
@@ -432,6 +457,7 @@ export default function StyleEditor() {
   const [browseTarget, setBrowseTarget] = useState<string | null>(null);
   const [activePreset, setActivePreset] = useState(defaultThemePreset.name);
   const [themeCopied, setThemeCopied] = useState(false);
+  const [productionCopied, setProductionCopied] = useState(false);
   const [themeMessage, setThemeMessage] = useState("");
   const [importOpen, setImportOpen] = useState(false);
   const [importText, setImportText] = useState("");
@@ -649,13 +675,17 @@ export default function StyleEditor() {
   }
 
   function exportThemeJson(themeName: string, theme: DevThemeExport) {
-    const blob = new Blob([JSON.stringify(theme, null, 2)], {
+    exportJsonFile(`${sanitizeFilename(themeName)}.json`, theme);
+  }
+
+  function exportJsonFile(fileName: string, data: unknown) {
+    const blob = new Blob([JSON.stringify(data, null, 2)], {
       type: "application/json",
     });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
-    link.download = `${sanitizeFilename(themeName)}.json`;
+    link.download = fileName;
     document.body.appendChild(link);
     link.click();
     link.remove();
@@ -699,9 +729,21 @@ export default function StyleEditor() {
     return buildThemeJson(activePreset || "Custom Theme", buildEffectiveVariables(overrides));
   }
 
+  function currentProductionThemeExport() {
+    return buildProductionThemeJson(
+      activePreset || "Custom Theme",
+      buildEffectiveVariables(overrides),
+    );
+  }
+
   function exportTheme() {
     exportThemeJson(activePreset || "dayiiiatch-theme-export", currentThemeExport());
     setThemeMessage("Theme export downloaded.");
+  }
+
+  function exportProductionTheme() {
+    exportJsonFile("production-theme.json", currentProductionThemeExport());
+    setThemeMessage("Production theme export downloaded.");
   }
 
   async function copyThemeJson() {
@@ -709,6 +751,15 @@ export default function StyleEditor() {
     setThemeCopied(true);
     setThemeMessage("Theme JSON copied.");
     window.setTimeout(() => setThemeCopied(false), 1400);
+  }
+
+  async function copyProductionThemeJson() {
+    await window.navigator.clipboard.writeText(
+      JSON.stringify(currentProductionThemeExport(), null, 2),
+    );
+    setProductionCopied(true);
+    setThemeMessage("Production theme JSON copied.");
+    window.setTimeout(() => setProductionCopied(false), 1400);
   }
 
   function importTheme(theme: DevThemeExport) {
@@ -1027,6 +1078,19 @@ export default function StyleEditor() {
                     marginTop: "10px",
                   }}
                 >
+                  <p
+                    style={{
+                      gridColumn: "1 / -1",
+                      margin: 0,
+                      color: "#67e8f9",
+                      fontSize: "10px",
+                      fontWeight: 900,
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Local Preview Changes
+                  </p>
                   <button type="button" onClick={savePreview} style={compactButton()}>
                     {saved ? "Saved" : "Save Preview"}
                   </button>
@@ -1038,6 +1102,25 @@ export default function StyleEditor() {
                   </button>
                   <button type="button" onClick={copyCssVariables} style={compactButton(true)}>
                     {copied ? "Copied" : "Copy CSS"}
+                  </button>
+                  <p
+                    style={{
+                      gridColumn: "1 / -1",
+                      margin: "6px 0 0",
+                      color: "#67e8f9",
+                      fontSize: "10px",
+                      fontWeight: 900,
+                      letterSpacing: "0.14em",
+                      textTransform: "uppercase",
+                    }}
+                  >
+                    Production Theme Export
+                  </p>
+                  <button type="button" onClick={exportProductionTheme} style={compactButton(true)}>
+                    Export Production Theme
+                  </button>
+                  <button type="button" onClick={copyProductionThemeJson} style={compactButton(true)}>
+                    {productionCopied ? "Copied" : "Copy Production JSON"}
                   </button>
                   <button type="button" onClick={exportTheme} style={compactButton(true)}>
                     Export Theme
@@ -1071,7 +1154,7 @@ export default function StyleEditor() {
                     <ControlField
                       key={control.variable}
                       control={control}
-                      value={overrides[control.variable] ?? control.defaultValue}
+                      value={controlValue(control, overrides)}
                       onChange={(value) => updateOverride(control.variable, value)}
                       onBrowse={
                         control.variable === "--ds-bg-image"
